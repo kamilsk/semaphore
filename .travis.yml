@@ -13,12 +13,10 @@ before_install:
 - export GO_TEST_COVERAGE_FILE_NAME='coverage.out'
 
 install:
-- make install-deps install-deps-dev
+- make install-deps
 - make build
 
 script:
-- make format-lint
-- make import-lint
 - make test-with-coverage-profile
 
 after_success:
@@ -27,3 +25,4 @@ after_success:
 matrix:
   allow_failures:
   - go: tip
+  fast_finish: true
