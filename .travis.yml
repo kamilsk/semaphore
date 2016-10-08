@@ -1,0 +1,29 @@
+language: go
+
+go:
+- 1.5
+- 1.6
+- 1.7
+- tip
+
+sudo: false
+
+before_install:
+- go get github.com/mattn/goveralls
+- export GO_TEST_COVERAGE_FILE_NAME='coverage.out'
+
+install:
+- make install-deps install-deps-dev
+- make build
+
+script:
+- make format-lint
+- make import-lint
+- make test-with-coverage-profile
+
+after_success:
+- goveralls -service=travis-ci -coverprofile="${GO_TEST_COVERAGE_FILE_NAME}"
+
+matrix:
+  allow_failures:
+  - go: tip
