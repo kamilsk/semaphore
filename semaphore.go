@@ -16,24 +16,22 @@ type Semaphore interface {
 
 // New constructs a new Semaphore with the given number of places.
 func New(size int) Semaphore {
-	return &semaphore{sem: make(chan struct{}, size)}
+	return make(semaphore, size)
 }
 
 var errTimeout = errors.New("operation timeout")
 
-type semaphore struct {
-	sem chan struct{}
-}
+type semaphore chan struct{}
 
-func (s *semaphore) Acquire(timeout time.Duration) error {
+func (sem semaphore) Acquire(timeout time.Duration) error {
 	select {
-	case s.sem <- struct{}{}:
+	case sem <- struct{}{}:
 		return nil
 	case <-time.After(timeout):
 		return errTimeout
 	}
 }
 
-func (s *semaphore) Release() {
-	<-s.sem
+func (sem semaphore) Release() {
+	<-sem
 }

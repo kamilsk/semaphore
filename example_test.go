@@ -17,7 +17,7 @@ func Example() {
 	ts := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		if err := limiter.Acquire(time.Millisecond); err != nil {
 			rw.WriteHeader(429) // http.StatusTooManyRequests
-			rw.Write([]byte("please try again later"))
+			_, _ = rw.Write([]byte("please try again later"))
 			return
 		}
 		defer limiter.Release()
@@ -25,7 +25,7 @@ func Example() {
 		// do some heavy work
 		time.Sleep(time.Second)
 		rw.WriteHeader(http.StatusOK)
-		rw.Write([]byte("success"))
+		_, _ = rw.Write([]byte("success"))
 	}))
 	defer ts.Close()
 
