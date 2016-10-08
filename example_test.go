@@ -16,7 +16,7 @@ func Example() {
 
 	ts := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		if err := limiter.Acquire(time.Millisecond); err != nil {
-			rw.WriteHeader(http.StatusTooManyRequests)
+			rw.WriteHeader(429) // http.StatusTooManyRequests
 			rw.Write([]byte("please try again later"))
 			return
 		}
@@ -44,7 +44,7 @@ func Example() {
 			switch resp.StatusCode {
 			case http.StatusOK:
 				atomic.AddInt32(&ok, 1)
-			case http.StatusTooManyRequests:
+			case 429: // http.StatusTooManyRequests
 				atomic.AddInt32(&fail, 1)
 			}
 		}()
