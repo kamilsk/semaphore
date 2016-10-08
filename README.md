@@ -28,6 +28,12 @@ defer semaphore.Release()
 $ go get github.com/kamilsk/semaphore
 ```
 
+### Mirror
+
+```bash
+$ go get bitbucket.org/kamilsk/semaphore
+```
+
 ## Feedback
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/kamilsk/semaphore)
