@@ -26,6 +26,9 @@ func TestSemaphore_Concurrently(t *testing.T) {
 				return
 			}
 			defer sem.Release()
+			if sem.Occupied() == sem.Capacity() {
+				t.Log("semaphore is full")
+			}
 			atomic.AddInt32(&counter, 1)
 		}()
 	}
@@ -34,6 +37,9 @@ func TestSemaphore_Concurrently(t *testing.T) {
 
 	if counter != int32(size) {
 		t.Errorf("expected counter value is equals to %d, obtained %d", size, counter)
+	}
+	if sem.Occupied() != 0 {
+		t.Fatal("unexpected occupied value")
 	}
 }
 

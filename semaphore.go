@@ -10,6 +10,10 @@ type Semaphore interface {
 	// Acquire tries to take an available place with the given timeout.
 	// If the timeout has occurred, then returns an appropriate error.
 	Acquire(time.Duration) error
+	// Capacity returns semaphore capacity.
+	Capacity() int
+	// Occupied returns the number of places occupied.
+	Occupied() int
 	// Release releases the previously occupied place.
 	Release()
 }
@@ -30,6 +34,14 @@ func (sem semaphore) Acquire(timeout time.Duration) error {
 	case <-time.After(timeout):
 		return errTimeout
 	}
+}
+
+func (sem semaphore) Capacity() int {
+	return cap(sem)
+}
+
+func (sem semaphore) Occupied() int {
+	return len(sem)
 }
 
 func (sem semaphore) Release() {

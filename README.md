@@ -2,7 +2,7 @@
 >
 > Simple semaphore implementation with timeout written on Go.
 >
-> > Inspired by [go-resiliency](https://github.com/eapache/go-resiliency)
+> > Inspired by [go-resiliency](https://github.com/eapache/go-resiliency) and [sema](https://github.com/tarndt/sema).
 
 [![Build Status](https://travis-ci.org/kamilsk/semaphore.svg?branch=master)](https://travis-ci.org/kamilsk/semaphore)
 [![Coverage Status](https://coveralls.io/repos/github/kamilsk/semaphore/badge.svg)](https://coveralls.io/github/kamilsk/semaphore)
@@ -19,6 +19,7 @@ if err := semaphore.Acquire(50*time.Millisecond); err != nil {
 }
 defer semaphore.Release()
 
+// push to monitoring semaphore.Occupied()
 // do some heavy work
 ```
 
