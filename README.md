@@ -23,6 +23,47 @@ defer semaphore.Release()
 // do some heavy work
 ```
 
+## Tips and tricks
+
+### Monitoring decorator
+
+```go
+type MonitoredSemaphore struct {
+	Semaphore
+
+	mu sync.Mutex
+	timers []time.Time
+}
+
+func (sem *MonitoredSemaphore) Acquire(timeout time.Duration) error {
+	if err := sem.Semaphore.Acquire(timeout); err != nil {
+		// trigger error counter in monitoring
+		return err
+	}
+	// send current sem.Occupied() value to monitoring
+	sem.timers = append(sem.timers, time.Now())
+	return nil
+}
+
+func (sem *MonitoredSemaphore) Release() {
+	sem.mu.Lock()
+	defer sem.mu.Unlock()
+	if len(sem.timers) > 0 {
+		timer := sem.timers[0]
+		sem.timers := sem.timers[1:]
+		// send time.Since(timer) value to monitoring
+	}
+	sem.Semaphore.Release()
+}
+
+var sem Semaphore = &MonitoredSemaphore{Semaphore: new semaphore.New(5)}
+
+if err := sem.Acquire(50*time.Millisecond); err != nil {
+	// log error
+}
+defer sem.Release()
+```
+
 ## Installation
 
 ```bash
