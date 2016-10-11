@@ -41,6 +41,8 @@ func TestSemaphore_Concurrently(t *testing.T) {
 	if sem.Occupied() != 0 {
 		t.Fatal("unexpected occupied value")
 	}
+	// try to get dead-lock
+	sem.Release()
 }
 
 func TestTimeoutError_Concurrently(t *testing.T) {

@@ -1,6 +1,6 @@
 > # Semaphore
 >
-> Simple semaphore implementation with timeout written on Go.
+> Simple non-blocking semaphore implementation with timeout written on Go.
 >
 > > Inspired by [go-resiliency](https://github.com/eapache/go-resiliency) and [sema](https://github.com/tarndt/sema).
 

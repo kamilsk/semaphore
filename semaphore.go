@@ -42,7 +42,12 @@ func (sem semaphore) Acquire(timeout time.Duration) error {
 }
 
 func (sem semaphore) Release() {
-	<-sem
+	select {
+	case <-sem:
+		return
+	default:
+		return
+	}
 }
 
 func (sem semaphore) Capacity() int {
