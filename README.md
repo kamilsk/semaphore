@@ -13,31 +13,56 @@
 ## Usages
 
 ```go
-if err := semaphore.Acquire(50*time.Millisecond); err != nil {
+sem := semaphore.New(5)
+
+if err := sem.Acquire(50*time.Millisecond); err != nil {
     // try again later
     return
 }
-defer semaphore.Release()
+defer sem.Release()
 
-// push to monitoring semaphore.Occupied()
 // do some heavy work
 ```
 
 ## Tips and tricks
 
+### Retry to acquire a few times with line breaks between attempts
+
+```go
+import (
+	"github.com/kamilsk/retry"
+	"github.com/kamilsk/retry/backoff"
+	"github.com/kamilsk/retry/strategy"
+)
+
+sem := semaphore.New(5)
+
+acquire := func(uint) error {
+	return sem.Acquire(50 * time.Millisecond)
+}
+
+if err := retry.Retry(acquire, strategy.Limit(5), backoff.Linear(time.Second)); err != nil {
+	// try again later
+	return
+}
+defer sem.Release()
+
+// do some heavy work
+```
+
 ### Monitoring decorator
 
 ```go
-type MonitoredSemaphore struct {
-	Semaphore
+type monitoredSemaphore struct {
+	semaphore.Semaphore
 
 	mu sync.Mutex
 	timers []time.Time
 }
 
-func (sem *MonitoredSemaphore) Acquire(timeout time.Duration) error {
+func (sem *monitoredSemaphore) Acquire(timeout time.Duration) error {
 	if err := sem.Semaphore.Acquire(timeout); err != nil {
-		// trigger error counter in monitoring
+		// trigger error counter to monitoring
 		return err
 	}
 	// send current sem.Occupied() value to monitoring
@@ -45,7 +70,7 @@ func (sem *MonitoredSemaphore) Acquire(timeout time.Duration) error {
 	return nil
 }
 
-func (sem *MonitoredSemaphore) Release() {
+func (sem *monitoredSemaphore) Release() {
 	sem.mu.Lock()
 	defer sem.mu.Unlock()
 	if len(sem.timers) > 0 {
@@ -56,12 +81,19 @@ func (sem *MonitoredSemaphore) Release() {
 	sem.Semaphore.Release()
 }
 
-var sem Semaphore = &MonitoredSemaphore{Semaphore: new semaphore.New(5)}
+func New(size int) semaphore.Semaphore {
+	return &monitoredSemaphore{Semaphore: semaphore.New(5)}
+}
+
+sem := New(5)
 
 if err := sem.Acquire(50*time.Millisecond); err != nil {
 	// log error
+	return
 }
 defer sem.Release()
+
+// do some heavy work
 ```
 
 ## Installation

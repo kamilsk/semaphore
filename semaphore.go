@@ -17,7 +17,7 @@ type Semaphore interface {
 
 // HealthCheck defines some helpful methods related with capacity for monitoring.
 type HealthCheck interface {
-	// Capacity returns the number of places.
+	// Capacity returns the number of total places.
 	Capacity() int
 	// Occupied returns the number of occupied places.
 	Occupied() int
