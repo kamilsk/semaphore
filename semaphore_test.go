@@ -25,7 +25,7 @@ func TestSemaphore_Concurrently(t *testing.T) {
 				t.Fatal("error is not expected")
 				return
 			}
-			defer sem.Release()
+			defer func() { _ = sem.Release() }()
 			if sem.Occupied() == sem.Capacity() {
 				t.Log("semaphore is full")
 			}
@@ -76,7 +76,7 @@ func TestTimeoutError_Concurrently(t *testing.T) {
 				}
 				return
 			}
-			defer sem.Release()
+			defer func() { _ = sem.Release() }()
 			time.Sleep(time.Second)
 		}()
 	}

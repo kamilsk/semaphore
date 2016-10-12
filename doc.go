@@ -3,8 +3,8 @@
 // that can be found in the LICENSE.md file.
 
 /*
-Package semaphore provides simple implementation of
-Semaphore functionality with timeout on lock operation.
+Package semaphore provides simple non-blocking implementation of
+Semaphore functionality with timeout on lock/unlock operations.
 
 */
 package semaphore
