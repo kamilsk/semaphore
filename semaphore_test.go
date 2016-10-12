@@ -42,7 +42,9 @@ func TestSemaphore_Concurrently(t *testing.T) {
 		t.Fatal("unexpected occupied value")
 	}
 	// try to get dead-lock
-	sem.Release()
+	if err := sem.Release(); err != errEmpty {
+		t.Errorf("expected error %q, obtained %q", errEmpty, err)
+	}
 }
 
 func TestTimeoutError_Concurrently(t *testing.T) {
@@ -59,8 +61,8 @@ func TestTimeoutError_Concurrently(t *testing.T) {
 			<-start
 			if err := sem.Acquire(time.Millisecond); err != nil {
 				atomic.AddInt32(&counter, 1)
-				if err.Error() != errTimeout.Error() {
-					t.Errorf("expected error message %q, obtained %q", err, errTimeout)
+				if err != errTimeout {
+					t.Errorf("expected error %q, obtained %q", errEmpty, err)
 				}
 				return
 			}

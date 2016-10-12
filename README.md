@@ -70,7 +70,7 @@ func (sem *monitoredSemaphore) Acquire(timeout time.Duration) error {
 	return nil
 }
 
-func (sem *monitoredSemaphore) Release() {
+func (sem *monitoredSemaphore) Release() error {
 	sem.mu.Lock()
 	defer sem.mu.Unlock()
 	if len(sem.timers) > 0 {
@@ -78,7 +78,7 @@ func (sem *monitoredSemaphore) Release() {
 		sem.timers := sem.timers[1:]
 		// send time.Since(timer) value to monitoring
 	}
-	sem.Semaphore.Release()
+	return sem.Semaphore.Release()
 }
 
 func New(size int) semaphore.Semaphore {

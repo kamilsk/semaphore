@@ -12,7 +12,8 @@ type Semaphore interface {
 	// If the timeout has occurred, then returns an appropriate error.
 	Acquire(time.Duration) error
 	// Release releases the previously occupied place.
-	Release()
+	// If no places was occupied then returns error.
+	Release() error
 }
 
 // HealthCheck defines some helpful methods related with capacity for monitoring.
@@ -28,7 +29,10 @@ func New(size int) Semaphore {
 	return make(semaphore, size)
 }
 
-var errTimeout = errors.New("operation timeout")
+var (
+	errTimeout = errors.New("operation timeout")
+	errEmpty   = errors.New("semaphore is empty")
+)
 
 type semaphore chan struct{}
 
@@ -41,12 +45,12 @@ func (sem semaphore) Acquire(timeout time.Duration) error {
 	}
 }
 
-func (sem semaphore) Release() {
+func (sem semaphore) Release() error {
 	select {
 	case <-sem:
-		return
+		return nil
 	default:
-		return
+		return errEmpty
 	}
 }
 
