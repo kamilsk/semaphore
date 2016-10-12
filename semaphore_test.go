@@ -11,7 +11,7 @@ import (
 
 func TestSemaphore_Concurrently(t *testing.T) {
 	size := int(math.Max(2.0, float64(runtime.GOMAXPROCS(0))))
-	sem := New(size)
+	sem := NewWithHealthCheck(size)
 	var counter int32
 
 	start := make(chan bool)
