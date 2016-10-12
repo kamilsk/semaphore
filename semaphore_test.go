@@ -41,7 +41,17 @@ func TestSemaphore_Concurrently(t *testing.T) {
 	if sem.Occupied() != 0 {
 		t.Fatal("unexpected occupied value")
 	}
-	// try to get dead-lock
+}
+
+func TestSemaphore_Acquire_InvalidTimeout(t *testing.T) {
+	sem := New(1)
+	if err := sem.Acquire(0); err != errInvalid {
+		t.Errorf("expected error %q, obtained %q", errInvalid, err)
+	}
+}
+
+func TestSemaphore_Release_TryToGetDeadLock(t *testing.T) {
+	sem := New(1)
 	if err := sem.Release(); err != errEmpty {
 		t.Errorf("expected error %q, obtained %q", errEmpty, err)
 	}
