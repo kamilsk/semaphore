@@ -50,6 +50,27 @@ func TestSemaphore_Acquire_InvalidTimeout(t *testing.T) {
 	}
 }
 
+func BenchmarkSemaphore_Acquire(b *testing.B) {
+	sem := New(b.N)
+	for i := 0; i < b.N; i++ {
+		_ = sem.Acquire(time.Millisecond)
+	}
+	if sem.Occupied() != sem.Capacity() {
+		b.Fatalf("expected occupied value %d, obtained %d", sem.Capacity(), sem.Occupied())
+	}
+}
+
+func BenchmarkSemaphore_Acquire_Release(b *testing.B) {
+	sem := New(b.N)
+	for i := 0; i < b.N; i++ {
+		_ = sem.Acquire(time.Millisecond)
+		_ = sem.Release()
+	}
+	if sem.Occupied() != 0 {
+		b.Fatalf("expected occupied value 0, obtained %d", sem.Occupied())
+	}
+}
+
 func TestSemaphore_Release_TryToGetDeadLock(t *testing.T) {
 	sem := New(1)
 	if err := sem.Release(); err != errEmpty {
