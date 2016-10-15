@@ -44,9 +44,12 @@ func TestSemaphore_Concurrently(t *testing.T) {
 }
 
 func TestSemaphore_Acquire_InvalidTimeout(t *testing.T) {
-	sem := New(1)
-	if err := sem.Acquire(0); err != errInvalid {
-		t.Errorf("expected error %q, obtained %q", errInvalid, err)
+	sem := New(0)
+	if err := sem.Acquire(0); err != errTimeout {
+		t.Errorf("expected error %q, obtained %q", errTimeout, err)
+	}
+	if err := sem.Acquire(-time.Millisecond); err != errTimeout {
+		t.Errorf("expected error %q, obtained %q", errTimeout, err)
 	}
 }
 

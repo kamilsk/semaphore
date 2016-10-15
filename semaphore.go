@@ -31,16 +31,12 @@ func New(size int) Semaphore {
 
 var (
 	errEmpty   = errors.New("semaphore is empty")
-	errInvalid = errors.New("invalid timeout")
 	errTimeout = errors.New("operation timeout")
 )
 
 type semaphore chan struct{}
 
 func (sem semaphore) Acquire(timeout time.Duration) error {
-	if timeout <= 0 {
-		return errInvalid
-	}
 	select {
 	case sem <- struct{}{}:
 		return nil
