@@ -39,7 +39,7 @@ func TestSemaphore_Concurrently(t *testing.T) {
 		t.Errorf("expected counter value is equals to %d, obtained %d", size, counter)
 	}
 	if sem.Occupied() != 0 {
-		t.Fatal("unexpected occupied value")
+		t.Fatal("expected empty semaphore")
 	}
 }
 
@@ -59,7 +59,7 @@ func BenchmarkSemaphore_Acquire(b *testing.B) {
 		_ = sem.Acquire(time.Millisecond)
 	}
 	if sem.Occupied() != sem.Capacity() {
-		b.Fatalf("expected occupied value %d, obtained %d", sem.Capacity(), sem.Occupied())
+		b.Fatal("expected full filled semaphore")
 	}
 }
 
@@ -70,7 +70,7 @@ func BenchmarkSemaphore_Acquire_Release(b *testing.B) {
 		_ = sem.Release()
 	}
 	if sem.Occupied() != 0 {
-		b.Fatalf("expected occupied value 0, obtained %d", sem.Occupied())
+		b.Fatal("expected empty semaphore")
 	}
 }
 

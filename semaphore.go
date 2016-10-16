@@ -37,6 +37,11 @@ var (
 type semaphore chan struct{}
 
 func (sem semaphore) Acquire(timeout time.Duration) error {
+	// returns errTimeout immediately
+	// without unnecessary overhead
+	if timeout < 0 {
+		return errTimeout
+	}
 	select {
 	case sem <- struct{}{}:
 		return nil
