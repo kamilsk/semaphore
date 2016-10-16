@@ -46,3 +46,6 @@ clean:
 
 vet:
 	go vet ./...
+
+publish:
+	git push origin master --tags && git push mirror master --tags
