@@ -39,17 +39,17 @@ type ProcessSemaphore interface {
 
 // NewProcessSemaphore constructs a new ProcessSemaphore with the given number of places.
 func NewProcessSemaphore(size int) ProcessSemaphore {
-	return make(semaphore, size)
+	sem := make(semaphore, size)
+	sem.P(size)
+	return sem
 }
 
-// logic is inverted
 func (sem semaphore) Signal() {
-	sem.P(1)
+	sem.V(1)
 }
 
-// logic is inverted
 func (sem semaphore) Wait(n int) {
-	sem.V(n)
+	sem.P(n)
 }
 
 // BinarySemaphore represents the classic binary semaphore with mutex-like interface.
