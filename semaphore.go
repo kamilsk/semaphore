@@ -10,21 +10,25 @@ type Semaphore interface {
 	HealthCheck
 	// Acquire tries to take an available place with the given timeout.
 	// If the timeout has occurred, then returns an appropriate error.
+	// It must be safe to call Acquire concurrently on a single semaphore.
 	Acquire(time.Duration) error
 	// Release releases the previously occupied place.
 	// If no places was occupied then returns error.
+	// It must be safe to call Release concurrently on a single semaphore.
 	Release() error
 }
 
 // HealthCheck defines some helpful methods related with capacity for monitoring.
 type HealthCheck interface {
 	// Capacity returns the number of total places.
+	// It must be safe to call Capacity concurrently on a single semaphore.
 	Capacity() int
 	// Occupied returns the number of occupied places.
+	// It must be safe to call Occupied concurrently on a single semaphore.
 	Occupied() int
 }
 
-// New constructs a new Semaphore with the given number of places.
+// New constructs a new thread-safe Semaphore with the given number of places.
 func New(size int) Semaphore {
 	return make(semaphore, size)
 }

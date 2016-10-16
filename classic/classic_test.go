@@ -62,7 +62,7 @@ func TestBinarySemaphore(t *testing.T) {
 	step = 1
 	sem.Unlock()
 
-	// to give a chance to start the internal goroutine
+	// just enough to yield the scheduler and let the goroutines work off
 	time.Sleep(time.Millisecond)
 
 	sem.Lock()
