@@ -8,7 +8,7 @@ GOLINT_MIN_CONFIDENCE ?= 0.3
 .PHONY: install install-deps
 .PHONY: update-deps
 .PHONY: test test-with-coverage test-with-coverage-formatted test-with-coverage-profile
-.PHONY: clean vet
+.PHONY: clean vet publish
 
 
 all: install-deps build install

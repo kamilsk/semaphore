@@ -34,8 +34,8 @@ func Example() {
 
 	ok, fail := sendParallelHTTPRequestsToURL(ts.URL)
 
-	// as expected, we made 2 "success" and 3 "failure" requests
 	fmt.Printf("success: %d, failure: %d\n", ok, fail)
+	// Output: success: 2, failure: 3
 }
 
 // sends five HTTP requests at the specified url in parallel
