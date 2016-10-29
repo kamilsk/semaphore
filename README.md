@@ -8,8 +8,8 @@
 > > - [sema.TimeoutCountingSema](https://github.com/tarndt/sema/blob/02de9df47f0b98e4529584d0b52baa37c2c86e7a/sema.go)
 > >
 > > Related
-> > [Semaphore Pattern](http://tmrts.com/go-patterns/synchronization/semaphore.html)
-> > [Semaphore (programming)](https://en.wikipedia.org/wiki/Semaphore_(programming))
+> > - [Semaphore Pattern](http://tmrts.com/go-patterns/synchronization/semaphore.html)
+> > - [Semaphore (programming)](https://en.wikipedia.org/wiki/Semaphore_(programming))
 
 [![Build Status](https://travis-ci.org/kamilsk/semaphore.svg?branch=master)](https://travis-ci.org/kamilsk/semaphore)
 [![Coverage Status](https://coveralls.io/repos/github/kamilsk/semaphore/badge.svg)](https://coveralls.io/github/kamilsk/semaphore)
