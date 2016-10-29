@@ -57,7 +57,7 @@ type monitoredSemaphore struct {
 	semaphore.Semaphore
 
 	mu sync.Mutex
-	timers []time.Time
+	timestamps []time.Time
 }
 
 func (sem *monitoredSemaphore) Acquire(timeout time.Duration) error {
@@ -65,24 +65,26 @@ func (sem *monitoredSemaphore) Acquire(timeout time.Duration) error {
 		// trigger error counter to monitoring
 		return err
 	}
+	sem.mu.Lock()
+	sem.timestamps = append(sem.timestamps, time.Now())
+	sem.mu.Unlock()
 	// send current sem.Occupied() value to monitoring
-	sem.timers = append(sem.timers, time.Now())
 	return nil
 }
 
 func (sem *monitoredSemaphore) Release() error {
 	sem.mu.Lock()
 	defer sem.mu.Unlock()
-	if len(sem.timers) > 0 {
-		timer := sem.timers[0]
-		sem.timers := sem.timers[1:]
-		// send time.Since(timer) value to monitoring
+	if len(sem.timestamps) > 0 {
+		var timestamp time.Time
+		timestamp, sem.timestamps = sem.timestamps[0], sem.timestamps[1:]
+		// send time.Since(timestamp) value to monitoring
 	}
 	return sem.Semaphore.Release()
 }
 
 func New(size int) semaphore.Semaphore {
-	return &monitoredSemaphore{Semaphore: semaphore.New(5)}
+	return &monitoredSemaphore{Semaphore: semaphore.New(size), timestamps: make([]time.Time, 0, size)}
 }
 
 sem := New(5)
