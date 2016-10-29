@@ -9,6 +9,7 @@
 > >
 > > Related
 > > - [Semaphore Pattern](http://tmrts.com/go-patterns/synchronization/semaphore.html)
+> > - [Semaphores - Go Language Patterns](https://sites.google.com/site/gopatterns/concurrency/semaphores)
 > > - [Semaphore (programming)](https://en.wikipedia.org/wiki/Semaphore_(programming))
 
 [![Build Status](https://travis-ci.org/kamilsk/semaphore.svg?branch=master)](https://travis-ci.org/kamilsk/semaphore)
@@ -17,7 +18,7 @@
 [![GoDoc](https://godoc.org/github.com/kamilsk/semaphore?status.svg)](https://godoc.org/github.com/kamilsk/semaphore)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](LICENSE.md)
 
-## Usages
+## Usage
 
 ```go
 sem := semaphore.New(5)

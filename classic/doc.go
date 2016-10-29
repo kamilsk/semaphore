@@ -3,9 +3,8 @@
 // that can be found in the LICENSE.md file.
 
 /*
-Package classic is experimental package
-based on https://sites.google.com/site/gopatterns/concurrency/semaphores.
-All of the presented components here not ready yet to use them. Don't use it!
+Package classic provides the base implementation
+of Semaphore pattern based on channels.
 
 */
 package classic
