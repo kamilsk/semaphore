@@ -114,7 +114,7 @@ acquire := func(uint) error {
 	return sem.Acquire(50 * time.Millisecond)
 }
 
-if err := retry.Retry(acquire, strategy.Limit(5), backoff.Linear(time.Second)); err != nil {
+if err := retrier.Retry(acquire, strategy.Limit(5), backoff.Linear(time.Second)); err != nil {
 	// try again later
 	return
 }
