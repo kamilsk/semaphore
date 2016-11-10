@@ -8,7 +8,7 @@ GOLINT_MIN_CONFIDENCE ?= 0.3
 .PHONY: install install-deps
 .PHONY: update-deps
 .PHONY: test test-with-coverage test-with-coverage-formatted test-with-coverage-profile
-.PHONY: clean vet publish
+.PHONY: clean dev publish vet
 
 
 all: install-deps build install
@@ -44,8 +44,13 @@ test-with-coverage-profile:
 clean:
 	go clean -i -x ./...
 
-vet:
-	go vet ./...
+dev:
+	git remote set-url origin git@github.com:kamilsk/semaphore.git
+	git remote add mirror git@bitbucket.org:kamilsk/semaphore.git
 
 publish:
-	git push origin master --tags && git push mirror master --tags
+	git push origin master --tags
+	git push mirror master --tags
+
+vet:
+	go vet ./...

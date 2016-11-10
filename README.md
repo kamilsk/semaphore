@@ -34,28 +34,21 @@ defer sem.Release()
 
 ## Tips and tricks
 
-### Retry to acquire a few times with line breaks between attempts
+### HTTP request limiter
 
 ```go
-import (
-	"github.com/kamilsk/retry"
-	"github.com/kamilsk/retry/backoff"
-	"github.com/kamilsk/retry/strategy"
-)
+limiter := semaphore.New(10)
 
-sem := semaphore.New(5)
+http.Handle("/do-some-heavy-work", http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+	if err := limiter.Acquire(time.Second); err != nil {
+		// try again after 1 minute
+		rw.Header().Add("Retry-After", time.Minute.String())
+		rw.WriteHeader(http.StatusServiceUnavailable)
+		rw.Write(nil)
+	}
 
-acquire := func(uint) error {
-	return sem.Acquire(50 * time.Millisecond)
-}
-
-if err := retry.Retry(acquire, strategy.Limit(5), backoff.Linear(time.Second)); err != nil {
-	// try again later
-	return
-}
-defer sem.Release()
-
-// do some heavy work
+	// do some heavy work
+}))
 ```
 
 ### Monitoring decorator
@@ -99,6 +92,30 @@ sem := New(5)
 
 if err := sem.Acquire(50*time.Millisecond); err != nil {
 	// log error
+	return
+}
+defer sem.Release()
+
+// do some heavy work
+```
+
+### Retry to acquire a few times with line breaks between attempts
+
+```go
+import (
+	"github.com/kamilsk/retrier"
+	"github.com/kamilsk/retrier/backoff"
+	"github.com/kamilsk/retrier/strategy"
+)
+
+sem := semaphore.New(5)
+
+acquire := func(uint) error {
+	return sem.Acquire(50 * time.Millisecond)
+}
+
+if err := retry.Retry(acquire, strategy.Limit(5), backoff.Linear(time.Second)); err != nil {
+	// try again later
 	return
 }
 defer sem.Release()
