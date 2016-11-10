@@ -45,6 +45,7 @@ http.Handle("/do-some-heavy-work", http.HandlerFunc(func(rw http.ResponseWriter,
 		rw.Header().Add("Retry-After", time.Minute.String())
 		rw.WriteHeader(http.StatusServiceUnavailable)
 		rw.Write(nil)
+		return
 	}
 
 	// do some heavy work
