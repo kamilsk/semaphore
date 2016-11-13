@@ -1,9 +1,9 @@
-GIT_ORIGIN ?= "git@github.com:kamilsk/semaphore.git"
-GIT_MIRROR ?= "git@bitbucket.org:kamilsk/semaphore.git"
-GO_TEST_COVERAGE_MODE ?= count
-GO_TEST_COVERAGE_FILE_NAME ?= coverage.out
-GOFMT_FLAGS ?= -s
-GOLINT_MIN_CONFIDENCE ?= 0.3
+GIT_ORIGIN?="git@github.com:kamilsk/semaphore.git"
+GIT_MIRROR?="git@bitbucket.org:kamilsk/semaphore.git"
+GO_TEST_COVERAGE_MODE?="count"
+GO_TEST_COVERAGE_FILE_NAME?="coverage.out"
+GOFMT_FLAGS?="-s"
+GOLINT_MIN_CONFIDENCE?="0.3"
 
 
 .PHONY: all build
