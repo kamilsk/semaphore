@@ -56,7 +56,7 @@ func (sem semaphore) Acquire(timeout time.Duration) error {
 
 func (sem semaphore) Release() error {
 	select {
-	case <-sem:
+	case _ = <-sem:
 		return nil
 	default:
 		return errEmpty

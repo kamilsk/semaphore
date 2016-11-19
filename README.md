@@ -133,14 +133,45 @@ $ go get bitbucket.org/kamilsk/semaphore
 
 ## Notes
 
-### Inspired by
-
-- [go-resiliency/semaphore.Semaphore](https://github.com/eapache/go-resiliency/blob/008c74ab45c7c8efbbf0370fdadcf3564faa1e3e/semaphore/semaphore.go)
-- [godropbox/sync2.Semaphore](https://github.com/dropbox/godropbox/blob/ece4db8e7759e0231f401202ffda6b5946a37ac0/sync2/semaphore.go)
-- [sema.TimeoutCountingSema](https://github.com/tarndt/sema/blob/02de9df47f0b98e4529584d0b52baa37c2c86e7a/sema.go)
-
-### Related articles
+### Articles
 
 - [Semaphore Pattern](http://tmrts.com/go-patterns/synchronization/semaphore.html)
 - [Semaphores - Go Language Patterns](https://sites.google.com/site/gopatterns/concurrency/semaphores)
 - [Semaphore (programming)](https://en.wikipedia.org/wiki/Semaphore_(programming))
+
+### Examples
+
+- [github.com/goinaction/code/chapter7/patterns/semaphore](https://github.com/goinaction/code/tree/master/chapter7/patterns/semaphore)
+
+### Another implementations
+
+#### Similar
+
+- [github.com/eapache/go-resiliency/semaphore.Semaphore](https://github.com/eapache/go-resiliency/blob/master/semaphore/semaphore.go)
+- [github.com/dropbox/godropbox/sync2.Semaphore](https://github.com/dropbox/godropbox/blob/master/sync2/semaphore.go)
+- [github.com/tarndt/sema.TimeoutCountingSema](https://github.com/tarndt/sema/blob/master/sema.go)
+- [github.com/abiosoft/semaphore.Semaphore](https://github.com/abiosoft/semaphore/blob/master/semaphore.go)
+- [github.com/vada-ir/semaphore.Semaphore](https://github.com/vada-ir/semaphore/blob/master/semaphore.go)
+- [github.com/avezila/psem.Sem](https://github.com/avezila/psem/blob/master/psem.go)
+- [github.com/jsipprell/go-semaphore.WaitableSemaphore](https://github.com/jsipprell/go-semaphore/blob/master/semaphore.go)
+
+#### Others
+
+##### Not locking
+
+- [github.com/toolkits/concurrent/semaphore](https://github.com/toolkits/concurrent/tree/master/semaphore)
+- [github.com/dexterous/semaphore](https://github.com/dexterous/semaphore)
+- [github.com/seanjohnno/semaphore](https://github.com/seanjohnno/semaphore)
+- [github.com/tmthrgd/go-sem](https://github.com/tmthrgd/go-sem)
+
+##### Locking
+
+- [github.com/tj/go-sync/semaphore](https://github.com/tj/go-sync/tree/master/semaphore)
+- [github.com/carlmjohnson/go-utils/semaphore](https://github.com/carlmjohnson/go-utils/tree/master/semaphore)
+- [github.com/pivotal-golang/semaphore](https://github.com/pivotal-golang/semaphore)
+- [github.com/andreyvit/sem](https://github.com/andreyvit/sem)
+- [github.com/spektroskop/semaphore](https://github.com/spektroskop/semaphore)
+- [github.com/opencoff/go-lib/sem](https://github.com/opencoff/go-lib/tree/master/sem)
+- [github.com/nicholasjackson/bench/semaphore](https://github.com/nicholasjackson/bench/tree/master/semaphore)
+- [github.com/cognusion/semaphore](https://github.com/cognusion/semaphore)
+- [github.com/riobard/go-semaphore](https://github.com/riobard/go-semaphore)
