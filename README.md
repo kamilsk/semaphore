@@ -1,16 +1,6 @@
 > # Semaphore
 >
 > Simple non-blocking semaphore implementation with timeout written on Go.
->
-> > Inspired by
-> > - [go-resiliency/semaphore.Semaphore](https://github.com/eapache/go-resiliency/blob/008c74ab45c7c8efbbf0370fdadcf3564faa1e3e/semaphore/semaphore.go)
-> > - [godropbox/sync2.Semaphore](https://github.com/dropbox/godropbox/blob/ece4db8e7759e0231f401202ffda6b5946a37ac0/sync2/semaphore.go)
-> > - [sema.TimeoutCountingSema](https://github.com/tarndt/sema/blob/02de9df47f0b98e4529584d0b52baa37c2c86e7a/sema.go)
-> >
-> > Related
-> > - [Semaphore Pattern](http://tmrts.com/go-patterns/synchronization/semaphore.html)
-> > - [Semaphores - Go Language Patterns](https://sites.google.com/site/gopatterns/concurrency/semaphores)
-> > - [Semaphore (programming)](https://en.wikipedia.org/wiki/Semaphore_(programming))
 
 [![Build Status](https://travis-ci.org/kamilsk/semaphore.svg?branch=master)](https://travis-ci.org/kamilsk/semaphore)
 [![Coverage Status](https://coveralls.io/repos/github/kamilsk/semaphore/badge.svg)](https://coveralls.io/github/kamilsk/semaphore)
@@ -140,3 +130,17 @@ $ go get bitbucket.org/kamilsk/semaphore
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/kamilsk/semaphore)
 [![@ikamilsk](https://img.shields.io/badge/author-%40ikamilsk-blue.svg)](https://twitter.com/ikamilsk)
+
+## Notes
+
+### Inspired by
+
+- [go-resiliency/semaphore.Semaphore](https://github.com/eapache/go-resiliency/blob/008c74ab45c7c8efbbf0370fdadcf3564faa1e3e/semaphore/semaphore.go)
+- [godropbox/sync2.Semaphore](https://github.com/dropbox/godropbox/blob/ece4db8e7759e0231f401202ffda6b5946a37ac0/sync2/semaphore.go)
+- [sema.TimeoutCountingSema](https://github.com/tarndt/sema/blob/02de9df47f0b98e4529584d0b52baa37c2c86e7a/sema.go)
+
+### Related articles
+
+- [Semaphore Pattern](http://tmrts.com/go-patterns/synchronization/semaphore.html)
+- [Semaphores - Go Language Patterns](https://sites.google.com/site/gopatterns/concurrency/semaphores)
+- [Semaphore (programming)](https://en.wikipedia.org/wiki/Semaphore_(programming))
