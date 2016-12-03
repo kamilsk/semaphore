@@ -58,8 +58,7 @@ func TestSyncingSemaphore(t *testing.T) {
 func TestBinarySemaphore(t *testing.T) {
 	sem := NewBinary()
 
-	expected := []string{"first", "second", "third"}
-	steps := make([]string, 0, 3)
+	expected, steps := []string{"first", "second", "third"}, make([]string, 0, 3)
 
 	sem.Lock()
 	go func() {

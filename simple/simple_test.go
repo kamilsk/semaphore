@@ -81,8 +81,7 @@ func TestSemaphore_Concurrently(t *testing.T) {
 
 	var counter int32
 
-	start := make(chan bool)
-	wg := &sync.WaitGroup{}
+	start, wg := make(chan bool), &sync.WaitGroup{}
 	for i := 0; i < sem.Capacity(); i++ {
 		wg.Add(1)
 		go func() {
@@ -113,9 +112,12 @@ func TestSemaphore_Concurrently(t *testing.T) {
 
 func BenchmarkSemaphore_Acquire(b *testing.B) {
 	sem := New(b.N)
+	defer sem.(semaphore).Flush()
+
 	for i := 0; i < b.N; i++ {
 		_ = sem.Acquire(time.Millisecond)
 	}
+
 	if sem.Occupied() != sem.Capacity() {
 		b.Error("expected full filled semaphore")
 	}
@@ -123,10 +125,12 @@ func BenchmarkSemaphore_Acquire(b *testing.B) {
 
 func BenchmarkSemaphore_Acquire_Release(b *testing.B) {
 	sem := New(b.N)
+	defer sem.(semaphore).Flush()
+
 	for i := 0; i < b.N; i++ {
-		_ = sem.Acquire(time.Millisecond)
-		_ = sem.Release()
+		_, _ = sem.Acquire(time.Millisecond), sem.Release()
 	}
+
 	if sem.Occupied() != 0 {
 		b.Error("expected empty semaphore")
 	}

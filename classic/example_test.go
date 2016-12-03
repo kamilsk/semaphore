@@ -50,6 +50,7 @@ func Example_syncingSemaphore() {
 // This example shows hot to work with binary semaphore.
 func Example_binarySemaphore() {
 	binary := classic.NewBinary()
+
 	var shared string
 
 	go func() {
