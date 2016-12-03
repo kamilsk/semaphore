@@ -39,7 +39,7 @@ func TestSemaphore_Capacity_Immutability(t *testing.T) {
 	defer sem.(semaphore).Flush()
 
 	if sem.Capacity() != capacity {
-		t.Errorf("%d capacity is expected, %d was obtained", capacity, sem.Capacity())
+		t.Errorf("capacity equals to %d is expected, %d was obtained", capacity, sem.Capacity())
 	}
 
 	for i := 0; i < sem.Capacity(); i++ {
@@ -47,7 +47,7 @@ func TestSemaphore_Capacity_Immutability(t *testing.T) {
 	}
 
 	if sem.Capacity() != capacity {
-		t.Errorf("%d capacity is expected, %d was obtained", capacity, sem.Capacity())
+		t.Errorf("capacity equals to %d is expected, %d was obtained", capacity, sem.Capacity())
 	}
 }
 
@@ -100,7 +100,7 @@ func TestSemaphore_Concurrently(t *testing.T) {
 	wg.Wait()
 
 	if int(counter) != sem.Capacity() {
-		t.Errorf("%d counter value is expected, %d was obtained", sem.Capacity(), counter)
+		t.Errorf("counter value equals %d is expected, %d was obtained", sem.Capacity(), counter)
 	}
 
 	if sem.Occupied() != 0 {

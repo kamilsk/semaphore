@@ -4,9 +4,9 @@ import (
 	"sync"
 )
 
-// BlockingSemaphore provides the functionality to limit bandwidth.
+// LockingSemaphore provides the functionality to limit bandwidth.
 // https://en.wikipedia.org/wiki/Semaphore_(programming)#Operation_names
-type BlockingSemaphore interface {
+type LockingSemaphore interface {
 	// P decrements the value of semaphore variable by n.
 	// It must be safe to call P concurrently on a single semaphore.
 	P(n int)
@@ -15,8 +15,8 @@ type BlockingSemaphore interface {
 	V(n int)
 }
 
-// NewBlockingSemaphore constructs a new BlockingSemaphore with the given number of places.
-func NewBlockingSemaphore(size int) BlockingSemaphore {
+// NewLocking constructs a new LockingSemaphore with the given number of places.
+func NewLocking(size int) LockingSemaphore {
 	return make(semaphore, size)
 }
 
@@ -32,9 +32,9 @@ func (sem semaphore) V(n int) {
 	}
 }
 
-// ProcessSemaphore provides the functionality to synchronize the multiple gorutines.
+// SyncingSemaphore provides the functionality to synchronize multiple gorutines.
 // https://en.wikipedia.org/wiki/Semaphore_(programming)#Semantics_and_implementation
-type ProcessSemaphore interface {
+type SyncingSemaphore interface {
 	// Signal reports on the completion of gorutine work.
 	// It must be safe to call Signal concurrently on a single semaphore.
 	Signal()
@@ -43,8 +43,8 @@ type ProcessSemaphore interface {
 	Wait(n int)
 }
 
-// NewProcessSemaphore constructs a new ProcessSemaphore with the given number of places.
-func NewProcessSemaphore(size int) ProcessSemaphore {
+// NewSyncing constructs a new SyncingSemaphore with the given number of places.
+func NewSyncing(size int) SyncingSemaphore {
 	sem := make(semaphore, size)
 	sem.P(size)
 	return sem
@@ -63,8 +63,8 @@ type BinarySemaphore interface {
 	sync.Locker
 }
 
-// NewBinarySemaphore constructs a new BinarySemaphore with one place.
-func NewBinarySemaphore() BinarySemaphore {
+// NewBinary constructs a new BinarySemaphore with one place.
+func NewBinary() BinarySemaphore {
 	return make(semaphore, 1)
 }
 

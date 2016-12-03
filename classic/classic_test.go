@@ -1,14 +1,24 @@
 package classic
 
 import (
+	"reflect"
 	"sync/atomic"
 	"testing"
 	"time"
 )
 
-func TestBlockingSemaphore(t *testing.T) {
-	data := []int32{0, 1, 0, 1}
-	sem := NewBlockingSemaphore(len(data))
+func (sem semaphore) Flush() {
+	close(sem)
+	for range sem {
+	}
+}
+
+func TestLockingSemaphore(t *testing.T) {
+	data := []int32{1, 2, 3}
+
+	sem := NewLocking(len(data))
+	defer sem.(semaphore).Flush()
+
 	var sum int32
 
 	for _, i := range data {
@@ -19,14 +29,17 @@ func TestBlockingSemaphore(t *testing.T) {
 	}
 	sem.V(len(data))
 
-	if sum != int32(2) {
-		t.Errorf("expected sum value is equals to 2, obtained %d", sum)
+	if int(sum) != 6 {
+		t.Errorf("sum equals 6 is expected, obtained %d", sum)
 	}
 }
 
-func TestProcessSemaphore(t *testing.T) {
-	data := []int32{0, 1, 0, 1}
-	sem := NewProcessSemaphore(len(data))
+func TestSyncingSemaphore(t *testing.T) {
+	data := []int32{1, 2, 3}
+
+	sem := NewSyncing(len(data))
+	defer sem.(semaphore).Flush()
+
 	var sum int32
 
 	for _, i := range data {
@@ -37,36 +50,40 @@ func TestProcessSemaphore(t *testing.T) {
 	}
 	sem.Wait(len(data))
 
-	if sum != int32(2) {
-		t.Errorf("expected sum value is equals to 2, obtained %d", sum)
+	if int(sum) != 6 {
+		t.Errorf("sum equals 6 is expected, obtained %d", sum)
 	}
 }
 
 func TestBinarySemaphore(t *testing.T) {
-	sem := NewBinarySemaphore()
-	var step int
+	sem := NewBinary()
 
+	expected := []string{"first", "second", "third"}
+	steps := make([]string, 0, 3)
+
+	sem.Lock()
 	go func() {
 		defer sem.Unlock()
 		sem.Lock()
-		if step != 1 {
-			t.Fatal("unexpected result")
-		}
-		step = 2
-	}()
 
-	sem.Lock()
-	if step != 0 {
-		t.Fatal("unexpected result")
-	}
-	step = 1
+		steps = append(steps, "second")
+
+		go func() {
+			defer sem.Unlock()
+			sem.Lock()
+
+			steps = append(steps, "third")
+		}()
+	}()
+	steps = append(steps, "first")
 	sem.Unlock()
 
 	// just enough to yield the scheduler and let the goroutines work off
-	time.Sleep(time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
 	sem.Lock()
-	if step != 2 {
-		t.Fatal("unexpected result")
+	if !reflect.DeepEqual(expected, steps) {
+		t.Errorf("%+v not equals to %+v", steps, expected)
 	}
+	sem.Unlock()
 }

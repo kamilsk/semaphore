@@ -2,9 +2,6 @@
 // Use of this source code is governed by the MIT license
 // that can be found in the LICENSE.md file.
 
-/*
-Package classic provides the base implementation
-of Semaphore pattern based on channels.
-
-*/
+// Package classic provides base implementation
+// of Semaphore pattern based on channel.
 package classic

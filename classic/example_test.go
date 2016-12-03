@@ -7,49 +7,49 @@ import (
 	"github.com/kamilsk/semaphore/classic"
 )
 
-// This example shows how to work with blocking semaphore.
-func Example_blockingSemaphore() {
-	semaphore := classic.NewBlockingSemaphore(2)
+// This example shows how to work with locking semaphore.
+func Example_lockingSemaphore() {
+	sem := classic.NewLocking(2)
 
 	for i := 0; i < 2; i++ {
 		go func() {
-			fmt.Println("work is done")
-			semaphore.P(1)
+			fmt.Println("work done")
+			sem.P(1)
 		}()
 	}
 
-	semaphore.V(2)
-	fmt.Println("all work is done")
+	sem.V(2)
+	fmt.Println("all works done")
 
 	// Output:
-	// work is done
-	// work is done
-	// all work is done
+	// work done
+	// work done
+	// all works done
 }
 
-// This example shows how to work with process semaphore.
-func Example_processSemaphore() {
-	process := classic.NewProcessSemaphore(2)
+// This example shows how to work with syncing semaphore.
+func Example_syncingSemaphore() {
+	sem := classic.NewSyncing(2)
 
 	for i := 0; i < 2; i++ {
 		go func() {
-			fmt.Println("process has finished")
-			process.Signal()
+			fmt.Println("process finished")
+			sem.Signal()
 		}()
 	}
 
-	process.Wait(2)
-	fmt.Println("all processes have finished")
+	sem.Wait(2)
+	fmt.Println("all processes finished")
 
 	// Output:
-	// process has finished
-	// process has finished
-	// all processes have finished
+	// process finished
+	// process finished
+	// all processes finished
 }
 
 // This example shows hot to work with binary semaphore.
 func Example_binarySemaphore() {
-	binary := classic.NewBinarySemaphore()
+	binary := classic.NewBinary()
 	var shared string
 
 	go func() {
@@ -65,6 +65,7 @@ func Example_binarySemaphore() {
 	defer binary.Unlock()
 	shared = "b"
 
-	fmt.Printf("shared value is %q", shared)
-	// Output: shared value is "b"
+	fmt.Printf("shared value is equals to %q", shared)
+
+	// Output: shared value is equals to "b"
 }
