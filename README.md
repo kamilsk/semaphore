@@ -1,6 +1,6 @@
 > # semaphore
 >
-> Simple non-blocking semaphore implementation with timeout written on Go.
+> Simple non-blocking semaphore implementation with timeout via context written on Go.
 
 [![Build Status](https://travis-ci.org/kamilsk/semaphore.svg?branch=master)](https://travis-ci.org/kamilsk/semaphore)
 [![Coverage Status](https://coveralls.io/repos/github/kamilsk/semaphore/badge.svg)](https://coveralls.io/github/kamilsk/semaphore)
