@@ -18,8 +18,8 @@ type Semaphore interface {
 func (sem semaphore) Acquire(ctx context.Context) (ReleaseFunc, error) {
 	select {
 	case sem <- struct{}{}:
-		return func() { _ = sem.Release() }, nil
+		return releaser(sem), nil
 	case <-ctx.Done():
-		return nil, errTimeout
+		return nothing, errTimeout
 	}
 }
