@@ -16,4 +16,7 @@ all: install-deps build install
 docker-bench: docker-bench-1.5-alpine-gcc docker-bench-1.6-alpine-gcc docker-bench-1.7-alpine-gcc docker-bench-alpine-gcc
 
 .PHONY: docker-test
-docker-test: docker-test-1.5-alpine-gcc docker-test-1.6-alpine-gcc docker-test-1.7-alpine-gcc docker-test-alpine-gcc
+docker-test: docker-deps-1.5-alpine-gcc docker-test-1.5-alpine-gcc
+docker-test: docker-deps-1.6-alpine-gcc docker-test-1.6-alpine-gcc
+docker-test: docker-deps-1.7-alpine-gcc docker-test-1.7-alpine-gcc
+docker-test: docker-deps-alpine-gcc docker-test-alpine-gcc
