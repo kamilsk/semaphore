@@ -31,7 +31,7 @@ var (
 type semaphore chan struct{}
 
 func (sem semaphore) Acquire(timeout time.Duration) error {
-	if timeout < 0 {
+	if timeout <= 0 {
 		return errTimeout
 	}
 	select {

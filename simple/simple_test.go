@@ -23,8 +23,9 @@ func TestSemaphore_Acquire_InvalidTimeout(t *testing.T) {
 		name    string
 		timeout time.Duration
 	}{
-		{name: "zero timeout", timeout: 0},
 		{name: "negative timeout", timeout: -time.Second},
+		{name: "zero timeout", timeout: 0},
+		{name: "positive timeout", timeout: time.Nanosecond},
 	} {
 		if err := sem.Acquire(test.timeout); err != errTimeout {
 			t.Errorf("%s: %q error is expected, %q was obtained", test.name, errTimeout, err)
