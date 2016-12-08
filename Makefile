@@ -13,13 +13,13 @@ include makes/tools.mk
 all: install-deps build install
 
 .PHONY: docker-bench
-docker-bench: docker-deps-1.5-alpine-gcc docker-bench-1.5-alpine-gcc
-docker-bench: docker-deps-1.6-alpine-gcc docker-bench-1.6-alpine-gcc
-docker-bench: docker-deps-1.7-alpine-gcc docker-bench-1.7-alpine-gcc
-docker-bench: docker-deps-alpine-gcc docker-bench-alpine-gcc
+docker-bench: docker-bench-1.5
+docker-bench: docker-bench-1.6
+docker-bench: docker-bench-1.7
+docker-bench: docker-bench-latest
 
 .PHONY: docker-test
-docker-test: docker-deps-1.5-alpine-gcc docker-test-1.5-alpine-gcc
-docker-test: docker-deps-1.6-alpine-gcc docker-test-1.6-alpine-gcc
-docker-test: docker-deps-1.7-alpine-gcc docker-test-1.7-alpine-gcc
-docker-test: docker-deps-alpine-gcc docker-test-alpine-gcc
+docker-test: docker-install-deps-1.5 docker-test-1.5
+docker-test: docker-install-deps-1.6 docker-test-1.6
+docker-test: docker-install-deps-1.7 docker-test-1.7
+docker-test: docker-install-deps-latest docker-test-latest
