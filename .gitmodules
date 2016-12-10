@@ -1,8 +1,6 @@
-[submodule "makes"]
-	path = makes
-	url = git@github.com:kamilsk/shared.git
-	makefile-go-v1 = makefile-go-v1
 [submodule ".github"]
 	path = .github
 	url = git@github.com:kamilsk/shared.git
-	github-tpl-go-v1 = github-tpl-go-v1
+[submodule "makes"]
+	path = makes
+	url = git@github.com:kamilsk/shared.git
