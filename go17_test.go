@@ -141,7 +141,7 @@ func BenchmarkSemaphore_Acquire_Release(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		_, _ = sem.Acquire(ctx)
-		sem.Release()
+		_ = sem.Release()
 	}
 
 	if sem.Occupied() != 0 {
