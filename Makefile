@@ -18,6 +18,13 @@ docker-bench: docker-bench-1.6
 docker-bench: docker-bench-1.7
 docker-bench: docker-bench-latest
 
+.PHONY: docker-pull
+docker-pull: docker-pull-1.5
+docker-pull: docker-pull-1.6
+docker-pull: docker-pull-1.7
+docker-pull: docker-pull-latest
+docker-pull: docker-clean
+
 .PHONY: docker-test
 docker-test: docker-install-deps-1.5    docker-test-1.5
 docker-test: docker-install-deps-1.6    docker-test-1.6
