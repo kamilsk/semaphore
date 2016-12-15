@@ -30,3 +30,10 @@ docker-test: docker-test-1.5
 docker-test: docker-test-1.6
 docker-test: docker-test-1.7
 docker-test: docker-test-latest
+
+OPEN_BROWSER =
+.PHONY: docker-test-with-coverage
+docker-test-with-coverage: docker-test-1.5-with-coverage
+docker-test-with-coverage: docker-test-1.6-with-coverage
+docker-test-with-coverage: docker-test-1.7-with-coverage
+docker-test-with-coverage: docker-test-latest-with-coverage
