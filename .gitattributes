@@ -13,3 +13,5 @@ NOTES.md        export-ignore
 
 **/doc.go       export-ignore
 **/*_test.go    export-ignore
+
+research.yml    export-ignore
