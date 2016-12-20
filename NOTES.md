@@ -12,6 +12,9 @@
 
 ## Another implementations
 
+All examined packages are presented in [research.yml](research.yml).
+You can install them by run `glide -y install research.yml`.
+
 ### Similar
 
 - [github.com/jsipprell/go-semaphore.ContextSemaphore](https://github.com/jsipprell/go-semaphore/blob/master/context.go)
