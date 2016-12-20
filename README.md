@@ -23,7 +23,7 @@ $ go get bitbucket.org/kamilsk/semaphore
 ### Update
 
 This library is using [SemVer](http://semver.org) for versioning and is not [BC](https://en.wikipedia.org/wiki/Backward_compatibility)-safe.
-Therefore do not use `go get -u` to update it, use [Glide](https://glide.sh) or something similar for this purpose.
+Therefore, do not use `go get -u` to update it, use [Glide](https://glide.sh) or something similar for this purpose.
 
 ## Feedback
 
