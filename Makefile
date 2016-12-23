@@ -37,3 +37,6 @@ docker-test-with-coverage: docker-test-1.5-with-coverage
 docker-test-with-coverage: docker-test-1.6-with-coverage
 docker-test-with-coverage: docker-test-1.7-with-coverage
 docker-test-with-coverage: docker-test-latest-with-coverage
+
+.PHONY: docker-check
+docker-check: docker-tool-gometalinter
