@@ -9,7 +9,7 @@
 ```go
 sem := simple.New(5)
 
-if err := sem.Acquire(50*time.Millisecond); err != nil {
+if err := sem.Acquire(50 * time.Millisecond); err != nil {
     // try again later
     return
 }
@@ -60,7 +60,7 @@ func New(capacity int) simple.Semaphore {
 
 sem := New(5)
 
-if err := sem.Acquire(50*time.Millisecond); err != nil {
+if err := sem.Acquire(50 * time.Millisecond); err != nil {
 	// log error and try again later
 	return
 }
