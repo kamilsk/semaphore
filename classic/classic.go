@@ -7,17 +7,17 @@ import (
 // LockingSemaphore provides the functionality to limit bandwidth.
 // https://en.wikipedia.org/wiki/Semaphore_(programming)#Operation_names
 type LockingSemaphore interface {
-	// P decrements the value of semaphore variable by n.
+	// P decrements the occupancy of semaphore by n.
 	// It must be safe to call P concurrently on a single semaphore.
 	P(n int)
-	// V increments the value of semaphore variable by n.
+	// V increments the occupancy of semaphore by n.
 	// It must be safe to call V concurrently on a single semaphore.
 	V(n int)
 }
 
-// NewLocking constructs a new LockingSemaphore with the given number of places.
-func NewLocking(size int) LockingSemaphore {
-	return make(semaphore, size)
+// NewLocking constructs a new LockingSemaphore with the given capacity.
+func NewLocking(capacity int) LockingSemaphore {
+	return make(semaphore, capacity)
 }
 
 func (sem semaphore) P(n int) {
@@ -35,7 +35,7 @@ func (sem semaphore) V(n int) {
 // SyncingSemaphore provides the functionality to synchronize multiple gorutines.
 // https://en.wikipedia.org/wiki/Semaphore_(programming)#Semantics_and_implementation
 type SyncingSemaphore interface {
-	// Signal reports on the completion of gorutine work.
+	// Signal reports about completion of gorutine work.
 	// It must be safe to call Signal concurrently on a single semaphore.
 	Signal()
 	// Wait starts to wait n gorutines.
@@ -43,10 +43,10 @@ type SyncingSemaphore interface {
 	Wait(n int)
 }
 
-// NewSyncing constructs a new SyncingSemaphore with the given number of places.
-func NewSyncing(size int) SyncingSemaphore {
-	sem := make(semaphore, size)
-	sem.P(size)
+// NewSyncing constructs a new SyncingSemaphore with the given capacity.
+func NewSyncing(capacity int) SyncingSemaphore {
+	sem := make(semaphore, capacity)
+	sem.P(capacity)
 	return sem
 }
 
@@ -63,7 +63,7 @@ type BinarySemaphore interface {
 	sync.Locker
 }
 
-// NewBinary constructs a new BinarySemaphore with one place.
+// NewBinary constructs a new BinarySemaphore with capacity equals to one.
 func NewBinary() BinarySemaphore {
 	return make(semaphore, 1)
 }

@@ -30,7 +30,7 @@ func TestLockingSemaphore(t *testing.T) {
 	sem.V(len(data))
 
 	if int(sum) != 6 {
-		t.Errorf("sum equals 6 is expected, obtained %d", sum)
+		t.Errorf("sum equals to 6 is expected, obtained %d", sum)
 	}
 }
 
@@ -51,12 +51,13 @@ func TestSyncingSemaphore(t *testing.T) {
 	sem.Wait(len(data))
 
 	if int(sum) != 6 {
-		t.Errorf("sum equals 6 is expected, obtained %d", sum)
+		t.Errorf("sum equals to 6 is expected, obtained %d", sum)
 	}
 }
 
 func TestBinarySemaphore(t *testing.T) {
 	sem := NewBinary()
+	defer sem.(semaphore).Flush()
 
 	expected, steps := []string{"first", "second", "third"}, make([]string, 0, 3)
 
@@ -78,11 +79,11 @@ func TestBinarySemaphore(t *testing.T) {
 	sem.Unlock()
 
 	// just enough to yield the scheduler and let the goroutines work off
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(time.Millisecond)
 
 	sem.Lock()
 	if !reflect.DeepEqual(expected, steps) {
-		t.Errorf("%+v not equals to %+v", steps, expected)
+		t.Errorf("%+v is not equals to %+v", steps, expected)
 	}
 	sem.Unlock()
 }

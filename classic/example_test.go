@@ -13,18 +13,18 @@ func Example_lockingSemaphore() {
 
 	for i := 0; i < 2; i++ {
 		go func() {
-			fmt.Println("work done")
-			sem.P(1)
+			defer sem.P(1)
+			fmt.Println("work is done")
 		}()
 	}
 
 	sem.V(2)
-	fmt.Println("all works done")
+	fmt.Println("all work is done")
 
 	// Output:
-	// work done
-	// work done
-	// all works done
+	// work is done
+	// work is done
+	// all work is done
 }
 
 // This example shows how to work with syncing semaphore.
@@ -33,18 +33,18 @@ func Example_syncingSemaphore() {
 
 	for i := 0; i < 2; i++ {
 		go func() {
-			fmt.Println("process finished")
-			sem.Signal()
+			defer sem.Signal()
+			fmt.Println("process is finished")
 		}()
 	}
 
 	sem.Wait(2)
-	fmt.Println("all processes finished")
+	fmt.Println("all processes are finished")
 
 	// Output:
-	// process finished
-	// process finished
-	// all processes finished
+	// process is finished
+	// process is finished
+	// all processes are finished
 }
 
 // This example shows hot to work with binary semaphore.
