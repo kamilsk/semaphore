@@ -28,7 +28,7 @@ func TestSemaphore_Acquire_InvalidTimeout(t *testing.T) {
 		{name: "positive timeout", timeout: time.Nanosecond},
 	} {
 		if err := sem.Acquire(test.timeout); err != errTimeout {
-			t.Errorf("%s: %q error is expected, %q was obtained", test.name, errTimeout, err)
+			t.Errorf("%s: error %q is expected, but received %q instead", test.name, errTimeout, err)
 		}
 	}
 }
@@ -40,7 +40,7 @@ func TestSemaphore_Capacity_Immutability(t *testing.T) {
 	defer sem.(semaphore).Flush()
 
 	if sem.Capacity() != capacity {
-		t.Errorf("capacity equals to %d is expected, %d was obtained", capacity, sem.Capacity())
+		t.Errorf("capacity equal to %d is expected, but received %d instead", capacity, sem.Capacity())
 	}
 
 	for i := 0; i < sem.Capacity(); i++ {
@@ -48,7 +48,7 @@ func TestSemaphore_Capacity_Immutability(t *testing.T) {
 	}
 
 	if sem.Capacity() != capacity {
-		t.Errorf("capacity equals to %d is expected, %d was obtained", capacity, sem.Capacity())
+		t.Errorf("capacity equal to %d is expected, but received %d instead", capacity, sem.Capacity())
 	}
 }
 
@@ -58,13 +58,13 @@ func TestSemaphore_Occupied_Linearity(t *testing.T) {
 
 	for i := 0; i < sem.Capacity(); i++ {
 		if sem.Occupied() != i {
-			t.Errorf("%d occupied places are expected, %d were obtained", i, sem.Occupied())
+			t.Errorf("%d occupied places are expected, but received %d instead", i, sem.Occupied())
 		}
 		_ = sem.Acquire(time.Second)
 	}
 
 	if sem.Occupied() != sem.Capacity() {
-		t.Errorf("%d occupied places are expected, %d were obtained", sem.Capacity(), sem.Occupied())
+		t.Errorf("%d occupied places are expected, but received %d instead", sem.Capacity(), sem.Occupied())
 	}
 }
 
@@ -72,7 +72,7 @@ func TestSemaphore_Release_TryToGetDeadLock(t *testing.T) {
 	sem := New(0)
 
 	if err := sem.Release(); err != errEmpty {
-		t.Errorf("%q error is expected, %q was obtained", errEmpty, err)
+		t.Errorf("error %q is expected, but received %q instead", errEmpty, err)
 	}
 }
 
@@ -89,7 +89,7 @@ func TestSemaphore_Concurrently(t *testing.T) {
 			defer wg.Done()
 			<-start
 			if err := sem.Acquire(time.Millisecond); err != nil {
-				t.Errorf("error is not expected, %q was obtained", err)
+				t.Errorf("error is not expected, but received %q instead", err)
 				return
 			}
 			defer func() { _ = sem.Release() }()
@@ -100,16 +100,13 @@ func TestSemaphore_Concurrently(t *testing.T) {
 	wg.Wait()
 
 	if int(counter) != sem.Capacity() {
-		t.Errorf("counter value equals %d is expected, %d was obtained", sem.Capacity(), counter)
+		t.Errorf("counter value equal to %d is expected, but received %d instead", sem.Capacity(), counter)
 	}
 
 	if sem.Occupied() != 0 {
-		t.Errorf("zero occupied places are expected, %d were obtained", sem.Occupied())
+		t.Errorf("zero occupied places are expected, but received %d instead", sem.Occupied())
 	}
 }
-
-// TODO will try to define a way to avoid memory allocations
-// reason of memory allocations is <-time.After(timeout)
 
 func BenchmarkSemaphore_Acquire(b *testing.B) {
 	sem := New(b.N)
@@ -120,7 +117,7 @@ func BenchmarkSemaphore_Acquire(b *testing.B) {
 	}
 
 	if sem.Occupied() != sem.Capacity() {
-		b.Error("expected full filled semaphore")
+		b.Error("full filled semaphore is expected")
 	}
 }
 
@@ -133,6 +130,6 @@ func BenchmarkSemaphore_Acquire_Release(b *testing.B) {
 	}
 
 	if sem.Occupied() != 0 {
-		b.Error("expected empty semaphore")
+		b.Error("empty semaphore is expected")
 	}
 }

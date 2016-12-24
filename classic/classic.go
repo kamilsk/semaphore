@@ -32,13 +32,13 @@ func (sem semaphore) V(n int) {
 	}
 }
 
-// SyncingSemaphore provides the functionality to synchronize multiple gorutines.
+// SyncingSemaphore provides the functionality to synchronize multiple goroutines.
 // https://en.wikipedia.org/wiki/Semaphore_(programming)#Semantics_and_implementation
 type SyncingSemaphore interface {
-	// Signal reports about completion of gorutine work.
+	// Signal reports about completion of goroutine work.
 	// It must be safe to call Signal concurrently on a single semaphore.
 	Signal()
-	// Wait starts to wait n gorutines.
+	// Wait starts to wait n goroutines.
 	// It must be safe to call Wait concurrently on a single semaphore.
 	Wait(n int)
 }

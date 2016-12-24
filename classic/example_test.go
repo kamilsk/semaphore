@@ -55,16 +55,16 @@ func Example_binarySemaphore() {
 
 	go func() {
 		binary.Lock()
-		defer binary.Unlock()
 		shared = "a"
+		binary.Unlock()
 	}()
 
 	// just enough to yield the scheduler and let the goroutines work off
 	time.Sleep(time.Millisecond)
 
 	binary.Lock()
-	defer binary.Unlock()
 	shared = "b"
+	binary.Unlock()
 
 	fmt.Printf("shared value is equals to %q", shared)
 

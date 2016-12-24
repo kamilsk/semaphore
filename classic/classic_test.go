@@ -30,7 +30,7 @@ func TestLockingSemaphore(t *testing.T) {
 	sem.V(len(data))
 
 	if int(sum) != 6 {
-		t.Errorf("sum equals to 6 is expected, obtained %d", sum)
+		t.Errorf("sum equal to 6 is expected, but received %d instead", sum)
 	}
 }
 
@@ -51,7 +51,7 @@ func TestSyncingSemaphore(t *testing.T) {
 	sem.Wait(len(data))
 
 	if int(sum) != 6 {
-		t.Errorf("sum equals to 6 is expected, obtained %d", sum)
+		t.Errorf("sum equal to 6 is expected, but received %d instead", sum)
 	}
 }
 
@@ -83,7 +83,7 @@ func TestBinarySemaphore(t *testing.T) {
 
 	sem.Lock()
 	if !reflect.DeepEqual(expected, steps) {
-		t.Errorf("%+v is not equals to %+v", steps, expected)
+		t.Errorf("%+v is not equal to %+v", steps, expected)
 	}
 	sem.Unlock()
 }
