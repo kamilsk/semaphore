@@ -82,6 +82,7 @@ $ make docker-pull
 $ make docker-bench
 $ make docker-test
 $ make docker-test-with-coverage OPEN_BROWSER=true
+$ make docker-tool-gometalinter DEADLINE=60s
 ```
 
 ## Feedback
