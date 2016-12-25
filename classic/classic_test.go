@@ -2,9 +2,9 @@ package classic
 
 import (
 	"reflect"
+	"sync"
 	"sync/atomic"
 	"testing"
-	"time"
 )
 
 func (sem semaphore) Flush() {
@@ -59,31 +59,24 @@ func TestBinarySemaphore(t *testing.T) {
 	sem := NewBinary()
 	defer sem.(semaphore).Flush()
 
-	expected, steps := []string{"first", "second", "third"}, make([]string, 0, 3)
+	var v int
+	from, to := []int{1, 2, 3}, make([]int, 0, 3)
+	expected := []int{1, 2, 3}
 
-	sem.Lock()
-	go func() {
-		defer sem.Unlock()
-		sem.Lock()
-
-		steps = append(steps, "second")
-
+	wg := sync.WaitGroup{}
+	for i := 0; i < cap(expected); i++ {
+		wg.Add(1)
 		go func() {
-			defer sem.Unlock()
 			sem.Lock()
-
-			steps = append(steps, "third")
+			v, from = from[0], from[1:]
+			to = append(to, v)
+			sem.Unlock()
+			wg.Done()
 		}()
-	}()
-	steps = append(steps, "first")
-	sem.Unlock()
-
-	// just enough to yield the scheduler and let the goroutines work off
-	time.Sleep(time.Millisecond)
-
-	sem.Lock()
-	if !reflect.DeepEqual(expected, steps) {
-		t.Errorf("%+v is not equal to %+v", steps, expected)
 	}
-	sem.Unlock()
+	wg.Wait()
+
+	if !reflect.DeepEqual(expected, to) {
+		t.Errorf("%+v is not equal to %+v", to, expected)
+	}
 }
