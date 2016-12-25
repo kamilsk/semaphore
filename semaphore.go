@@ -2,28 +2,29 @@ package semaphore
 
 import "errors"
 
-// HealthChecker defines some helpful methods related with semaphore's state.
+// HealthChecker defines helpful methods related with semaphore status.
 type HealthChecker interface {
-	// Capacity returns the number of total places.
+	// Capacity returns the capacity of semaphore.
 	// It must be safe to call Capacity concurrently on a single semaphore.
 	Capacity() int
-	// Occupied returns the number of occupied places.
+	// Occupied returns the current number of occupied slots.
 	// It must be safe to call Occupied concurrently on a single semaphore.
 	Occupied() int
 }
 
-// Releaser defines method to release the previously occupied place.
+// Releaser defines method to release the previously occupied semaphore.
 type Releaser interface {
-	// Release releases the previously occupied place.
-	// If no places was occupied then returns error.
+	// Release releases the previously occupied slot.
+	// If no places was occupied then returns an appropriate error.
 	// It must be safe to call Release concurrently on a single semaphore.
 	Release() error
 }
 
-// A ReleaseFunc tells a semaphore to release the previously occupied place and to ignore an error.
+// A ReleaseFunc tells a semaphore to release the previously occupied slot
+// and to ignore an error if it occur.
 type ReleaseFunc func()
 
-// New constructs a new thread-safe Semaphore with the given number of places.
+// New constructs a new thread-safe Semaphore with the given capacity.
 func New(capacity int) Semaphore {
 	return make(semaphore, capacity)
 }

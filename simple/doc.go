@@ -2,6 +2,6 @@
 // Use of this source code is governed by the MIT license
 // that can be found in the LICENSE.md file.
 
-// Package simple provides non-blocking implementation
-// of Semaphore pattern based on channel.
+// Package simple provides implementation of Semaphore pattern
+// with timeout of lock/unlock operations based on channel.
 package simple

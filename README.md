@@ -1,12 +1,62 @@
 > # semaphore
 >
-> Simple non-blocking semaphore implementation with timeout via context written on Go.
+> Semaphore pattern implementation with timeout of lock/unlock operations based on channel and context.
 
 [![Build Status](https://travis-ci.org/kamilsk/semaphore.svg?branch=master)](https://travis-ci.org/kamilsk/semaphore)
 [![Coverage Status](https://coveralls.io/repos/github/kamilsk/semaphore/badge.svg)](https://coveralls.io/github/kamilsk/semaphore)
 [![Go Report Card](https://goreportcard.com/badge/github.com/kamilsk/semaphore)](https://goreportcard.com/report/github.com/kamilsk/semaphore)
 [![GoDoc](https://godoc.org/github.com/kamilsk/semaphore?status.svg)](https://godoc.org/github.com/kamilsk/semaphore)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](LICENSE.md)
+
+## Usage
+
+### HTTP response with timeout
+
+```go
+sla := 100 * time.Millisecond
+sem := semaphore.New(1000)
+
+timeIsOver := func(rw http.ResponseWriter, err error) {
+    http.Error(rw, err.Error(), http.StatusGatewayTimeout)
+}
+
+http.Handle("/do-with-timeout", http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+    done := make(chan struct{})
+
+    // user defined timeout
+    timeout, err := time.ParseDuration(req.FormValue("timeout"))
+    if err != nil || sla < timeout {
+        timeout = sla
+    }
+
+    ctx, cancel := context.WithTimeout(req.Context(), timeout)
+    defer cancel()
+
+    release, err := sem.Acquire(ctx)
+    if err != nil {
+        timeIsOver(rw, err)
+        return
+    }
+    defer release()
+
+    go func() {
+        defer close(done)
+
+        // do some heavy work
+    }()
+
+    // wait what happens before
+    select {
+    case <-ctx.Done():
+        timeIsOver(rw, ctx.Err())
+        return
+    case <-done:
+        rw.Header().Set("Content-Type", "text/plain; charset=utf-8")
+        rw.WriteHeader(http.StatusOK)
+        return
+    }
+}))
+```
 
 ## Installation
 
@@ -22,8 +72,17 @@ $ go get bitbucket.org/kamilsk/semaphore
 
 ### Update
 
-This library is using [SemVer](http://semver.org) for versioning and is not [BC](https://en.wikipedia.org/wiki/Backward_compatibility)-safe.
+This library is using [SemVer](http://semver.org) for versioning and it is not [BC](https://en.wikipedia.org/wiki/Backward_compatibility)-safe.
 Therefore, do not use `go get -u` to update it, use [Glide](https://glide.sh) or something similar for this purpose.
+
+## Integration with Docker
+
+```bash
+$ make docker-pull
+$ make docker-bench
+$ make docker-test
+$ make docker-test-with-coverage OPEN_BROWSER=true
+```
 
 ## Feedback
 

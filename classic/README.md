@@ -1,6 +1,6 @@
 > # semaphore/classic
 >
-> Classic semaphore implementation based on channel.
+> Classic Semaphore pattern implementation based on channel.
 
 [![GoDoc](https://godoc.org/github.com/kamilsk/semaphore/classic?status.svg)](https://godoc.org/github.com/kamilsk/semaphore/classic)
 

@@ -12,7 +12,8 @@ type Semaphore interface {
 	intf.HealthChecker
 	intf.Releaser
 
-	// Acquire tries to take an available occupancy with the given timeout.
+	// Acquire tries to reduces the number of available slots for 1
+	// with the given timeout.
 	// If the timeout has occurred, then returns an appropriate error.
 	// It must be safe to call Acquire concurrently on a single semaphore.
 	Acquire(timeout time.Duration) error

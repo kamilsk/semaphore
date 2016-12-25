@@ -4,13 +4,14 @@ package semaphore
 
 import "context"
 
-// Semaphore defines the base interface.
+// Semaphore provides the functionality of the same named pattern.
 type Semaphore interface {
 	HealthChecker
 	Releaser
 
-	// Acquire tries to take an available place with the given context.
-	// If the context will done, then returns an appropriate error.
+	// Acquire tries to reduces the number of available slots for 1.
+	// The operation can be canceled using context. In this case
+	// an appropriate error will be returned.
 	// It must be safe to call Acquire concurrently on a single semaphore.
 	Acquire(ctx context.Context) (ReleaseFunc, error)
 }

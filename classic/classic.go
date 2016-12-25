@@ -7,15 +7,15 @@ import (
 // LockingSemaphore provides the functionality to limit bandwidth.
 // https://en.wikipedia.org/wiki/Semaphore_(programming)#Operation_names
 type LockingSemaphore interface {
-	// P decrements the occupancy of semaphore by n.
+	// P reduces the number of available slots for n.
 	// It must be safe to call P concurrently on a single semaphore.
 	P(n int)
-	// V increments the occupancy of semaphore by n.
+	// V increases the number of available slots for n.
 	// It must be safe to call V concurrently on a single semaphore.
 	V(n int)
 }
 
-// NewLocking constructs a new LockingSemaphore with the given capacity.
+// NewLocking constructs a new thread-safe LockingSemaphore with the given capacity.
 func NewLocking(capacity int) LockingSemaphore {
 	return make(semaphore, capacity)
 }
@@ -36,14 +36,16 @@ func (sem semaphore) V(n int) {
 // https://en.wikipedia.org/wiki/Semaphore_(programming)#Semantics_and_implementation
 type SyncingSemaphore interface {
 	// Signal reports about completion of goroutine work.
+	// The method increases the number of available slots for 1.
 	// It must be safe to call Signal concurrently on a single semaphore.
 	Signal()
 	// Wait starts to wait n goroutines.
+	// The method reduces the number of available slots for n.
 	// It must be safe to call Wait concurrently on a single semaphore.
 	Wait(n int)
 }
 
-// NewSyncing constructs a new SyncingSemaphore with the given capacity.
+// NewSyncing constructs a new full-filled thread-safe SyncingSemaphore with the given capacity.
 func NewSyncing(capacity int) SyncingSemaphore {
 	sem := make(semaphore, capacity)
 	sem.P(capacity)
@@ -63,7 +65,7 @@ type BinarySemaphore interface {
 	sync.Locker
 }
 
-// NewBinary constructs a new BinarySemaphore with capacity equals to one.
+// NewBinary constructs a new thread-safe BinarySemaphore with capacity equals to one.
 func NewBinary() BinarySemaphore {
 	return make(semaphore, 1)
 }
