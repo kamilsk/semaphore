@@ -53,7 +53,7 @@ func sendParallelHTTPRequestsToURL(url string) (success, failure int32) {
 			if err != nil {
 				return
 			}
-			defer resp.Body.Close()
+			defer func() { _ = resp.Body.Close() }()
 
 			// calculate the result
 			switch resp.StatusCode {
