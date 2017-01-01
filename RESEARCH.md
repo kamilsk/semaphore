@@ -1,4 +1,4 @@
-# Notes
+# Research
 
 ## Articles
 
