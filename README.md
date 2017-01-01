@@ -79,10 +79,10 @@ Therefore, do not use `go get -u` to update it, use [Glide](https://glide.sh) or
 
 ```bash
 $ make docker-pull
-$ make docker-bench
-$ make docker-test
-$ make docker-test-with-coverage OPEN_BROWSER=true
-$ make docker-tool-gometalinter DEADLINE=60s
+$ make docker-bench ARGS=-benchmem
+$ make docker-test ARGS=-v
+$ make docker-test-with-coverage ARGS=-v OPEN_BROWSER=true
+$ make docker-tool-gometalinter ARGS=--deadline=12s
 ```
 
 ## Feedback
@@ -90,4 +90,7 @@ $ make docker-tool-gometalinter DEADLINE=60s
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/kamilsk/semaphore)
 [![@ikamilsk](https://img.shields.io/badge/author-%40ikamilsk-blue.svg)](https://twitter.com/ikamilsk)
 
-## [Notes](NOTES.md)
+## Notes
+
+- tested on Go 1.5, 1.6 and 1.7
+- [research](RESEARCH.md)
