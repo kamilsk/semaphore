@@ -79,10 +79,10 @@ Therefore, do not use `go get -u` to update it, use [Glide](https://glide.sh) or
 
 ```bash
 $ make docker-pull
+$ make docker-gometalinter ARGS=--deadline=12s
 $ make docker-bench ARGS=-benchmem
 $ make docker-test ARGS=-v
 $ make docker-test-with-coverage ARGS=-v OPEN_BROWSER=true
-$ make docker-tool-gometalinter ARGS=--deadline=12s
 ```
 
 ## Feedback

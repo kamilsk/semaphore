@@ -1,11 +1,7 @@
-GIT_ORIGIN = git@github.com:kamilsk/semaphore.git
-GIT_MIRROR = git@bitbucket.org:kamilsk/semaphore.git
-GO_PACKAGE = github.com/kamilsk/semaphore
-
 include makes/env.mk
+include makes/bench.mk
 include makes/deps.mk
 include makes/docker.mk
-include makes/flow.mk
 include makes/tests.mk
 include makes/tools.mk
 
@@ -18,6 +14,10 @@ docker-bench: docker-bench-1.5
 docker-bench: docker-bench-1.6
 docker-bench: docker-bench-1.7
 docker-bench: docker-bench-latest
+
+.PHONY: docker-gometalinter
+docker-gometalinter: ARGS := --deadline=12s $(ARGS)
+docker-gometalinter: docker-tool-gometalinter
 
 .PHONY: docker-pull
 docker-pull: docker-pull-1.5
@@ -39,7 +39,3 @@ docker-test-with-coverage: docker-test-1.5-with-coverage
 docker-test-with-coverage: docker-test-1.6-with-coverage
 docker-test-with-coverage: docker-test-1.7-with-coverage
 docker-test-with-coverage: docker-test-latest-with-coverage
-
-.PHONY: docker-check
-docker-check: ARGS := --deadline=12s $(ARGS)
-docker-check: docker-tool-gometalinter
