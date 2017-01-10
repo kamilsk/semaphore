@@ -17,7 +17,7 @@ docker-bench: docker-bench-1.7
 docker-bench: docker-bench-latest
 
 .PHONY: docker-gometalinter
-docker-gometalinter: ARGS := --deadline=12s $(ARGS)
+docker-gometalinter: ARGS := --deadline=30s $(ARGS)
 docker-gometalinter: docker-tool-gometalinter
 
 .PHONY: docker-pull
