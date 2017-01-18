@@ -19,9 +19,6 @@ func (sem semaphore) Flush() {
 }
 
 func TestSemaphore_Acquire_InvalidTimeout(t *testing.T) {
-	sem := New(0)
-	defer sem.(semaphore).Flush()
-
 	nothingToDo := func(context.CancelFunc) {}
 
 	for _, test := range []struct {
@@ -34,14 +31,20 @@ func TestSemaphore_Acquire_InvalidTimeout(t *testing.T) {
 		{name: "positive timeout", timeout: time.Nanosecond, do: nothingToDo},
 		{name: "context cancel", timeout: time.Second, do: func(cancel context.CancelFunc) { cancel() }},
 	} {
-		ctx, cancel := context.WithTimeout(context.Background(), test.timeout)
-		test.do(cancel)
-		release, err := sem.Acquire(ctx)
-		if err != errTimeout {
-			t.Errorf("%s: error %q is expected, but received %q instead", test.name, errTimeout, err)
-		}
-		release()
-		cancel()
+		test := test
+		t.Run(test.name, func(st *testing.T) {
+			st.Parallel()
+			sem := New(0)
+			ctx, cancel := context.WithTimeout(context.Background(), test.timeout)
+			test.do(cancel)
+			release, err := sem.Acquire(ctx)
+			if err != errTimeout {
+				t.Errorf("%s: error %q is expected, but received %q instead", test.name, errTimeout, err)
+			}
+			release()
+			cancel()
+			sem.(semaphore).Flush()
+		})
 	}
 }
 
@@ -52,7 +55,7 @@ func TestSemaphore_Capacity_Immutability(t *testing.T) {
 	defer sem.(semaphore).Flush()
 
 	if sem.Capacity() != capacity {
-		t.Errorf("capacity equal to %d is expected, but received %d instead", capacity, sem.Capacity())
+		t.Errorf("capacity equals to %d is expected, but received %d instead", capacity, sem.Capacity())
 	}
 
 	ctx := context.Background()
@@ -61,7 +64,7 @@ func TestSemaphore_Capacity_Immutability(t *testing.T) {
 	}
 
 	if sem.Capacity() != capacity {
-		t.Errorf("capacity equal to %d is expected, but received %d instead", capacity, sem.Capacity())
+		t.Errorf("capacity equals to %d is expected, but received %d instead", capacity, sem.Capacity())
 	}
 }
 
@@ -115,7 +118,7 @@ func TestSemaphore_Concurrently(t *testing.T) {
 	wg.Wait()
 
 	if int(counter) != sem.Capacity() {
-		t.Errorf("counter value equal to %d is expected, but received %d instead", sem.Capacity(), counter)
+		t.Errorf("counter value equals to %d is expected, but received %d instead", sem.Capacity(), counter)
 	}
 
 	if sem.Occupied() != 0 {

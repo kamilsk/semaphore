@@ -16,9 +16,7 @@ func (sem semaphore) Flush() {
 }
 
 func TestSemaphore_Acquire_InvalidTimeout(t *testing.T) {
-	sem := New(0)
-	defer sem.(semaphore).Flush()
-
+	// TODO use Parallel() as in go17_test.go
 	for _, test := range []struct {
 		name    string
 		timeout time.Duration
@@ -27,9 +25,11 @@ func TestSemaphore_Acquire_InvalidTimeout(t *testing.T) {
 		{name: "zero timeout", timeout: 0},
 		{name: "positive timeout", timeout: time.Nanosecond},
 	} {
+		sem := New(0)
 		if err := sem.Acquire(test.timeout); err != errTimeout {
 			t.Errorf("%s: error %q is expected, but received %q instead", test.name, errTimeout, err)
 		}
+		sem.(semaphore).Flush()
 	}
 }
 
@@ -40,7 +40,7 @@ func TestSemaphore_Capacity_Immutability(t *testing.T) {
 	defer sem.(semaphore).Flush()
 
 	if sem.Capacity() != capacity {
-		t.Errorf("capacity equal to %d is expected, but received %d instead", capacity, sem.Capacity())
+		t.Errorf("capacity equals to %d is expected, but received %d instead", capacity, sem.Capacity())
 	}
 
 	for i := 0; i < sem.Capacity(); i++ {
@@ -48,7 +48,7 @@ func TestSemaphore_Capacity_Immutability(t *testing.T) {
 	}
 
 	if sem.Capacity() != capacity {
-		t.Errorf("capacity equal to %d is expected, but received %d instead", capacity, sem.Capacity())
+		t.Errorf("capacity equals to %d is expected, but received %d instead", capacity, sem.Capacity())
 	}
 }
 
@@ -100,7 +100,7 @@ func TestSemaphore_Concurrently(t *testing.T) {
 	wg.Wait()
 
 	if int(counter) != sem.Capacity() {
-		t.Errorf("counter value equal to %d is expected, but received %d instead", sem.Capacity(), counter)
+		t.Errorf("counter value equals to %d is expected, but received %d instead", sem.Capacity(), counter)
 	}
 
 	if sem.Occupied() != 0 {
