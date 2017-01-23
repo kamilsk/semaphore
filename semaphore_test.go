@@ -1,16 +1,13 @@
-// +build !go1.7
-
 package semaphore
 
 import (
+	"context"
 	"math"
 	"runtime"
 	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
-
-	"golang.org/x/net/context"
 )
 
 func (sem semaphore) Flush() {
@@ -32,16 +29,20 @@ func TestSemaphore_Acquire_InvalidTimeout(t *testing.T) {
 		{name: "positive timeout", timeout: time.Nanosecond, do: nothingToDo},
 		{name: "context cancel", timeout: time.Second, do: func(cancel context.CancelFunc) { cancel() }},
 	} {
-		sem := New(0)
-		ctx, cancel := context.WithTimeout(context.Background(), test.timeout)
-		test.do(cancel)
-		release, err := sem.Acquire(ctx)
-		if err != errTimeout {
-			t.Errorf("%s: error %q is expected, but received %q instead", test.name, errTimeout, err)
-		}
-		release()
-		cancel()
-		sem.(semaphore).Flush()
+		test := test
+		t.Run(test.name, func(st *testing.T) {
+			st.Parallel()
+			sem := New(0)
+			ctx, cancel := context.WithTimeout(context.Background(), test.timeout)
+			test.do(cancel)
+			release, err := sem.Acquire(ctx)
+			if err != errTimeout {
+				t.Errorf("%s: error %q is expected, but received %q instead", test.name, errTimeout, err)
+			}
+			release()
+			cancel()
+			sem.(semaphore).Flush()
+		})
 	}
 }
 
