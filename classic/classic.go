@@ -1,4 +1,4 @@
-package classic
+package classic // import "github.com/kamilsk/semaphore/classic"
 
 import (
 	"sync"
