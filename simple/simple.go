@@ -1,4 +1,4 @@
-package simple
+package simple // import "github.com/kamilsk/semaphore/simple"
 
 import (
 	"errors"
