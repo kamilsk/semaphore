@@ -61,7 +61,7 @@ http.Handle("/do-with-timeout", http.HandlerFunc(func(rw http.ResponseWriter, re
 ## Installation
 
 ```bash
-$ go get github.com/kamilsk/semaphore
+$ egg -version 2.x github.com/kamilsk/semaphore
 ```
 
 ### Mirror
@@ -69,6 +69,8 @@ $ go get github.com/kamilsk/semaphore
 ```bash
 $ go get bitbucket.org/kamilsk/semaphore | egg -fix-vanity-url -version 2.x
 ```
+
+> [egg](https://github.com/kamilsk/egg) is an `extended go get`.
 
 ### Update
 
