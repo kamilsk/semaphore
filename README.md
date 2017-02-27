@@ -10,7 +10,7 @@
 
 ## Usage
 
-### HTTP response with timeout
+### HTTP request limitation with timeout response
 
 ```go
 sla := 100 * time.Millisecond
@@ -49,11 +49,9 @@ http.Handle("/do-with-timeout", http.HandlerFunc(func(rw http.ResponseWriter, re
     select {
     case <-ctx.Done():
         timeIsOver(rw, ctx.Err())
-        return
     case <-done:
         rw.Header().Set("Content-Type", "text/plain; charset=utf-8")
         rw.WriteHeader(http.StatusOK)
-        return
     }
 }))
 ```
