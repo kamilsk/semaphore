@@ -67,7 +67,7 @@ $ go get github.com/kamilsk/semaphore
 ### Mirror
 
 ```bash
-$ go get bitbucket.org/kamilsk/semaphore
+$ go get bitbucket.org/kamilsk/semaphore | egg -fix-vanity-url
 ```
 
 ### Update
