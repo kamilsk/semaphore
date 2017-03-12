@@ -93,5 +93,5 @@ $ make docker-test-with-coverage ARGS=-v OPEN_BROWSER=true
 
 ## Notes
 
-- tested on Go 1.7 and 1.8
+- tested on Go 1.7 and 1.8, use 2.x version for 1.5 and 1.6
 - [research](RESEARCH.md)
