@@ -1,7 +1,7 @@
 package: github.com/kamilsk/semaphore
 import:
 - package: github.com/abiosoft/semaphore
-  version: 9e8892d1cf5b56ae0f766596f83776619865594a
+  version: 9cc3b9e8a5125914f97b6d7a414a0736807ab8ff
 - package: github.com/andreyvit/sem
   version: 51d9c5c4f5082d89e3ac9d6b1bc187c0cc86fcf5
 - package: github.com/avezila/psem
@@ -11,11 +11,11 @@ import:
   subpackages:
   - semaphore
 - package: github.com/cognusion/semaphore
-  version: 31d67e0df9fb5fa119f2afc719abd517569f5c04
+  version: 246af59f5b2a70277c9cfa31f4991aa9d0dbe8ca
 - package: github.com/dexterous/semaphore
   version: c6af5dd4713dbc7d6e2a331aa732d02840863b37
 - package: github.com/dropbox/godropbox
-  version: 3384358932ed41f065e018278f34ca2367a75100
+  version: 404d0d3626ad378759155890ac53ed52b4ad9227
   subpackages:
   - sync2
 - package: github.com/eapache/go-resiliency
@@ -25,7 +25,7 @@ import:
 - package: github.com/jsipprell/go-semaphore
   version: e3745e5247e61541c301c62ee264e26628c38d1a
 - package: github.com/nicholasjackson/bench
-  version: 66694b357256efb8de8e453332fd21b394894337
+  version: 7e0e679563e3cdae97ffd630f8dbd51552fe50de
   subpackages:
   - semaphore
 - package: github.com/opencoff/go-lib
@@ -54,7 +54,3 @@ import:
   - semaphore
 - package: github.com/vada-ir/semaphore
   version: 566ed412777737d9b810f167bdca75fd066d8440
-- package: golang.org/x/net
-  version: 195180cfebf7362bd243a52477697895128c8777
-  subpackages:
-  - context
