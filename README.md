@@ -11,31 +11,21 @@
 
 ## Usage
 
-### HTTP request limitation with timeout response
+### HTTP response' time limitation
 
 ```go
 sla := 100 * time.Millisecond
 sem := semaphore.New(1000)
 
-timeIsOver := func(rw http.ResponseWriter, err error) {
-    http.Error(rw, err.Error(), http.StatusGatewayTimeout)
-}
-
 http.Handle("/do-with-timeout", http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
     done := make(chan struct{})
 
-    // user defined timeout
-    timeout, err := time.ParseDuration(req.FormValue("timeout"))
-    if err != nil || sla < timeout {
-        timeout = sla
-    }
-
-    ctx, cancel := context.WithTimeout(req.Context(), timeout)
+    ctx, cancel := context.WithTimeout(req.Context(), sla)
     defer cancel()
 
     release, err := sem.Acquire(ctx)
     if err != nil {
-        timeIsOver(rw, err)
+        http.Error(rw, err.Error(), http.StatusGatewayTimeout)
         return
     }
     defer release()
@@ -49,12 +39,34 @@ http.Handle("/do-with-timeout", http.HandlerFunc(func(rw http.ResponseWriter, re
     // wait what happens before
     select {
     case <-ctx.Done():
-        timeIsOver(rw, ctx.Err())
+        http.Error(rw, err.Error(), http.StatusGatewayTimeout)
     case <-done:
-        rw.Header().Set("Content-Type", "text/plain; charset=utf-8")
-        rw.WriteHeader(http.StatusOK)
+        // send success response
     }
 }))
+```
+
+### HTTP request' throughput limitation
+
+```go
+limiter := func(limit int, timeout time.Duration, handler http.Handler) http.Handler {
+	throughput := semaphore.New(limit)
+	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		ctx, cancel := context.WithTimeout(req.Context(), timeout)
+		defer cancel()
+
+		release, err := throughput.Acquire(ctx)
+		if err != nil {
+			http.Error(rw, err.Error(), http.StatusTooManyRequests)
+			return
+		}
+		defer release()
+	})
+}
+
+http.Handle("/do-limited", limiter(1000, time.Minute, http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+	// do some limited work
+})))
 ```
 
 ## Installation
@@ -73,7 +85,8 @@ $ go get bitbucket.org/kamilsk/semaphore | egg -fix-vanity-url
 
 ### Update
 
-This library is using [SemVer](http://semver.org) for versioning and it is not [BC](https://en.wikipedia.org/wiki/Backward_compatibility)-safe.
+This library is using [SemVer](http://semver.org) for versioning and it is not
+[BC](https://en.wikipedia.org/wiki/Backward_compatibility)-safe.
 Therefore, do not use `go get -u` to update it, use [Glide](https://glide.sh) or something similar for this purpose.
 
 ## Integration with Docker
