@@ -27,10 +27,10 @@ matrix:
   fast_finish: true
 
 notifications:
-  slack: octolab:${SLACK}
+  slack: octolab:1eMS7IqOArBipiu31jYVd0cN
   webhooks:
     urls:
-    - https://webhooks.gitter.im/e/${GITTER}
+    - https://webhooks.gitter.im/e/cb09d427ddadc2d05f64
     on_success: change
     on_failure: always
     on_start: never
