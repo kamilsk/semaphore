@@ -31,3 +31,15 @@ docker-test-with-coverage: OPEN_BROWSER := true
 docker-test-with-coverage: docker-test-with-coverage-1.7
 docker-test-with-coverage: docker-test-with-coverage-1.8
 docker-test-with-coverage: docker-test-with-coverage-latest
+
+.PHONY: pull-github-tpl
+pull-github-tpl:
+	rm -rf .github
+	(git clone git@github.com:kamilsk/shared.git .github && cd .github && git checkout github-tpl-go-v1 \
+	  && echo 'github templates at revision' $$(git rev-parse HEAD) && rm -rf .git)
+
+.PHONY: pull-makes
+pull-makes:
+	rm -rf makes
+	(git clone git@github.com:kamilsk/shared.git makes && cd makes && git checkout makefile-go-v1 \
+	  && echo 'makes at revision' $$(git rev-parse HEAD) && rm -rf .git)
