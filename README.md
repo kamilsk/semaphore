@@ -78,7 +78,7 @@ $ go get github.com/kamilsk/semaphore
 ### Mirror
 
 ```bash
-$ go get bitbucket.org/kamilsk/semaphore | egg -fix-vanity-url
+$ egg -fix-vanity-url bitbucket.org/kamilsk/semaphore
 ```
 
 > [egg](https://github.com/kamilsk/egg) is an `extended go get`.
