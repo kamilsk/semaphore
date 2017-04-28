@@ -61,6 +61,8 @@ limiter := func(limit int, timeout time.Duration, handler http.Handler) http.Han
 			return
 		}
 		defer release()
+
+		handler(rw, req)
 	})
 }
 
