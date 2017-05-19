@@ -91,14 +91,29 @@ This library is using [SemVer](http://semver.org) for versioning and it is not
 [BC](https://en.wikipedia.org/wiki/Backward_compatibility)-safe.
 Therefore, do not use `go get -u` to update it, use [Glide](https://glide.sh) or something similar for this purpose.
 
-## Integration with Docker
+## Contributing workflow
+
+### Code quality checking
+
+```bash
+$ make docker-pull-tools
+$ make docker-gometalinter
+```
+
+### Testing
+
+#### Local
+
+```bash
+$ make install-deps
+$ make test-with-coverage
+```
+
+#### Docker
 
 ```bash
 $ make docker-pull
-$ make docker-gometalinter ARGS=--deadline=12s
-$ make docker-bench ARGS=-benchmem
-$ make docker-test ARGS=-v
-$ make docker-test-with-coverage ARGS=-v OPEN_BROWSER=true
+$ make docker-test-with-coverage
 ```
 
 ## Feedback

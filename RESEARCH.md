@@ -13,7 +13,7 @@
 ## Another implementations
 
 All examined packages are presented in [research.yml](research.yml).
-You can install them by run `glide -y research.yml install`.
+You can install them by run `glide -y research.yml install` (local) or `make research` (docker).
 
 ### Similar
 
