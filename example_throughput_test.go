@@ -11,7 +11,7 @@ import (
 )
 
 // This example shows how to limit request' throughput.
-func ExampleHTTPRequestThroughputLimitation() {
+func Example_httpRequestThroughputLimitation() {
 	limiter := func(limit int, timeout time.Duration, handler http.Handler) http.Handler {
 		throughput := semaphore.New(limit)
 		return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {

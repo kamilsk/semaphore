@@ -19,7 +19,7 @@ var (
 )
 
 // This example shows how to follow SLA.
-func ExampleHTTPResponseTimeLimitation() {
+func Example_httpResponseTimeLimitation() {
 	limiter := semaphore.New(limit)
 
 	// start http server to handle parallel requests
