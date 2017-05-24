@@ -16,7 +16,6 @@ func (sem semaphore) Flush() {
 }
 
 func TestSemaphore_Acquire_InvalidTimeout(t *testing.T) {
-	// TODO use Parallel() as in go17_test.go
 	for _, test := range []struct {
 		name    string
 		timeout time.Duration
