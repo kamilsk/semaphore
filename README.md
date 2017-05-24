@@ -2,6 +2,7 @@
 >
 > Semaphore pattern implementation with timeout of lock/unlock operations based on channel and context.
 
+[![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/avelino/awesome-go#goroutines)
 [![Build Status](https://travis-ci.org/kamilsk/semaphore.svg?branch=master)](https://travis-ci.org/kamilsk/semaphore)
 [![Coverage Status](https://coveralls.io/repos/github/kamilsk/semaphore/badge.svg)](https://coveralls.io/github/kamilsk/semaphore)
 [![Go Report Card](https://goreportcard.com/badge/github.com/kamilsk/semaphore)](https://goreportcard.com/report/github.com/kamilsk/semaphore)
@@ -12,6 +13,8 @@
 ## Usage
 
 ### HTTP response' time limitation
+
+This example shows how to follow SLA.
 
 ```go
 sla := 100 * time.Millisecond
@@ -48,6 +51,8 @@ http.Handle("/do-with-timeout", http.HandlerFunc(func(rw http.ResponseWriter, re
 
 ### HTTP request' throughput limitation
 
+This example shows how to limit request' throughput.
+
 ```go
 limiter := func(limit int, timeout time.Duration, handler http.Handler) http.Handler {
 	throughput := semaphore.New(limit)
@@ -62,7 +67,7 @@ limiter := func(limit int, timeout time.Duration, handler http.Handler) http.Han
 		}
 		defer release()
 
-		handler(rw, req)
+		handler.ServeHTTP(rw, req)
 	})
 }
 

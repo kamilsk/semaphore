@@ -12,33 +12,26 @@ import (
 	"github.com/kamilsk/semaphore"
 )
 
-// define semaphore for maximum two operations at the same time
+// Define semaphore for maximum two operations at the same time.
 var (
-	limiter   = semaphore.New(2)
-	sla       = 50 * time.Millisecond
-	timeIsOut = func(rw http.ResponseWriter, err error) {
-		http.Error(rw, err.Error(), http.StatusGatewayTimeout)
-	}
+	limit = 2
+	sla   = 50 * time.Millisecond
 )
 
 // This example shows how to follow SLA.
-func Example_sla() {
+func ExampleHTTPResponseTimeLimitation() {
+	limiter := semaphore.New(limit)
+
 	// start http server to handle parallel requests
 	ts := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		done := make(chan struct{})
 
-		// user defined timeout
-		timeout, err := time.ParseDuration(req.FormValue("timeout"))
-		if err != nil || sla < timeout {
-			timeout = sla
-		}
-
-		ctx, cancel := context.WithTimeout(req.Context(), timeout)
+		ctx, cancel := context.WithTimeout(req.Context(), sla)
 		defer cancel()
 
 		release, err := limiter.Acquire(ctx)
 		if err != nil {
-			timeIsOut(rw, err)
+			http.Error(rw, err.Error(), http.StatusGatewayTimeout)
 			return
 		}
 		defer release()
@@ -53,7 +46,7 @@ func Example_sla() {
 		// wait what happens before
 		select {
 		case <-ctx.Done():
-			timeIsOut(rw, ctx.Err())
+			http.Error(rw, ctx.Err().Error(), http.StatusGatewayTimeout)
 			return
 		case <-done:
 			rw.Header().Set("Content-Type", "text/plain; charset=utf-8")
@@ -64,18 +57,18 @@ func Example_sla() {
 	}))
 	defer ts.Close()
 
-	ok, fail := sendParallelHTTPRequestsToURL(ts.URL)
+	ok, fail := sendParallelHTTPRequestsToURL(5, ts.URL)
 
 	fmt.Printf("success: %d, failure: %d \n", ok, fail)
 	// Output: success: 2, failure: 3
 }
 
-// sends five parallel HTTP requests to the specified url
-func sendParallelHTTPRequestsToURL(url string) (success, failure int32) {
+// Sends five parallel HTTP requests to the specified URL.
+func sendParallelHTTPRequestsToURL(parallelism int, url string) (success, failure int32) {
 	start := make(chan bool)
 	wg := &sync.WaitGroup{}
 
-	for i := 0; i < 5; i++ {
+	for i := 0; i < parallelism; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
