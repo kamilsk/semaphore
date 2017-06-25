@@ -76,6 +76,18 @@ http.Handle("/do-limited", limiter(1000, time.Minute, http.HandlerFunc(func(rw h
 })))
 ```
 
+### CLI tool for command execution in parallel
+
+```bash
+$ semaphore create --capacity=4 --timeout=1m
+$ semaphore add -- docker build
+$ semaphore add -- vagrant up
+$ semaphore add -- ansible-playbook
+$ semaphore wait
+```
+
+See more details [here](cmd#semaphore).
+
 ## Installation
 
 ```bash
