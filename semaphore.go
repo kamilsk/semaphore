@@ -1,30 +1,33 @@
+// Copyright (c) 2017 OctoLab. All rights reserved.
+// Use of this source code is governed by the MIT license
+// that can be found in the LICENSE file.
+
+// Package semaphore provides an implementation of Semaphore pattern
+// with a timeout of lock/unlock operations based on channels.
 package semaphore // import "github.com/kamilsk/semaphore"
 
-import (
-	"context"
-	"errors"
-)
+import "errors"
 
 // HealthChecker defines helpful methods related with semaphore status.
 type HealthChecker interface {
-	// Capacity returns the capacity of semaphore.
+	// Capacity returns a capacity of a semaphore.
 	// It must be safe to call Capacity concurrently on a single semaphore.
 	Capacity() int
-	// Occupied returns the current number of occupied slots.
+	// Occupied returns a current number of occupied slots.
 	// It must be safe to call Occupied concurrently on a single semaphore.
 	Occupied() int
 }
 
-// Releaser defines method to release the previously occupied semaphore.
+// Releaser defines a method to release the previously occupied semaphore.
 type Releaser interface {
 	// Release releases the previously occupied slot.
-	// If no places was occupied then returns an appropriate error.
+	// If no places were occupied then returns an appropriate error.
 	// It must be safe to call Release concurrently on a single semaphore.
 	Release() error
 }
 
 // A ReleaseFunc tells a semaphore to release the previously occupied slot
-// and to ignore an error if it occur.
+// and ignore an error if it occurs.
 type ReleaseFunc func()
 
 // Semaphore provides the functionality of the same named pattern.
@@ -32,11 +35,11 @@ type Semaphore interface {
 	HealthChecker
 	Releaser
 
-	// Acquire tries to reduces the number of available slots for 1.
-	// The operation can be canceled using context. In this case
+	// Acquire tries to reduce the number of available slots for 1.
+	// The operation can be canceled using context. In this case,
 	// an appropriate error will be returned.
 	// It must be safe to call Acquire concurrently on a single semaphore.
-	Acquire(ctx context.Context) (ReleaseFunc, error)
+	Acquire(deadline <-chan struct{}) (ReleaseFunc, error)
 }
 
 // New constructs a new thread-safe Semaphore with the given capacity.
@@ -53,11 +56,11 @@ var (
 
 type semaphore chan struct{}
 
-func (sem semaphore) Acquire(ctx context.Context) (ReleaseFunc, error) {
+func (sem semaphore) Acquire(deadline <-chan struct{}) (ReleaseFunc, error) {
 	select {
 	case sem <- struct{}{}:
 		return releaser(sem), nil
-	case <-ctx.Done():
+	case <-deadline:
 		return nothing, errTimeout
 	}
 }
@@ -80,5 +83,7 @@ func (sem semaphore) Release() error {
 }
 
 func releaser(releaser Releaser) ReleaseFunc {
-	return func() { _ = releaser.Release() }
+	return func() {
+		_ = releaser.Release() // nolint: gas
+	}
 }

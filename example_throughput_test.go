@@ -1,3 +1,5 @@
+// +build go1.7
+
 package semaphore_test
 
 import (
@@ -18,7 +20,7 @@ func Example_httpRequestThroughputLimitation() {
 			ctx, cancel := context.WithTimeout(req.Context(), timeout)
 			defer cancel()
 
-			release, err := throughput.Acquire(ctx)
+			release, err := throughput.Acquire(ctx.Done())
 			if err != nil {
 				http.Error(rw, err.Error(), http.StatusTooManyRequests)
 				return

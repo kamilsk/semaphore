@@ -2,4 +2,6 @@
 /vendor/
 glide.lock
 
+/dist/
+
 *coverage*.out

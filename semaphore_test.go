@@ -1,7 +1,6 @@
 package semaphore
 
 import (
-	"context"
 	"math"
 	"runtime"
 	"sync"
@@ -16,33 +15,22 @@ func (sem semaphore) Flush() {
 	}
 }
 
-func TestSemaphore_Acquire_InvalidTimeout(t *testing.T) {
-	nothingToDo := func(context.CancelFunc) {}
-
+func TestSemaphore_Acquire_Timeout(t *testing.T) {
 	for _, test := range []struct {
 		name    string
 		timeout time.Duration
-		do      func(cancel context.CancelFunc)
 	}{
-		{name: "negative timeout", timeout: -time.Second, do: nothingToDo},
-		{name: "zero timeout", timeout: 0, do: nothingToDo},
-		{name: "positive timeout", timeout: time.Nanosecond, do: nothingToDo},
-		{name: "context cancel", timeout: time.Second, do: func(cancel context.CancelFunc) { cancel() }},
+		{name: "negative timeout", timeout: -time.Second},
+		{name: "zero timeout", timeout: 0},
+		{name: "positive timeout", timeout: time.Nanosecond},
 	} {
-		test := test
-		t.Run(test.name, func(st *testing.T) {
-			st.Parallel()
-			sem := New(0)
-			ctx, cancel := context.WithTimeout(context.Background(), test.timeout)
-			test.do(cancel)
-			release, err := sem.Acquire(ctx)
-			if err != errTimeout {
-				t.Errorf("%s: error %q is expected, but received %q instead", test.name, errTimeout, err)
-			}
-			release()
-			cancel()
-			sem.(semaphore).Flush()
-		})
+		sem := New(0)
+		release, err := sem.Acquire(WithTimeout(test.timeout))
+		if err != errTimeout {
+			t.Errorf("%s: error %q is expected, but received %q instead", test.name, errTimeout, err)
+		}
+		release()
+		sem.(semaphore).Flush()
 	}
 }
 
@@ -56,9 +44,8 @@ func TestSemaphore_Capacity_Immutability(t *testing.T) {
 		t.Errorf("capacity equals to %d is expected, but received %d instead", capacity, sem.Capacity())
 	}
 
-	ctx := context.Background()
 	for i := 0; i < sem.Capacity(); i++ {
-		_, _ = sem.Acquire(ctx)
+		_, _ = sem.Acquire(nil)
 	}
 
 	if sem.Capacity() != capacity {
@@ -70,12 +57,11 @@ func TestSemaphore_Occupied_Linearity(t *testing.T) {
 	sem := New(7)
 	defer sem.(semaphore).Flush()
 
-	ctx := context.Background()
 	for i := 0; i < sem.Capacity(); i++ {
 		if sem.Occupied() != i {
 			t.Errorf("%d occupied places are expected, but received %d instead", i, sem.Occupied())
 		}
-		_, _ = sem.Acquire(ctx)
+		_, _ = sem.Acquire(nil)
 	}
 
 	if sem.Occupied() != sem.Capacity() {
@@ -98,12 +84,12 @@ func TestSemaphore_Concurrently(t *testing.T) {
 	var counter int32
 
 	start, wg := make(chan bool), &sync.WaitGroup{}
-	for i, ctx := 0, context.Background(); i < sem.Capacity(); i++ {
+	for i := 0; i < sem.Capacity(); i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
 			<-start
-			release, err := sem.Acquire(ctx)
+			release, err := sem.Acquire(nil)
 			if err != nil {
 				t.Errorf("error is not expected, but received %q instead", err)
 				return
@@ -125,11 +111,11 @@ func TestSemaphore_Concurrently(t *testing.T) {
 }
 
 func BenchmarkSemaphore_Acquire(b *testing.B) {
-	ctx, sem := context.Background(), New(b.N)
+	sem := New(b.N)
 	defer sem.(semaphore).Flush()
 
 	for i := 0; i < b.N; i++ {
-		_, _ = sem.Acquire(ctx)
+		_, _ = sem.Acquire(nil)
 	}
 
 	if sem.Occupied() != sem.Capacity() {
@@ -138,11 +124,11 @@ func BenchmarkSemaphore_Acquire(b *testing.B) {
 }
 
 func BenchmarkSemaphore_Acquire_Release(b *testing.B) {
-	ctx, sem := context.Background(), New(b.N)
+	sem := New(b.N)
 	defer sem.(semaphore).Flush()
 
 	for i := 0; i < b.N; i++ {
-		_, _ = sem.Acquire(ctx)
+		_, _ = sem.Acquire(nil)
 		_ = sem.Release()
 	}
 

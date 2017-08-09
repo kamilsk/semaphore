@@ -1,0 +1,50 @@
+homepage:    &home https://github.com/kamilsk/semaphore
+description: &desc Semaphore pattern implementation with timeout of lock/unlock operations based on channels.
+
+archive:
+  files:
+  - LICENSE
+  format: tar.gz
+  format_overrides:
+  - goos:   windows
+    format: zip
+  name_template: "{{.Binary}}_{{.Version}}_{{.Os}}-{{.Arch}}"
+  replacements:
+    386:    32bit
+    amd64:  64bit
+
+    darwin:  macOS
+    linux:   Linux
+    windows: Windows
+
+brew:
+  caveats: semaphore -h
+  folder: Formula
+  github:
+    name:  homebrew-tap
+    owner: kamilsk
+  homepage:    *home
+  description: *desc
+
+build:
+  binary: semaphore
+  env:
+  - CGO_ENABLED=0
+  goarch:
+  - 386
+  - amd64
+  goos:
+  - darwin
+  - linux
+  - windows
+  ldflags: -s -w -X 'main.Version="{{.Version}} ({{.Date}})"'
+  main:    ./cmd/semaphore
+
+release:
+  draft: false
+  github:
+    name:  semaphore
+    owner: kamilsk
+
+snapshot:
+  name_template: "{{.Commit}}_{{.Timestamp}}"

@@ -1,6 +1,6 @@
 > # semaphore
 >
-> Semaphore pattern implementation with timeout of lock/unlock operations based on channel and context.
+> Semaphore pattern implementation with a timeout of lock/unlock operations based on channels.
 
 [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/avelino/awesome-go#goroutines)
 [![Build Status](https://travis-ci.org/kamilsk/semaphore.svg?branch=master)](https://travis-ci.org/kamilsk/semaphore)
@@ -26,7 +26,7 @@ http.Handle("/do-with-timeout", http.HandlerFunc(func(rw http.ResponseWriter, re
     ctx, cancel := context.WithTimeout(req.Context(), sla)
     defer cancel()
 
-    release, err := sem.Acquire(ctx)
+    release, err := sem.Acquire(ctx.Done())
     if err != nil {
         http.Error(rw, err.Error(), http.StatusGatewayTimeout)
         return
@@ -60,7 +60,7 @@ limiter := func(limit int, timeout time.Duration, handler http.Handler) http.Han
 		ctx, cancel := context.WithTimeout(req.Context(), timeout)
 		defer cancel()
 
-		release, err := throughput.Acquire(ctx)
+		release, err := throughput.Acquire(ctx.Done())
 		if err != nil {
 			http.Error(rw, err.Error(), http.StatusTooManyRequests)
 			return
@@ -140,5 +140,5 @@ $ make docker-test-with-coverage
 
 ## Notes
 
-- tested on Go 1.7 and 1.8, use 2.x version for 1.5 and 1.6
+- tested on Go 1.5, 1.6, 1.7 and 1.8
 - [research](RESEARCH.md)

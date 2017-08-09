@@ -1,3 +1,5 @@
+// +build go1.7
+
 package semaphore_test
 
 import (
@@ -29,7 +31,7 @@ func Example_httpResponseTimeLimitation() {
 		ctx, cancel := context.WithTimeout(req.Context(), sla)
 		defer cancel()
 
-		release, err := limiter.Acquire(ctx)
+		release, err := limiter.Acquire(ctx.Done())
 		if err != nil {
 			http.Error(rw, err.Error(), http.StatusGatewayTimeout)
 			return
