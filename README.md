@@ -97,7 +97,7 @@ $ go get github.com/kamilsk/semaphore
 ### Mirror
 
 ```bash
-$ egg -fix-vanity-url bitbucket.org/kamilsk/semaphore
+$ egg bitbucket.org/kamilsk/semaphore
 ```
 
 > [egg](https://github.com/kamilsk/egg) is an `extended go get`.
@@ -114,7 +114,7 @@ Therefore, do not use `go get -u` to update it, use [Glide](https://glide.sh) or
 
 ```bash
 $ make docker-pull-tools
-$ make docker-check
+$ make check-code-quality
 ```
 
 ### Testing
@@ -123,14 +123,16 @@ $ make docker-check
 
 ```bash
 $ make install-deps
-$ make test-with-coverage
+$ make test # or test-with-coverage
+$ make bench
 ```
 
 #### Docker
 
 ```bash
 $ make docker-pull
-$ make docker-test-with-coverage
+$ make complex-tests # or complex-tests-with-coverage
+$ make complex-bench
 ```
 
 ## Feedback
