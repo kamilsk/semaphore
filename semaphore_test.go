@@ -1,4 +1,4 @@
-package semaphore
+package semaphore_test
 
 import (
 	"math"
@@ -7,16 +7,13 @@ import (
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/kamilsk/semaphore"
 )
 
-func (sem semaphore) Flush() {
-	close(sem)
-	for range sem {
-	}
-}
-
 func TestSemaphore_Acquire_Timeout(t *testing.T) {
-	for _, test := range []struct {
+	expected := "operation timeout"
+	for _, tc := range []struct {
 		name    string
 		timeout time.Duration
 	}{
@@ -24,21 +21,19 @@ func TestSemaphore_Acquire_Timeout(t *testing.T) {
 		{name: "zero timeout", timeout: 0},
 		{name: "positive timeout", timeout: time.Nanosecond},
 	} {
-		sem := New(0)
-		release, err := sem.Acquire(WithTimeout(test.timeout))
-		if err != errTimeout {
-			t.Errorf("%s: error %q is expected, but received %q instead", test.name, errTimeout, err)
+		sem := semaphore.New(0)
+		release, err := sem.Acquire(semaphore.WithTimeout(tc.timeout))
+		if err.Error() != expected {
+			t.Errorf("%s: error %q is expected, but received %q instead", tc.name, expected, err)
 		}
 		release()
-		sem.(semaphore).Flush()
 	}
 }
 
 func TestSemaphore_Capacity_Immutability(t *testing.T) {
 	capacity := 7
 
-	sem := New(capacity)
-	defer sem.(semaphore).Flush()
+	sem := semaphore.New(capacity)
 
 	if sem.Capacity() != capacity {
 		t.Errorf("capacity equals to %d is expected, but received %d instead", capacity, sem.Capacity())
@@ -54,8 +49,7 @@ func TestSemaphore_Capacity_Immutability(t *testing.T) {
 }
 
 func TestSemaphore_Occupied_Linearity(t *testing.T) {
-	sem := New(7)
-	defer sem.(semaphore).Flush()
+	sem := semaphore.New(7)
 
 	for i := 0; i < sem.Capacity(); i++ {
 		if sem.Occupied() != i {
@@ -70,16 +64,15 @@ func TestSemaphore_Occupied_Linearity(t *testing.T) {
 }
 
 func TestSemaphore_Release_TryToGetDeadLock(t *testing.T) {
-	sem := New(0)
+	sem := semaphore.New(0)
 
-	if err := sem.Release(); err != errEmpty {
-		t.Errorf("error %q is expected, but received %q instead", errEmpty, err)
+	if err, expected := sem.Release(), "semaphore is empty"; err.Error() != expected {
+		t.Errorf("error %q is expected, but received %q instead", expected, err)
 	}
 }
 
 func TestSemaphore_Concurrently(t *testing.T) {
-	sem := New(int(math.Max(2.0, float64(runtime.GOMAXPROCS(0)))))
-	defer sem.(semaphore).Flush()
+	sem := semaphore.New(int(math.Max(2.0, float64(runtime.GOMAXPROCS(0)))))
 
 	var counter int32
 
@@ -111,8 +104,7 @@ func TestSemaphore_Concurrently(t *testing.T) {
 }
 
 func BenchmarkSemaphore_Acquire(b *testing.B) {
-	sem := New(b.N)
-	defer sem.(semaphore).Flush()
+	sem := semaphore.New(b.N)
 
 	for i := 0; i < b.N; i++ {
 		_, _ = sem.Acquire(nil)
@@ -124,8 +116,7 @@ func BenchmarkSemaphore_Acquire(b *testing.B) {
 }
 
 func BenchmarkSemaphore_Acquire_Release(b *testing.B) {
-	sem := New(b.N)
-	defer sem.(semaphore).Flush()
+	sem := semaphore.New(b.N)
 
 	for i := 0; i < b.N; i++ {
 		_, _ = sem.Acquire(nil)
