@@ -1,15 +1,17 @@
-package semaphore
+package semaphore_test
 
 import (
 	"testing"
 	"time"
+
+	"github.com/kamilsk/semaphore"
 )
 
 func TestWithTimeout(t *testing.T) {
 	sleep := 500 * time.Millisecond
 
 	start := time.Now()
-	<-WithTimeout(sleep)
+	<-semaphore.WithTimeout(sleep)
 	end := time.Now()
 
 	if expected, obtained := sleep, end.Sub(start); expected > obtained {
