@@ -1,56 +1,36 @@
 package: github.com/kamilsk/semaphore
 import:
 - package: github.com/abiosoft/semaphore
-  version: 9d5d6764eda2187f2a7979395cf2d564f401d0b0
 - package: github.com/andreyvit/sem
-  version: 51d9c5c4f5082d89e3ac9d6b1bc187c0cc86fcf5
 - package: github.com/avezila/psem
-  version: 9998d632c317d544fdee1a04c4775db8bc68e3d2
 - package: github.com/carlmjohnson/go-utils
-  version: 3990067f140bd1e9878f1b7801df008629ad1d52
   subpackages:
   - semaphore
 - package: github.com/cognusion/semaphore
-  version: cfa287382ee8184c1db2a176e76cfb2962dcb96e
 - package: github.com/dexterous/semaphore
-  version: c6af5dd4713dbc7d6e2a331aa732d02840863b37
 - package: github.com/dropbox/godropbox
-  version: 404d0d3626ad378759155890ac53ed52b4ad9227
   subpackages:
   - sync2
 - package: github.com/eapache/go-resiliency
-  version: b1fe83b5b03f624450823b751b662259ffc6af70
   subpackages:
   - semaphore
 - package: github.com/jsipprell/go-semaphore
-  version: e3745e5247e61541c301c62ee264e26628c38d1a
 - package: github.com/nicholasjackson/bench
-  version: 7e0e679563e3cdae97ffd630f8dbd51552fe50de
   subpackages:
   - semaphore
 - package: github.com/opencoff/go-lib
-  version: 47e9ad138b47ca535cccba9243d5042ab831256c
   subpackages:
   - sem
 - package: github.com/pivotal-golang/semaphore
-  version: 8d2d0aa1f213493f9ef531ad673a08930c360312
 - package: github.com/riobard/go-semaphore
-  version: 35c92335d9b4fea7860e1a02cb7219e315e11956
 - package: github.com/seanjohnno/semaphore
-  version: dbd495df94b9e0d911bc2a07a7c4c50a13e66629
 - package: github.com/spektroskop/semaphore
-  version: c6667b50d46d2f2e14d94a1627a7f7144195d1b2
 - package: github.com/tarndt/sema
-  version: 16a63f0b21aace6d4585f01f034ca2ebc5453907
 - package: github.com/tj/go-sync
-  version: 8448302468e84b34d4b949808dd5874149be15d1
   subpackages:
   - semaphore
 - package: github.com/tmthrgd/go-sem
-  version: 0214dbf5387720b1ff35c31913423f4d1fbde077
 - package: github.com/toolkits/concurrent
-  version: a4371d70e3e308db0d5f90c2b1f5efaa84add725
   subpackages:
   - semaphore
 - package: github.com/vada-ir/semaphore
-  version: 566ed412777737d9b810f167bdca75fd066d8440

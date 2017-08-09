@@ -1,10 +1,9 @@
+OPEN_BROWSER       =
 SUPPORTED_VERSIONS = 1.5 1.6 1.7 1.8 latest
 
 include makes/env.mk
 include makes/local.mk
 include makes/docker.mk
-
-OPEN_BROWSER =
 
 .PHONY: check-code-quality
 check-code-quality: ARGS = --vendor --deadline=1m ./...

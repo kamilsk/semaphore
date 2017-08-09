@@ -2,6 +2,10 @@ ifndef PACKAGES
 $(error Please include env.mk before)
 endif
 
+OPEN_BROWSER              ?= true
+GO_TEST_COVERAGE_MODE     ?= count
+GO_TEST_COVERAGE_FILENAME ?= coverage.out
+
 
 .PHONY: install-deps
 install-deps:
@@ -29,9 +33,10 @@ vet:
 	$(PACKAGES) | xargs go vet
 
 
-OPEN_BROWSER              ?= true
-GO_TEST_COVERAGE_MODE     ?= count
-GO_TEST_COVERAGE_FILENAME ?= coverage.out
+.PHONY: bench
+bench:
+	$(PACKAGES) | xargs go test -bench=. $(strip $(ARGS))
+
 
 .PHONY: test
 test:
@@ -56,8 +61,10 @@ test-with-coverage-profile:
 	    go test -covermode '${GO_TEST_COVERAGE_MODE}' \
 	            -coverprofile "coverage_$${package##*/}.out" \
 	            $(strip $(ARGS)) "$${package}"; \
-	    sed '1d' "coverage_$${package##*/}.out" >> '${GO_TEST_COVERAGE_FILENAME}'; \
-	    rm "coverage_$${package##*/}.out"; \
+	    if [ -f "coverage_$${package##*/}.out" ]; then \
+	        sed '1d' "coverage_$${package##*/}.out" >> '${GO_TEST_COVERAGE_FILENAME}'; \
+	        rm "coverage_$${package##*/}.out"; \
+	    fi \
 	done
 	if [ '${OPEN_BROWSER}' != '' ]; then go tool cover -html='${GO_TEST_COVERAGE_FILENAME}'; fi
 
@@ -70,15 +77,13 @@ test-example:
 	            -covermode '${GO_TEST_COVERAGE_MODE}' \
 	            -coverprofile "coverage_example_$${package##*/}.out" \
 	            $(strip $(ARGS)) "$${package}"; \
-	    sed '1d' "coverage_example_$${package##*/}.out" >> '${GO_TEST_COVERAGE_FILENAME}'; \
-	    rm "coverage_example_$${package##*/}.out"; \
+	    if [ -f "coverage_$${package##*/}.out" ]; then \
+	        sed '1d' "coverage_example_$${package##*/}.out" >> '${GO_TEST_COVERAGE_FILENAME}'; \
+	        rm "coverage_example_$${package##*/}.out"; \
+	    fi \
 	done
 	if [ '${OPEN_BROWSER}' != '' ]; then go tool cover -html='${GO_TEST_COVERAGE_FILENAME}'; fi
 
-
-.PHONY: bench
-bench:
-	$(PACKAGES) | xargs go test -bench=. $(strip $(ARGS))
 
 .PHONY: docs
 docs: WAITING = 2

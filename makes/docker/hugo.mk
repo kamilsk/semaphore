@@ -2,6 +2,10 @@ HUGO_SITE ?= html
 HUGO_PORT ?= 8080
 HUGO_HOST ?= localhost:$(HUGO_PORT)
 
+.PHONY: hugo-pull
+hubo-pull:
+	docker pull kamilsk/hugo:latest
+
 .PHONY: hugo-init
 hugo-init:
 	mkdir -p site/$(HUGO_SITE)/archetypes \

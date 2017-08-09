@@ -1,5 +1,9 @@
 define docker_base_tpl
 
+.PHONY: docker-pull-$(1)
+docker-pull-$(1):
+	docker pull golang:$(1)
+
 .PHONY: docker-in-$(1)
 docker-in-$(1):
 	docker run --rm -it \
@@ -7,6 +11,7 @@ docker-in-$(1):
 	           -w '/go/src/$${GO_PACKAGE}' \
 	           golang:$(1) \
 	           /bin/sh
+
 
 .PHONY: docker-bench-$(1)
 docker-bench-$(1):
@@ -17,9 +22,6 @@ docker-bench-$(1):
 	           /bin/sh -c '$$(PACKAGES) | xargs go get -d -t && \
 	                       $$(PACKAGES) | xargs go test -bench=. $$(strip $$(ARGS))'
 
-.PHONY: docker-pull-$(1)
-docker-pull-$(1):
-	docker pull golang:$(1)
 
 .PHONY: docker-test-$(1)
 docker-test-$(1):
@@ -51,10 +53,13 @@ docker-test-with-coverage-$(1):
 	                           go test -covermode '$${GO_TEST_COVERAGE_MODE}' \
 	                                   -coverprofile "coverage_$$$${package##*/}.out" \
 	                                   $$(strip $$(ARGS)) "$$$${package}"; \
-	                           sed '1d' "coverage_$$$${package##*/}.out" >> '$$@.out'; \
-	                           rm "coverage_$$$${package##*/}.out"; \
+	                           if [ -f "coverage_$$$${package##*/}.out" ]; then \
+	                               sed '1d' "coverage_$$$${package##*/}.out" >> '$$@.out'; \
+	                               rm "coverage_$$$${package##*/}.out"; \
+	                           fi \
 	                       done'
 	if [ '$${OPEN_BROWSER}' != '' ]; then go tool cover -html='$$@.out'; fi
+
 
 .PHONY: docker-docs-$(1)
 docker-docs-$(1):

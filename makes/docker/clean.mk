@@ -2,8 +2,8 @@ PRUNE_AVAILABLE := $(shell echo "1.13.0\n$(DOCKER_VERSION)" | sort -ct. -k1,1n -
 
 .PHONY: docker-clean
 docker-clean: docker-clean-invalid-common
+docker-clean: docker-clean-invalid-experiments
 docker-clean: docker-clean-invalid-golang
-docker-clean: docker-clean-invalid-custom
 docker-clean: docker-clean-invalid-tools
 docker-clean:
 	if [ '${PRUNE}' != '' ] && [ '${PRUNE_AVAILABLE}' == 'true' ]; then docker system prune $(strip $(PRUNE)); fi
@@ -15,19 +15,19 @@ docker-clean-invalid-common:
 	| awk '{print $$3}' \
 	| xargs docker rmi -f &>/dev/null || true
 
-.PHONY: docker-clean-invalid-golang
-docker-clean-invalid-golang:
+.PHONY: docker-clean-invalid-experiments
+docker-clean-invalid-experiments:
 	docker images --all \
-	| grep '^golang\s\+' \
+	| grep '^kamilsk\/go-experiments\s\+' \
 	| awk '{print $$2 "\t" $$3}' \
 	| grep '^<none>\s\+' \
 	| awk '{print $$2}' \
 	| xargs docker rmi -f &>/dev/null || true
 
-.PHONY: docker-clean-invalid-custom
-docker-clean-invalid-custom:
+.PHONY: docker-clean-invalid-golang
+docker-clean-invalid-golang:
 	docker images --all \
-	| grep '^kamilsk\/golang\s\+' \
+	| grep '^golang\s\+' \
 	| awk '{print $$2 "\t" $$3}' \
 	| grep '^<none>\s\+' \
 	| awk '{print $$2}' \
