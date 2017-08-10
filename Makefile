@@ -6,7 +6,10 @@ include makes/local.mk
 include makes/docker.mk
 
 .PHONY: check-code-quality
-check-code-quality: ARGS = --vendor --deadline=1m ./...
+check-code-quality: ARGS = \
+	--exclude='.*_test\.go:.*error return value not checked.*\(errcheck\)$' \
+	--exclude='duplicate of.*_test.go.*\(dupl\)$' \
+	--vendor --deadline=1m ./...
 check-code-quality: docker-tool-gometalinter
 
 .PHONY: complex-bench
