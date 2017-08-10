@@ -69,7 +69,10 @@ test-cmd:
 	           -v '$(GOPATH)/src/$(GO_PACKAGE)':'/go/src/$(GO_PACKAGE)' \
 	           -w '/go/src/$(GO_PACKAGE)' \
 	           golang:1.7 \
-	           /bin/sh -c 'go install -ldflags "-X 'main.Version=test'" ./cmd/semaphore \
+	           /bin/sh -c 'go install -ldflags "-s -w -X main.version=test \
+	                                                  -X main.commit=$(GIT_REV) \
+	                                                  -X main.date=$(DATE)" \
+	                                  ./cmd/semaphore \
 	                       && semaphore create --capacity=1 --timeout=10s \
 	                       && semaphore add -- curl example.com \
 	                       && semaphore add -- curl example.com \
