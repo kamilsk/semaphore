@@ -84,6 +84,6 @@ func (sem semaphore) Release() error {
 
 func releaser(releaser Releaser) ReleaseFunc {
 	return func() {
-		_ = releaser.Release() // nolint: gas
+		_ = releaser.Release() //nolint: gas
 	}
 }
