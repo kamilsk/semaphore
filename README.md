@@ -10,6 +10,14 @@
 [![GoDoc](https://godoc.org/github.com/kamilsk/semaphore?status.svg)](https://godoc.org/github.com/kamilsk/semaphore)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](LICENSE)
 
+## Code of Conduct
+
+The project team follows [Contributor Covenant v1.4](http://contributor-covenant.org/version/1/4/).
+Instances of abusive, harassing or otherwise unacceptable behavior may be reported by contacting
+the project team at feedback@octolab.org.
+
+---
+
 ## Usage
 
 ### HTTP response' time limitation
