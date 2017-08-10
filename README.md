@@ -118,6 +118,8 @@ Therefore, do not use `go get -u` to update it, use [Glide](https://glide.sh) or
 
 ## Contributing workflow
 
+Read first [Go Code Review Comments](https://github.com/golang/go/wiki/CodeReviewComments).
+
 ### Code quality checking
 
 ```bash
