@@ -68,7 +68,7 @@ research:
 
 .PHONY: test-cmd
 test-cmd:
-	docker run --rm \
+	docker run --rm -it \
 	           -v '$(GOPATH)/src/$(GO_PACKAGE)':'/go/src/$(GO_PACKAGE)' \
 	           -w '/go/src/$(GO_PACKAGE)' \
 	           golang:1.7 \
