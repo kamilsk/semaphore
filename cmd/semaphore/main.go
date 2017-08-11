@@ -1,11 +1,9 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"os/signal"
-	"strings"
 )
 
 /*
@@ -32,9 +30,16 @@ func main() {
 		signal.Stop(c)
 	}()
 
-	<-c
+	commands := Commands{
+		&CreateCommand{BaseCommand: BaseCommand{ID: "create"}},
+		&AddCommand{BaseCommand: BaseCommand{ID: "add"}},
+		&WaitCommand{BaseCommand: BaseCommand{ID: "wait"}},
+	}
+	command, err := commands.Parse(os.Args[1:])
+	if err != nil {
+		fmt.Println(err)
+	}
+	command.Do()
 
-	flag.Parse()
-	fmt.Println(strings.Join(flag.Args(), ", "))
 	fmt.Println(commit, date, version, os.TempDir())
 }

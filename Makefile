@@ -76,7 +76,7 @@ test-cmd:
 	                                                  -X main.commit=$(GIT_REV) \
 	                                                  -X main.date=$(DATE)" \
 	                                  ./cmd/semaphore \
-	                       && semaphore create --capacity=1 --timeout=10s \
+	                       && semaphore create 1 \
 	                       && semaphore add -- curl example.com \
 	                       && semaphore add -- curl example.com \
-	                       && semaphore wait'
+	                       && semaphore wait --notify --timeout=10s'
