@@ -1,6 +1,10 @@
+# glide
 /.glide/
 /vendor/
+glide.lock
 
+# goreleaser
 /dist/
 
+# go test
 *coverage*.out

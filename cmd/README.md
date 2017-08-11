@@ -10,9 +10,9 @@
 ### Concept
 
 ```bash
-$ semaphore create --capacity=4 --timeout=1m
+$ semaphore create 4
 $ semaphore add -- docker build
 $ semaphore add -- vagrant up
 $ semaphore add -- ansible-playbook
-$ semaphore wait
+$ semaphore wait --timeout=1m --notify
 ```

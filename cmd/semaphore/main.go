@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"path/filepath"
 )
 
 /*
@@ -31,7 +32,7 @@ func main() {
 	}()
 
 	commands := Commands{
-		&CreateCommand{BaseCommand: BaseCommand{ID: "create"}},
+		&CreateCommand{BaseCommand: BaseCommand{ID: "create"}, Filename: filepath.Join(os.TempDir(), os.Args[0]+".json")},
 		&AddCommand{BaseCommand: BaseCommand{ID: "add"}},
 		&WaitCommand{BaseCommand: BaseCommand{ID: "wait"}},
 	}
@@ -41,5 +42,5 @@ func main() {
 	}
 	command.Do()
 
-	fmt.Println(commit, date, version, os.TempDir())
+	fmt.Println(commit, date, version)
 }

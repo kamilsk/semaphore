@@ -60,14 +60,15 @@ pull-makes:
 	  && echo 'makes at revision' $$(git rev-parse HEAD) && rm -rf .git)
 
 .PHONY: research
-research: COMMAND = -y research.yml install
-research: ARGS    = --strip-vendor
-research: docker-tool-glide
 research:
+	rm glide.lock || true
+	#make docker-tool-glide COMMAND='-y research.yml install' ARGS='--strip-vendor'
 	rm -rf .glide
 
 .PHONY: test-cmd
 test-cmd:
+	rm glide.lock || true
+	#make docker-tool-glide COMMAND='install' ARGS='--strip-vendor'
 	docker run --rm -it \
 	           -v '$(GOPATH)/src/$(GO_PACKAGE)':'/go/src/$(GO_PACKAGE)' \
 	           -w '/go/src/$(GO_PACKAGE)' \
@@ -79,4 +80,5 @@ test-cmd:
 	                       && semaphore create 1 \
 	                       && semaphore add -- curl example.com \
 	                       && semaphore add -- curl example.com \
+	                       && cat /tmp/semaphore.json && echo "" \
 	                       && semaphore wait --notify --timeout=10s'
