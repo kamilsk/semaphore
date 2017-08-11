@@ -1,9 +1,6 @@
-// +build go1.7
-
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
 	"os"
@@ -28,20 +25,14 @@ output:
 command...
 */
 func main() {
-	ctx, cancel := context.WithCancel(context.Background())
 	c := make(chan os.Signal, 1)
 
 	signal.Notify(c, os.Interrupt)
 	defer func() {
 		signal.Stop(c)
-		cancel()
 	}()
 
-	select {
-	case <-c:
-		cancel()
-	case <-ctx.Done():
-	}
+	<-c
 
 	flag.Parse()
 	fmt.Println(strings.Join(flag.Args(), ", "))
