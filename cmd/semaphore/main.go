@@ -31,10 +31,11 @@ func main() {
 		signal.Stop(c)
 	}()
 
+	filename := filepath.Join(os.TempDir(), os.Args[0]+".json")
 	commands := Commands{
-		&CreateCommand{BaseCommand: BaseCommand{ID: "create"}, Filename: filepath.Join(os.TempDir(), os.Args[0]+".json")},
-		&AddCommand{BaseCommand: BaseCommand{ID: "add"}},
-		&WaitCommand{BaseCommand: BaseCommand{ID: "wait"}},
+		&CreateCommand{BaseCommand: BaseCommand{ID: "create", Filename: filename}},
+		&AddCommand{BaseCommand: BaseCommand{ID: "add", Filename: filename}},
+		&WaitCommand{BaseCommand: BaseCommand{ID: "wait", Filename: filename}},
 	}
 	command, err := commands.Parse(os.Args[1:])
 	if err != nil {

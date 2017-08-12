@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"runtime"
 	"strconv"
@@ -24,7 +25,7 @@ type Commands []Command
 // Parse ...
 func (l Commands) Parse(args []string) (Command, error) {
 	if len(args) == 0 {
-		return nil, errors.New("help call...")
+		return nil, errors.New("need a command: help call...")
 	}
 	command := args[0]
 	for _, c := range l {
@@ -36,14 +37,15 @@ func (l Commands) Parse(args []string) (Command, error) {
 			return c, err
 		}
 	}
-	return nil, errors.New("help call...")
+	return nil, errors.New("command not found: help call...")
 }
 
 // BaseCommand ...
 type BaseCommand struct {
-	ID   string
-	Mode flag.ErrorHandling
-	fs   *flag.FlagSet
+	ID       string
+	Mode     flag.ErrorHandling
+	Filename string
+	fs       *flag.FlagSet
 }
 
 // FlagSet ...
@@ -63,7 +65,6 @@ func (c *BaseCommand) Name() string {
 type CreateCommand struct {
 	BaseCommand
 	Capacity int
-	Filename string
 }
 
 // Do creates file to store a semaphore's context.
@@ -78,7 +79,7 @@ func (c *CreateCommand) Do() error {
 		}
 	}
 
-	file, err := os.OpenFile(c.Filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+	file, err := os.Create(c.Filename)
 	if err != nil {
 		return err
 	}
@@ -93,7 +94,7 @@ func (c *CreateCommand) Do() error {
 	return err
 }
 
-// FlagSet returns configured FlagSet to handle passed arguments.
+// FlagSet returns configured FlagSet to handle CreateCommand arguments.
 func (c *CreateCommand) FlagSet() *flag.FlagSet {
 	if c.fs == nil {
 		c.fs = c.BaseCommand.FlagSet()
@@ -101,19 +102,46 @@ func (c *CreateCommand) FlagSet() *flag.FlagSet {
 	return c.fs
 }
 
-// AddCommand ...
+// AddCommand is a command to add a job into a semaphore's context.
 type AddCommand struct {
 	BaseCommand
 	Command []string
 }
 
-// Do ...
+// Do adds a job into a semaphore's context.
 func (c *AddCommand) Do() error {
-	fmt.Println(c.ID, "run", c.FlagSet().Args(), c.Command)
-	return nil
+	args := c.FlagSet().Args()
+	if len(args) == 0 {
+		return errors.New("need args: help call...")
+	}
+
+	file, err := os.OpenFile(c.Filename, os.O_RDWR, 0644)
+	if err != nil {
+		return err
+	}
+
+	var task Task
+	data, err := ioutil.ReadAll(file)
+	if err := json.Unmarshal(data, &task); err != nil {
+		return err
+	}
+
+	var jobArgs []string
+	if len(args) > 1 {
+		jobArgs = args[1:]
+	}
+	task.AddJob(Job{Name: args[0], Args: jobArgs})
+
+	data, err = json.Marshal(task)
+	if err != nil {
+		return err
+	}
+
+	_, err = file.WriteAt(data, 0)
+	return err
 }
 
-// FlagSet ...
+// FlagSet returns configured FlagSet to handle AddCommand arguments.
 func (c *AddCommand) FlagSet() *flag.FlagSet {
 	if c.fs == nil {
 		c.fs = c.BaseCommand.FlagSet()
