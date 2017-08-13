@@ -5,10 +5,11 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
-	"runtime"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -72,7 +73,7 @@ func (c *CreateCommand) Do() error {
 	var err error
 
 	args := c.FlagSet().Args()
-	capacity := runtime.GOMAXPROCS(0)
+	capacity := c.Capacity
 	if len(args) > 0 {
 		if capacity, err = strconv.Atoi(args[0]); err != nil {
 			return err
@@ -149,20 +150,55 @@ func (c *AddCommand) FlagSet() *flag.FlagSet {
 	return c.fs
 }
 
-// WaitCommand ...
+// WaitCommand is a command to execute a semaphore's task.
 type WaitCommand struct {
 	BaseCommand
-	Notify  bool
-	Timeout time.Duration
+	Stdout, Stderr io.Writer
+	Notify         bool
+	Timeout        time.Duration
 }
 
-// Do ...
+// Do executes a semaphore's task.
 func (c *WaitCommand) Do() error {
-	fmt.Println(c.ID, "run", c.FlagSet().Args(), c.Notify, c.Timeout)
-	return nil
+	var err error
+
+	file, err := os.OpenFile(c.Filename, os.O_RDWR, 0644)
+	if err != nil {
+		return err
+	}
+
+	var task Task
+	data, err := ioutil.ReadAll(file)
+	if err := json.Unmarshal(data, &task); err != nil {
+		return err
+	}
+	if c.Timeout > 0 {
+		task.Timeout = c.Timeout
+	}
+
+	results := task.Run()
+	for result := range results {
+		var (
+			src io.Reader = result.Stdout
+			dst io.Writer = c.Stdout
+		)
+
+		if result.Error != nil {
+			src, dst = result.Stderr, c.Stderr
+		}
+
+		// TODO combine error
+		_, err = fmt.Fprintf(dst, "command %s: `%s %s`\n", result.Job.ID, result.Job.Name, strings.Join(result.Job.Args, " "))
+		_, err = fmt.Fprintf(dst, "     error: %v\n", result.Error)
+		_, err = fmt.Fprint(dst, "    output:\n<<<\n")
+		_, err = io.Copy(dst, src)
+		_, err = dst.Write([]byte("\n>>>\n"))
+	}
+
+	return err
 }
 
-// FlagSet ...
+// FlagSet returns configured FlagSet to handle WaitCommand arguments.
 func (c *WaitCommand) FlagSet() *flag.FlagSet {
 	if c.fs == nil {
 		c.fs = c.BaseCommand.FlagSet()

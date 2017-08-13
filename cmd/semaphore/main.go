@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"runtime"
 )
 
 /*
@@ -33,15 +34,14 @@ func main() {
 
 	filename := filepath.Join(os.TempDir(), os.Args[0]+".json")
 	commands := Commands{
-		&CreateCommand{BaseCommand: BaseCommand{ID: "create", Filename: filename}},
+		&CreateCommand{BaseCommand: BaseCommand{ID: "create", Filename: filename}, Capacity: runtime.GOMAXPROCS(0)},
 		&AddCommand{BaseCommand: BaseCommand{ID: "add", Filename: filename}},
-		&WaitCommand{BaseCommand: BaseCommand{ID: "wait", Filename: filename}},
+		&WaitCommand{BaseCommand: BaseCommand{ID: "wait", Filename: filename}, Stdout: os.Stdout, Stderr: os.Stderr},
 	}
+
 	command, err := commands.Parse(os.Args[1:])
 	if err != nil {
 		fmt.Println(err)
 	}
 	command.Do()
-
-	fmt.Println(commit, date, version)
 }

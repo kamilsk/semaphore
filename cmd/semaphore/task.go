@@ -2,11 +2,11 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"io"
-	"math"
+	"os"
 	"os/exec"
 	"sync"
-	"sync/atomic"
 	"time"
 
 	"github.com/kamilsk/semaphore"
@@ -17,52 +17,59 @@ type Task struct {
 	Capacity int
 	Timeout  time.Duration
 	Jobs     []Job
-
-	Results []Result `json:"-"`
 }
 
 // AddJob adds a job to the task.
 func (t *Task) AddJob(job Job) {
+	job.ID = fmt.Sprintf("#%d", len(t.Jobs)+1)
 	t.Jobs = append(t.Jobs, job)
 }
 
 // Run executes all jobs.
-func (t *Task) Run() {
-	wg := &sync.WaitGroup{}
-	sem := semaphore.New(t.Capacity)
-	timeout := semaphore.WithTimeout(t.Timeout)
+func (t *Task) Run() <-chan Result {
+	results := make(chan Result, len(t.Jobs))
 
-	t.Results = make([]Result, len(t.Jobs))
+	go func() {
+		defer func() { close(results) }()
 
-	var index int32 = math.MaxInt32
-	for i := range t.Jobs {
-		wg.Add(1)
-		go func() {
-			result := Result{
-				Job:    t.Jobs[i],
-				Stdout: bytes.NewBuffer(make([]byte, 1024)),
-				Stderr: bytes.NewBuffer(make([]byte, 1024)),
-			}
+		wg := &sync.WaitGroup{}
+		sem := semaphore.New(t.Capacity)
+		deadline := semaphore.Multiplex(
+			semaphore.WithTimeout(t.Timeout),
+			semaphore.WithSignal(os.Interrupt),
+		)
 
-			defer func() {
-				t.Results[atomic.AddInt32(&index, 1)] = result
-				wg.Done()
-			}()
+		for i := range t.Jobs {
+			wg.Add(1)
+			go func(index int) {
+				result := Result{
+					Job:    t.Jobs[index],
+					Stdout: bytes.NewBuffer(make([]byte, 1024)),
+					Stderr: bytes.NewBuffer(make([]byte, 1024)),
+				}
 
-			releaser, err := sem.Acquire(timeout)
-			if err != nil {
-				result.Error = err
-				return
-			}
-			defer releaser()
+				defer func() {
+					results <- result
+					wg.Done()
+				}()
 
-			if err := result.Fetch(); err != nil {
-				result.Error = err
-				return
-			}
-		}()
-	}
-	wg.Wait()
+				releaser, err := sem.Acquire(deadline)
+				if err != nil {
+					result.Error = err
+					return
+				}
+				defer releaser()
+
+				if err := result.Fetch(); err != nil {
+					result.Error = err
+					return
+				}
+			}(i)
+		}
+		wg.Wait()
+	}()
+
+	return results
 }
 
 // Job represents command for execution.
