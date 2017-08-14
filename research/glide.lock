@@ -1,0 +1,58 @@
+hash: f2b3b302d89911f4bc65751a7bee773d06fd2bd1924e9777f06e38f3d1f4af56
+updated: 2017-08-14T16:46:15.384128578Z
+imports:
+- name: github.com/abiosoft/semaphore
+  version: 9d5d6764eda2187f2a7979395cf2d564f401d0b0
+- name: github.com/andreyvit/sem
+  version: 51d9c5c4f5082d89e3ac9d6b1bc187c0cc86fcf5
+- name: github.com/avezila/psem
+  version: 9998d632c317d544fdee1a04c4775db8bc68e3d2
+- name: github.com/carlmjohnson/go-utils
+  version: 3990067f140bd1e9878f1b7801df008629ad1d52
+  subpackages:
+  - semaphore
+- name: github.com/cognusion/semaphore
+  version: cfa287382ee8184c1db2a176e76cfb2962dcb96e
+- name: github.com/dexterous/semaphore
+  version: c6af5dd4713dbc7d6e2a331aa732d02840863b37
+- name: github.com/dropbox/godropbox
+  version: 908470ffe6093af1a8a15b7d107972a20ccdb9ec
+  subpackages:
+  - sync2
+- name: github.com/eapache/go-resiliency
+  version: b1fe83b5b03f624450823b751b662259ffc6af70
+  subpackages:
+  - semaphore
+- name: github.com/jsipprell/go-semaphore
+  version: e3745e5247e61541c301c62ee264e26628c38d1a
+- name: github.com/nicholasjackson/bench
+  version: 7e0e679563e3cdae97ffd630f8dbd51552fe50de
+  subpackages:
+  - semaphore
+- name: github.com/opencoff/go-lib
+  version: ea60bcbac7c6f17b61bc45de8e269fe39a38730f
+  subpackages:
+  - sem
+- name: github.com/pivotal-golang/semaphore
+  version: 8d2d0aa1f213493f9ef531ad673a08930c360312
+- name: github.com/riobard/go-semaphore
+  version: 35c92335d9b4fea7860e1a02cb7219e315e11956
+- name: github.com/seanjohnno/semaphore
+  version: dbd495df94b9e0d911bc2a07a7c4c50a13e66629
+- name: github.com/spektroskop/semaphore
+  version: c6667b50d46d2f2e14d94a1627a7f7144195d1b2
+- name: github.com/tarndt/sema
+  version: 16a63f0b21aace6d4585f01f034ca2ebc5453907
+- name: github.com/tj/go-sync
+  version: 8448302468e84b34d4b949808dd5874149be15d1
+  subpackages:
+  - semaphore
+- name: github.com/tmthrgd/go-sem
+  version: 0214dbf5387720b1ff35c31913423f4d1fbde077
+- name: github.com/toolkits/concurrent
+  version: a4371d70e3e308db0d5f90c2b1f5efaa84add725
+  subpackages:
+  - semaphore
+- name: github.com/vada-ir/semaphore
+  version: 566ed412777737d9b810f167bdca75fd066d8440
+testImports: []

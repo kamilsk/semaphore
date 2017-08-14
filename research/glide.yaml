@@ -1,36 +1,36 @@
 package: github.com/kamilsk/semaphore/research
 import:
-- name: github.com/abiosoft/semaphore
-- name: github.com/andreyvit/sem
-- name: github.com/avezila/psem
-- name: github.com/carlmjohnson/go-utils
+- package: github.com/abiosoft/semaphore
+- package: github.com/andreyvit/sem
+- package: github.com/avezila/psem
+- package: github.com/carlmjohnson/go-utils
   subpackages:
   - semaphore
-- name: github.com/cognusion/semaphore
-- name: github.com/dexterous/semaphore
-- name: github.com/dropbox/godropbox
+- package: github.com/cognusion/semaphore
+- package: github.com/dexterous/semaphore
+- package: github.com/dropbox/godropbox
   subpackages:
   - sync2
-- name: github.com/eapache/go-resiliency
+- package: github.com/eapache/go-resiliency
   subpackages:
   - semaphore
-- name: github.com/jsipprell/go-semaphore
-- name: github.com/nicholasjackson/bench
+- package: github.com/jsipprell/go-semaphore
+- package: github.com/nicholasjackson/bench
   subpackages:
   - semaphore
-- name: github.com/opencoff/go-lib
+- package: github.com/opencoff/go-lib
   subpackages:
   - sem
-- name: github.com/pivotal-golang/semaphore
-- name: github.com/riobard/go-semaphore
-- name: github.com/seanjohnno/semaphore
-- name: github.com/spektroskop/semaphore
-- name: github.com/tarndt/sema
-- name: github.com/tj/go-sync
+- package: github.com/pivotal-golang/semaphore
+- package: github.com/riobard/go-semaphore
+- package: github.com/seanjohnno/semaphore
+- package: github.com/spektroskop/semaphore
+- package: github.com/tarndt/sema
+- package: github.com/tj/go-sync
   subpackages:
   - semaphore
-- name: github.com/tmthrgd/go-sem
-- name: github.com/toolkits/concurrent
+- package: github.com/tmthrgd/go-sem
+- package: github.com/toolkits/concurrent
   subpackages:
   - semaphore
-- name: github.com/vada-ir/semaphore
+- package: github.com/vada-ir/semaphore
