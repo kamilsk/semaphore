@@ -1,34 +1,34 @@
 language: go
 
 go:
-- 1.5
-- 1.6
-- 1.7
-- 1.8
-- tip
+- 1.5.x
+- 1.6.x
+- 1.7.x
+- 1.8.x
+- 1.x
+- master
 
-sudo: required
-
-services:
-  - docker
+sudo: false
 
 before_install:
+- wget https://github.com/Masterminds/glide/releases/download/v0.12.3/glide-v0.12.3-linux-amd64.tar.gz
+- tar -vxz -C $GOPATH/bin --strip=1 -f glide-v0.12.3-linux-amd64.tar.gz
+
 - go get github.com/mattn/goveralls
 - export GO_TEST_COVERAGE_FILENAME='coverage.out'
 
 install:
-- make deps
-- make build
+- glide install -v
 
 script:
-- make test-with-coverage-profile ARGS='-timeout=1s' OPEN_BROWSER=
+- make test-with-coverage-profile ARGS='-timeout=2s'
 
 after_success:
 - goveralls -service=travis-ci -coverprofile="${GO_TEST_COVERAGE_FILENAME}"
 
 matrix:
   allow_failures:
-  - go: tip
+  - go: master
   fast_finish: true
 
 notifications:

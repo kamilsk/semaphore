@@ -21,7 +21,7 @@ complex-bench: docker-bench-1.8
 complex-bench: docker-bench-latest
 
 .PHONY: complex-tests
-complex-tests: ARGS = -timeout=1s
+complex-tests: ARGS = -timeout=2s
 complex-tests: docker-test-1.5
 complex-tests: docker-test-1.6
 complex-tests: docker-test-1.7
@@ -29,17 +29,12 @@ complex-tests: docker-test-1.8
 complex-tests: docker-test-latest
 
 .PHONY: complex-tests-with-coverage
-complex-tests-with-coverage: ARGS = -timeout=1s
+complex-tests-with-coverage: ARGS = -timeout=2s
 complex-tests-with-coverage: docker-test-with-coverage-1.5
 complex-tests-with-coverage: docker-test-with-coverage-1.6
 complex-tests-with-coverage: docker-test-with-coverage-1.7
 complex-tests-with-coverage: docker-test-with-coverage-1.8
 complex-tests-with-coverage: docker-test-with-coverage-latest
-
-.PHONY: deps
-deps: COMMAND = 'install'
-deps: ARGS    = '-v'
-deps: docker-tool-glide
 
 .PHONY: docker-pull
 docker-pull: docker-pull-1.5
@@ -73,10 +68,14 @@ research:
 	           glide install -v
 	rm -rf research/.glide
 
-.PHONY: test-cmd
-test-cmd:
-	rm glide.lock || true
-	#make docker-tool-glide COMMAND='install' ARGS='--strip-vendor'
+.PHONY: cmd-deps
+cmd-deps: COMMAND = 'install'
+cmd-deps: ARGS    = '-v'
+cmd-deps: docker-tool-glide
+
+.PHONY: cmd-test
+cmd-test: cmd-deps
+cmd-test:
 	docker run --rm -it \
 	           -v '$(GOPATH)/src/$(GO_PACKAGE)':'/go/src/$(GO_PACKAGE)' \
 	           -w '/go/src/$(GO_PACKAGE)' \
