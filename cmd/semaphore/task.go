@@ -88,8 +88,8 @@ func (j Job) Run(stdout, stderr io.Writer) error {
 
 // Result holds the job execution result.
 type Result struct {
-	Error          error
 	Job            Job
+	Error          error
 	Stdout, Stderr *bytes.Buffer
 }
 

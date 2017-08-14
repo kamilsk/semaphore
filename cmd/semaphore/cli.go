@@ -43,6 +43,7 @@ func (l Commands) Parse(args []string) (Command, error) {
 
 // BaseCommand ...
 type BaseCommand struct {
+	Bin      string
 	ID       string
 	Mode     flag.ErrorHandling
 	Filename string
@@ -188,12 +189,15 @@ func (c *WaitCommand) Do() error {
 		}
 
 		// TODO combine error
-		_, err = fmt.Fprintf(dst, "command %s: `%s %s`\n", result.Job.ID, result.Job.Name, strings.Join(result.Job.Args, " "))
+		_, err = fmt.Fprintf(dst, "command %s: `%s %s`\n",
+			result.Job.ID, result.Job.Name, strings.Join(result.Job.Args, " "))
 		_, err = fmt.Fprintf(dst, "     error: %v\n", result.Error)
 		_, err = fmt.Fprint(dst, "    output:\n<<<\n")
 		_, err = io.Copy(dst, src)
 		_, err = dst.Write([]byte("\n>>>\n"))
 	}
+	_, err = fmt.Fprintf(c.Stdout, "%s version %s (commit: %s, build date: %s)\n",
+		c.Bin, version, commit, strings.Replace(date, "_", " ", 1))
 
 	return err
 }

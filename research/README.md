@@ -12,8 +12,8 @@
 
 ## Another implementations
 
-All examined packages are presented in [research.yml](research.yml).
-You can install them by run `glide -y research.yml install` (local) or `make research` (docker).
+All examined packages are presented in [glide.yaml](glide.yaml).
+You can install them by run `glide install` (local) or `make research` (docker).
 
 ### Similar
 

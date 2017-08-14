@@ -20,6 +20,18 @@ the project team at feedback@octolab.org.
 
 ## Usage
 
+### Console tool for command execution in parallel
+
+```bash
+$ semaphore create 2
+$ semaphore add -- docker build
+$ semaphore add -- vagrant up
+$ semaphore add -- ansible-playbook
+$ semaphore wait --notify --timeout=1m
+```
+
+See more details [here](cmd#semaphore).
+
 ### HTTP response' time limitation
 
 This example shows how to follow SLA.
@@ -84,18 +96,6 @@ http.Handle("/do-limited", limiter(1000, time.Minute, http.HandlerFunc(func(rw h
 })))
 ```
 
-### CLI tool for command execution in parallel
-
-```bash
-$ semaphore create --capacity=4 --timeout=1m
-$ semaphore add -- docker build
-$ semaphore add -- vagrant up
-$ semaphore add -- ansible-playbook
-$ semaphore wait
-```
-
-See more details [here](cmd#semaphore).
-
 ## Installation
 
 ```bash
@@ -153,4 +153,4 @@ $ make complex-bench
 ## Notes
 
 - tested on Go 1.5, 1.6, 1.7 and 1.8
-- [research](RESEARCH.md)
+- [research](research)

@@ -1,7 +1,6 @@
 # glide
-/.glide/
-/vendor/
-glide.lock
+.glide
+vendor
 
 # goreleaser
 /dist/

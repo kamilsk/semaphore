@@ -1,2 +1,4 @@
 package: github.com/kamilsk/semaphore
-import: ~
+import:
+- name: github.com/pkg/errors
+  version: ^0.8.0

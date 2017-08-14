@@ -61,9 +61,12 @@ pull-makes:
 
 .PHONY: research
 research:
-	rm glide.lock || true
-	#make docker-tool-glide COMMAND='-y research.yml install' ARGS='--strip-vendor'
-	rm -rf .glide
+	docker run --rm \
+	           -v '${GOPATH}/src/${GO_PACKAGE}':'/go/src/${GO_PACKAGE}' \
+	           -w '/go/src/${GO_PACKAGE}/research' \
+	           kamilsk/go-tools:latest \
+	           glide install --strip-vendor \
+	rm -rf ./research/.glide || true
 
 .PHONY: test-cmd
 test-cmd:
