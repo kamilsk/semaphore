@@ -7,10 +7,12 @@ go:
 - 1.8
 - tip
 
-sudo: false
+sudo: required
+
+services:
+  - docker
 
 before_install:
-- curl https://glide.sh/get | sh
 - go get github.com/mattn/goveralls
 - export GO_TEST_COVERAGE_FILENAME='coverage.out'
 

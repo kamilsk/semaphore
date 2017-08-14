@@ -37,8 +37,9 @@ complex-tests-with-coverage: docker-test-with-coverage-1.8
 complex-tests-with-coverage: docker-test-with-coverage-latest
 
 .PHONY: deps
-deps:
-	glide install
+deps: COMMAND = 'install'
+deps: ARGS    = '-v'
+deps: docker-tool-glide
 
 .PHONY: docker-pull
 docker-pull: docker-pull-1.5
@@ -69,7 +70,7 @@ research:
 	           -v '${GOPATH}/src/${GO_PACKAGE}':'/go/src/${GO_PACKAGE}' \
 	           -w '/go/src/${GO_PACKAGE}/research' \
 	           kamilsk/go-tools:latest \
-	           glide install --strip-vendor
+	           glide install -v
 	rm -rf research/.glide
 
 .PHONY: test-cmd
