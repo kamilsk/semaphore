@@ -1,0 +1,8 @@
+hash: d45055e14f76b86c5ed2d3ce3c6a967815b480ef5136ad7433b9328da7658399
+updated: 2017-08-14T19:09:06.753582032Z
+imports:
+- name: github.com/cheggaaa/pb
+  version: b449a36fa2c295b9e36e75b0a0a369d14c5ff15d
+- name: github.com/pkg/errors
+  version: 645ef00459ed84a119197bfb8d8205042c6df63d
+testImports: []

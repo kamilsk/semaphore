@@ -18,7 +18,7 @@ before_install:
 - export GO_TEST_COVERAGE_FILENAME='coverage.out'
 
 install:
-- glide install -v
+- (cd cmd/semaphore && glide install -v)
 
 script:
 - make test-with-coverage-profile ARGS='-timeout=2s'
