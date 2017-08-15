@@ -19,7 +19,7 @@ type Task struct {
 	Jobs     []Job
 }
 
-// AddJob adds a job to the task.
+// AddJob sets ID to a job and adds it to the task.
 func (t *Task) AddJob(job Job) {
 	job.ID = fmt.Sprintf("#%d", len(t.Jobs)+1)
 	t.Jobs = append(t.Jobs, job)
@@ -32,18 +32,18 @@ func (t *Task) Run() <-chan Result {
 	go func() {
 		defer func() { close(results) }()
 
-		wg := &sync.WaitGroup{}
 		sem := semaphore.New(t.Capacity)
 		deadline := semaphore.Multiplex(
 			semaphore.WithTimeout(t.Timeout),
 			semaphore.WithSignal(os.Interrupt),
 		)
 
+		wg := &sync.WaitGroup{}
 		for i := range t.Jobs {
 			wg.Add(1)
-			go func(index int) {
+			go func(job Job) {
 				result := Result{
-					Job:    t.Jobs[index],
+					Job:    job,
 					Stdout: bytes.NewBuffer(make([]byte, 1024)),
 					Stderr: bytes.NewBuffer(make([]byte, 1024)),
 				}
@@ -64,7 +64,7 @@ func (t *Task) Run() <-chan Result {
 					result.Error = err
 					return
 				}
-			}(i)
+			}(t.Jobs[i])
 		}
 		wg.Wait()
 	}()
@@ -72,14 +72,14 @@ func (t *Task) Run() <-chan Result {
 	return results
 }
 
-// Job represents command for execution.
+// Job represents a command for execution.
 type Job struct {
 	ID   string
 	Name string
 	Args []string
 }
 
-// Run executes command.
+// Run prepares command and executes it.
 func (j Job) Run(stdout, stderr io.Writer) error {
 	c := exec.Command(j.Name, j.Args...)
 	c.Stdout, c.Stderr = stdout, stderr

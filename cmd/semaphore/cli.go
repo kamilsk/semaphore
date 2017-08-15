@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -30,7 +31,7 @@ func (l Commands) Parse(args []string) (Command, error) {
 	}
 	command := args[0]
 	for _, c := range l {
-		if command == c.Name() {
+		if c.Name() == command {
 			var err error
 			if len(args) > 1 {
 				err = c.FlagSet().Parse(args[1:])
@@ -41,31 +42,30 @@ func (l Commands) Parse(args []string) (Command, error) {
 	return nil, errors.New("command not found: help call...")
 }
 
+// ~~~
+
 // BaseCommand ...
 type BaseCommand struct {
-	Bin      string
-	ID       string
+	BinName  string
+	FileName string
 	Mode     flag.ErrorHandling
-	Filename string
-	fs       *flag.FlagSet
+
+	fs *flag.FlagSet
 }
 
 // FlagSet ...
-func (c *BaseCommand) FlagSet() *flag.FlagSet {
-	if c.fs == nil {
-		c.fs = flag.NewFlagSet(c.ID, c.Mode)
-	}
-	return c.fs
+func (c *BaseCommand) FlagSet(name string) *flag.FlagSet {
+	fs := flag.NewFlagSet(name, c.Mode)
+	fs.StringVar(&c.FileName, "filename", filepath.Join(os.TempDir(), c.BinName+".json"), "")
+	return fs
 }
 
-// Name ...
-func (c *BaseCommand) Name() string {
-	return c.ID
-}
+// ~~~
 
 // CreateCommand is a command to store a semaphore's context.
 type CreateCommand struct {
-	BaseCommand
+	*BaseCommand
+	CmdName  string
 	Capacity int
 }
 
@@ -81,7 +81,7 @@ func (c *CreateCommand) Do() error {
 		}
 	}
 
-	file, err := os.Create(c.Filename)
+	file, err := os.Create(c.BaseCommand.FileName)
 	if err != nil {
 		return err
 	}
@@ -99,14 +99,20 @@ func (c *CreateCommand) Do() error {
 // FlagSet returns configured FlagSet to handle CreateCommand arguments.
 func (c *CreateCommand) FlagSet() *flag.FlagSet {
 	if c.fs == nil {
-		c.fs = c.BaseCommand.FlagSet()
+		c.fs = c.BaseCommand.FlagSet(c.CmdName)
 	}
 	return c.fs
 }
 
+// Name ...
+func (c *CreateCommand) Name() string {
+	return c.CmdName
+}
+
 // AddCommand is a command to add a job into a semaphore's context.
 type AddCommand struct {
-	BaseCommand
+	*BaseCommand
+	CmdName string
 	Command []string
 }
 
@@ -117,7 +123,7 @@ func (c *AddCommand) Do() error {
 		return errors.New("need args: help call...")
 	}
 
-	file, err := os.OpenFile(c.Filename, os.O_RDWR, 0644)
+	file, err := os.OpenFile(c.BaseCommand.FileName, os.O_RDWR, 0644)
 	if err != nil {
 		return err
 	}
@@ -146,14 +152,20 @@ func (c *AddCommand) Do() error {
 // FlagSet returns configured FlagSet to handle AddCommand arguments.
 func (c *AddCommand) FlagSet() *flag.FlagSet {
 	if c.fs == nil {
-		c.fs = c.BaseCommand.FlagSet()
+		c.fs = c.BaseCommand.FlagSet(c.CmdName)
 	}
 	return c.fs
 }
 
+// Name ...
+func (c *AddCommand) Name() string {
+	return c.CmdName
+}
+
 // WaitCommand is a command to execute a semaphore's task.
 type WaitCommand struct {
-	BaseCommand
+	*BaseCommand
+	CmdName        string
 	Stdout, Stderr io.Writer
 	Notify         bool
 	Timeout        time.Duration
@@ -163,7 +175,7 @@ type WaitCommand struct {
 func (c *WaitCommand) Do() error {
 	var err error
 
-	file, err := os.OpenFile(c.Filename, os.O_RDWR, 0644)
+	file, err := os.OpenFile(c.BaseCommand.FileName, os.O_RDWR, 0644)
 	if err != nil {
 		return err
 	}
@@ -197,7 +209,7 @@ func (c *WaitCommand) Do() error {
 		_, err = dst.Write([]byte("\n>>>\n"))
 	}
 	_, err = fmt.Fprintf(c.Stdout, "%s version %s (commit: %s, build date: %s)\n",
-		c.Bin, version, commit, strings.Replace(date, "_", " ", 1))
+		c.BinName, version, commit, strings.Replace(date, "_", " ", 1))
 
 	return err
 }
@@ -205,9 +217,14 @@ func (c *WaitCommand) Do() error {
 // FlagSet returns configured FlagSet to handle WaitCommand arguments.
 func (c *WaitCommand) FlagSet() *flag.FlagSet {
 	if c.fs == nil {
-		c.fs = c.BaseCommand.FlagSet()
+		c.fs = c.BaseCommand.FlagSet(c.CmdName)
 		c.fs.BoolVar(&c.Notify, "notify", false, "")
 		c.fs.DurationVar(&c.Timeout, "timeout", time.Minute, "")
 	}
 	return c.fs
+}
+
+// Name ...
+func (c *WaitCommand) Name() string {
+	return c.CmdName
 }

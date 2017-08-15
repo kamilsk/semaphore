@@ -1,4 +1,6 @@
-# Research
+> # semaphore/research
+>
+> Examined articles and packages.
 
 ## Articles
 
@@ -13,7 +15,7 @@
 ## Another implementations
 
 All examined packages are presented in [glide.yaml](glide.yaml).
-You can install them by run `glide install` (local) or `make research` (docker).
+You can install them by run `glide install -v` (local) or `make research` (docker).
 
 ### Similar
 
