@@ -6,10 +6,12 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/kamilsk/semaphore"
+	"github.com/pkg/errors"
 )
 
 // Task holds required jobs for execution.
@@ -53,12 +55,12 @@ func (t *Task) Run() <-chan Result {
 					wg.Done()
 				}()
 
-				releaser, err := sem.Acquire(deadline)
+				release, err := sem.Acquire(deadline)
 				if err != nil {
-					result.Error = err
+					result.Error = errors.WithMessage(err, "semaphore")
 					return
 				}
-				defer releaser()
+				defer release()
 
 				if err := result.Fetch(); err != nil {
 					result.Error = err
@@ -79,11 +81,32 @@ type Job struct {
 	Args []string
 }
 
+// Format implements Formatter interface.
+func (j Job) Format(s fmt.State, verb rune) {
+	switch verb {
+	case 'v':
+		if s.Flag('+') {
+			fmt.Fprintf(s, "%s %+v", j.String(), j.Args)
+			return
+		}
+		fallthrough
+	case 's':
+		io.WriteString(s, j.String())
+	case 'q':
+		fmt.Fprintf(s, "`%s`", strings.Join(append([]string{j.String()}, j.Args...), " "))
+	}
+}
+
+// String implements Stringer interface.
+func (j Job) String() string {
+	return j.Name + "#" + j.ID
+}
+
 // Run prepares command and executes it.
 func (j Job) Run(stdout, stderr io.Writer) error {
 	c := exec.Command(j.Name, j.Args...)
 	c.Stdout, c.Stderr = stdout, stderr
-	return c.Run()
+	return errors.WithMessage(c.Run(), fmt.Sprintf("an error occurred while executing %q", j))
 }
 
 // Result holds the job execution result.
@@ -95,5 +118,5 @@ type Result struct {
 
 // Fetch executes the job and fetches its result into buffers.
 func (r Result) Fetch() error {
-	return r.Job.Run(r.Stdout, r.Stderr)
+	return errors.WithMessage(r.Job.Run(r.Stdout, r.Stderr), fmt.Sprintf("the job %s ended with error", r.Job))
 }
