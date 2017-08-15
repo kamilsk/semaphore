@@ -19,6 +19,7 @@ type Command interface {
 	Do() error
 	FlagSet() *flag.FlagSet
 	Name() string
+	Desc() string
 }
 
 // Commands ...
@@ -51,6 +52,12 @@ type BaseCommand struct {
 	Mode     flag.ErrorHandling
 
 	fs *flag.FlagSet
+}
+
+// Copy ...
+func (c *BaseCommand) Copy() *BaseCommand {
+	n := *c
+	return &n
 }
 
 // FlagSet ...
@@ -109,6 +116,11 @@ func (c *CreateCommand) Name() string {
 	return c.CmdName
 }
 
+// Desc ...
+func (c *CreateCommand) Desc() string {
+	return "desc..."
+}
+
 // AddCommand is a command to add a job into a semaphore's context.
 type AddCommand struct {
 	*BaseCommand
@@ -162,6 +174,11 @@ func (c *AddCommand) Name() string {
 	return c.CmdName
 }
 
+// Desc ...
+func (c *AddCommand) Desc() string {
+	return "desc..."
+}
+
 // WaitCommand is a command to execute a semaphore's task.
 type WaitCommand struct {
 	*BaseCommand
@@ -200,16 +217,12 @@ func (c *WaitCommand) Do() error {
 			src, dst = result.Stderr, c.Stderr
 		}
 
-		// TODO combine error
-		_, err = fmt.Fprintf(dst, "command %s: `%s %s`\n",
-			result.Job.ID, result.Job.Name, strings.Join(result.Job.Args, " "))
-		_, err = fmt.Fprintf(dst, "     error: %v\n", result.Error)
-		_, err = fmt.Fprint(dst, "    output:\n<<<\n")
-		_, err = io.Copy(dst, src)
-		_, err = dst.Write([]byte("\n>>>\n"))
+		fmt.Fprintf(dst, "command %s: `%s %s`\n", result.Job.ID, result.Job.Name, strings.Join(result.Job.Args, " "))
+		fmt.Fprintf(dst, "     error: %v\n", result.Error)
+		fmt.Fprint(dst, "    output:\n<<<\n")
+		io.Copy(dst, src)
+		dst.Write([]byte("\n>>>\n"))
 	}
-	_, err = fmt.Fprintf(c.Stdout, "%s version %s (commit: %s, build date: %s)\n",
-		c.BinName, version, commit, strings.Replace(date, "_", " ", 1))
 
 	return err
 }
@@ -226,5 +239,57 @@ func (c *WaitCommand) FlagSet() *flag.FlagSet {
 
 // Name ...
 func (c *WaitCommand) Name() string {
+	return c.CmdName
+}
+
+// Desc ...
+func (c *WaitCommand) Desc() string {
+	return "desc..."
+}
+
+// HelpCommand ...
+type HelpCommand struct {
+	*BaseCommand
+	CmdName               string
+	Commit, Date, Version string
+	Commands              []Command
+	Output                io.Writer
+}
+
+// Do ...
+func (c *HelpCommand) Do() error {
+	fmt.Fprintf(c.Output, `
+Usage: %s COMMAND
+
+Semaphore provides functionality to execute terminal commands in parallel.
+
+`, c.BinName)
+
+	if len(c.Commands) > 0 {
+		fmt.Fprintln(c.Output, "Commands:")
+		for _, cmd := range c.Commands {
+			fmt.Fprintf(c.Output, "\n%s\t%s\n", cmd.Name(), cmd.Desc())
+			fs := cmd.FlagSet()
+			fs.SetOutput(c.Output)
+			fs.PrintDefaults()
+			fmt.Fprintln(c.Output)
+		}
+	}
+
+	fmt.Fprintf(c.Output, "Version %s (commit: %s, build date: %s)\n", c.Version, c.Commit, c.Date)
+
+	return nil
+}
+
+// FlagSet ...
+func (c *HelpCommand) FlagSet() *flag.FlagSet {
+	if c.fs == nil {
+		c.fs = c.BaseCommand.FlagSet(c.CmdName)
+	}
+	return c.fs
+}
+
+// Name ...
+func (c *HelpCommand) Name() string {
 	return c.CmdName
 }

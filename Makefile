@@ -51,23 +51,43 @@ cmd-deps:
 	           glide install -v
 	rm -rf cmd/semaphore/.glide
 
-.PHONY: cmd-test
-cmd-test: cmd-deps
-cmd-test:
+.PHONY: cmd-test-1
+cmd-test-1: cmd-deps
+cmd-test-1:
 	docker run --rm -it \
 	           -v '$(GOPATH)/src/$(GO_PACKAGE)':'/go/src/$(GO_PACKAGE)' \
 	           -w '/go/src/$(GO_PACKAGE)' \
-	           golang:1.7 \
-	           /bin/sh -c 'go install -ldflags "-s -w -X main.version=test \
-	                                                  -X main.commit=$(GIT_REV) \
-	                                                  -X main.date=$(DATE)" \
-	                                  ./cmd/semaphore \
+	           golang:1.8 \
+	           /bin/sh -c 'go install ./cmd/semaphore \
 	                       && semaphore create 1 \
 	                       && semaphore add -- curl example.com \
 	                       && semaphore add -- curl example.com \
 	                       && cat /tmp/semaphore.json && echo "" \
 	                       && semaphore wait --notify --timeout=10s'
 
+.PHONY: cmd-test-2
+cmd-test-2: cmd-deps
+cmd-test-2:
+	docker run --rm -it \
+	           -v '$(GOPATH)/src/$(GO_PACKAGE)':'/go/src/$(GO_PACKAGE)' \
+	           -w '/go/src/$(GO_PACKAGE)' \
+	           golang:1.8 \
+	           /bin/sh -c 'go install ./cmd/semaphore \
+	                       && semaphore create --filename=/tmp/test.json 1 \
+	                       && semaphore add --filename=/tmp/test.json -- curl example.com \
+	                       && semaphore add -- curl example.com \
+	                       && cat /tmp/test.json && echo "" \
+	                       && semaphore wait --notify --timeout=10s --filename=/tmp/test.json'
+
+.PHONY: cmd-test-3
+cmd-test-3: cmd-deps
+cmd-test-3:
+	docker run --rm -it \
+	           -v '$(GOPATH)/src/$(GO_PACKAGE)':'/go/src/$(GO_PACKAGE)' \
+	           -w '/go/src/$(GO_PACKAGE)' \
+	           golang:1.8 \
+	           /bin/sh -c 'go install ./cmd/semaphore \
+	                       && semaphore --help'
 
 
 .PHONY: docker-pull
