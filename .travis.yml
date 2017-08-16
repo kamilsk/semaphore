@@ -8,6 +8,11 @@ go:
 - 1.x
 - master
 
+matrix:
+  allow_failures:
+  - go: master
+  fast_finish: true
+
 sudo: false
 
 before_install:
@@ -21,15 +26,10 @@ install:
 - (cd cmd/semaphore && glide install -v)
 
 script:
-- make test-with-coverage-profile ARGS='-timeout=2s'
+- make test-with-coverage-profile ARGS='-timeout=1s'
 
 after_success:
 - goveralls -service=travis-ci -coverprofile="${GO_TEST_COVERAGE_FILENAME}"
-
-matrix:
-  allow_failures:
-  - go: master
-  fast_finish: true
 
 notifications:
   slack: octolab:1eMS7IqOArBipiu31jYVd0cN
@@ -38,4 +38,4 @@ notifications:
     - https://webhooks.gitter.im/e/cb09d427ddadc2d05f64
     on_success: change
     on_failure: always
-    on_start: never
+    on_start:   never

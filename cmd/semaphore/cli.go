@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -12,58 +11,60 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
-// Command ...
+var (
+	NotProvided = fmt.Errorf("command not provided")
+	NotFound    = fmt.Errorf("command not found")
+)
+
+// Command defines behavior to interact with user input.
 type Command interface {
-	Do() error
 	FlagSet() *flag.FlagSet
 	Name() string
 	Desc() string
+	Do() error
 }
 
-// Commands ...
+// Commands is a container which provides the method to search an appropriate command.
 type Commands []Command
 
-// Parse ...
+// Parse parses the arguments and searches an appropriate command for them.
 func (l Commands) Parse(args []string) (Command, error) {
 	if len(args) == 0 {
-		return nil, errors.New("need a command: help call...")
+		return nil, NotProvided
 	}
-	command := args[0]
-	for _, c := range l {
-		if c.Name() == command {
-			var err error
-			if len(args) > 1 {
-				err = c.FlagSet().Parse(args[1:])
-			}
-			return c, err
+	cmdName := args[0]
+	for _, cmd := range l {
+		if cmd.Name() == cmdName {
+			return cmd, errors.WithMessage(cmd.FlagSet().Parse(args[1:]),
+				fmt.Sprintf("invalid arguments for command %s", cmd.Name()))
 		}
 	}
-	return nil, errors.New("command not found: help call...")
+	return nil, NotFound
 }
 
-// ~~~
-
-// BaseCommand ...
+// BaseCommand contains general properties for other commands.
 type BaseCommand struct {
 	BinName  string
 	FileName string
 	Mode     flag.ErrorHandling
-
-	fs *flag.FlagSet
+	Flags    *flag.FlagSet
 }
 
-// Copy ...
+// Copy returns a copy of current BaseCommand.
 func (c *BaseCommand) Copy() *BaseCommand {
 	n := *c
 	return &n
 }
 
-// FlagSet ...
+// FlagSet creates and configures new general FlagSet.
 func (c *BaseCommand) FlagSet(name string) *flag.FlagSet {
 	fs := flag.NewFlagSet(name, c.Mode)
-	fs.StringVar(&c.FileName, "filename", filepath.Join(os.TempDir(), c.BinName+".json"), "")
+	value := filepath.Join(os.TempDir(), c.BinName+".json")
+	fs.StringVar(&c.FileName, "filename", value, "an absolute path to semaphore's context")
 	return fs
 }
 
@@ -105,10 +106,10 @@ func (c *CreateCommand) Do() error {
 
 // FlagSet returns configured FlagSet to handle CreateCommand arguments.
 func (c *CreateCommand) FlagSet() *flag.FlagSet {
-	if c.fs == nil {
-		c.fs = c.BaseCommand.FlagSet(c.CmdName)
+	if c.Flags == nil {
+		c.Flags = c.BaseCommand.FlagSet(c.CmdName)
 	}
-	return c.fs
+	return c.Flags
 }
 
 // Name ...
@@ -132,7 +133,7 @@ type AddCommand struct {
 func (c *AddCommand) Do() error {
 	args := c.FlagSet().Args()
 	if len(args) == 0 {
-		return errors.New("need args: help call...")
+		return fmt.Errorf("need args: help call...")
 	}
 
 	file, err := os.OpenFile(c.BaseCommand.FileName, os.O_RDWR, 0644)
@@ -163,10 +164,10 @@ func (c *AddCommand) Do() error {
 
 // FlagSet returns configured FlagSet to handle AddCommand arguments.
 func (c *AddCommand) FlagSet() *flag.FlagSet {
-	if c.fs == nil {
-		c.fs = c.BaseCommand.FlagSet(c.CmdName)
+	if c.Flags == nil {
+		c.Flags = c.BaseCommand.FlagSet(c.CmdName)
 	}
-	return c.fs
+	return c.Flags
 }
 
 // Name ...
@@ -229,12 +230,12 @@ func (c *WaitCommand) Do() error {
 
 // FlagSet returns configured FlagSet to handle WaitCommand arguments.
 func (c *WaitCommand) FlagSet() *flag.FlagSet {
-	if c.fs == nil {
-		c.fs = c.BaseCommand.FlagSet(c.CmdName)
-		c.fs.BoolVar(&c.Notify, "notify", false, "")
-		c.fs.DurationVar(&c.Timeout, "timeout", time.Minute, "")
+	if c.Flags == nil {
+		c.Flags = c.BaseCommand.FlagSet(c.CmdName)
+		c.Flags.BoolVar(&c.Notify, "notify", false, "")
+		c.Flags.DurationVar(&c.Timeout, "timeout", time.Minute, "")
 	}
-	return c.fs
+	return c.Flags
 }
 
 // Name ...
@@ -252,12 +253,47 @@ type HelpCommand struct {
 	*BaseCommand
 	CmdName               string
 	Commit, Date, Version string
-	Commands              []Command
+	Commands              Commands
+	Error                 error
 	Output                io.Writer
+}
+
+// FlagSet ...
+func (c *HelpCommand) FlagSet() *flag.FlagSet {
+	if c.Flags == nil {
+		c.Flags = c.BaseCommand.FlagSet(c.CmdName)
+	}
+	return c.Flags
+}
+
+// Name ...
+func (c *HelpCommand) Name() string {
+	return c.CmdName
+}
+
+// Desc ...
+func (c *HelpCommand) Desc() string {
+	return ""
 }
 
 // Do ...
 func (c *HelpCommand) Do() error {
+	switch c.Error {
+	case NotProvided:
+		fallthrough
+	case flag.ErrHelp:
+		c.Usage()
+		return nil
+	case NotFound:
+		c.Usage()
+		return c.Error
+	default:
+		fmt.Fprint(c.Output, c.Error)
+		return c.Error
+	}
+}
+
+func (c *HelpCommand) Usage() {
 	fmt.Fprintf(c.Output, `
 Usage: %s COMMAND
 
@@ -277,19 +313,4 @@ Semaphore provides functionality to execute terminal commands in parallel.
 	}
 
 	fmt.Fprintf(c.Output, "Version %s (commit: %s, build date: %s)\n", c.Version, c.Commit, c.Date)
-
-	return nil
-}
-
-// FlagSet ...
-func (c *HelpCommand) FlagSet() *flag.FlagSet {
-	if c.fs == nil {
-		c.fs = c.BaseCommand.FlagSet(c.CmdName)
-	}
-	return c.fs
-}
-
-// Name ...
-func (c *HelpCommand) Name() string {
-	return c.CmdName
 }

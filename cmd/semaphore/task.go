@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -23,7 +24,7 @@ type Task struct {
 
 // AddJob sets ID to a job and adds it to the task.
 func (t *Task) AddJob(job Job) {
-	job.ID = fmt.Sprintf("#%d", len(t.Jobs)+1)
+	job.ID = strconv.Itoa(len(t.Jobs) + 1)
 	t.Jobs = append(t.Jobs, job)
 }
 
@@ -85,7 +86,7 @@ type Job struct {
 func (j Job) Format(s fmt.State, verb rune) {
 	switch verb {
 	case 'v':
-		if s.Flag('+') {
+		if s.Flag('+') && len(j.Args) > 0 {
 			fmt.Fprintf(s, "%s %+v", j.String(), j.Args)
 			return
 		}
@@ -93,7 +94,7 @@ func (j Job) Format(s fmt.State, verb rune) {
 	case 's':
 		io.WriteString(s, j.String())
 	case 'q':
-		fmt.Fprintf(s, "`%s`", strings.Join(append([]string{j.String()}, j.Args...), " "))
+		fmt.Fprintf(s, "%s `%s`", j.String(), strings.Join(append([]string{j.Name}, j.Args...), " "))
 	}
 }
 
@@ -118,5 +119,5 @@ type Result struct {
 
 // Fetch executes the job and fetches its result into buffers.
 func (r Result) Fetch() error {
-	return errors.WithMessage(r.Job.Run(r.Stdout, r.Stderr), fmt.Sprintf("the job %s ended with error", r.Job))
+	return errors.WithMessage(r.Job.Run(r.Stdout, r.Stderr), fmt.Sprintf("the job %s ended with an error", r.Job))
 }

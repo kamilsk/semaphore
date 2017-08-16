@@ -5,8 +5,6 @@ include makes/env.mk
 include makes/local.mk
 include makes/docker.mk
 
-
-
 .PHONY: check-code-quality
 check-code-quality: ARGS = \
 	--exclude='.*_test\.go:.*error return value not checked.*\(errcheck\)$' \
@@ -58,12 +56,21 @@ cmd-test-1:
 	           -v '$(GOPATH)/src/$(GO_PACKAGE)':'/go/src/$(GO_PACKAGE)' \
 	           -w '/go/src/$(GO_PACKAGE)' \
 	           golang:1.8 \
-	           /bin/sh -c 'go install ./cmd/semaphore \
-	                       && semaphore create 1 \
-	                       && semaphore add -- curl example.com \
-	                       && semaphore add -- curl example.com \
-	                       && cat /tmp/semaphore.json && echo "" \
-	                       && semaphore wait --notify --timeout=10s'
+	           /bin/sh -c 'go install ./cmd/semaphore; \
+	                       semaphore create 1; \
+	                       semaphore add -- curl example.com; \
+	                       semaphore add -- curl example.com; \
+	                       cat /tmp/semaphore.json && echo ""; \
+	                       semaphore wait --notify --timeout=10s'
+
+.PHONY: cmd-test-1-local
+cmd-test-1-local:
+	(cd cmd/semaphore && glide install -v)
+	go install ./cmd/semaphore
+	semaphore create 1
+	semaphore add -- curl example.com
+	semaphore add -- curl example.com
+	semaphore wait --notify --timeout=10s
 
 .PHONY: cmd-test-2
 cmd-test-2: cmd-deps
@@ -88,6 +95,7 @@ cmd-test-3:
 	           golang:1.8 \
 	           /bin/sh -c 'go install ./cmd/semaphore \
 	                       && semaphore --help'
+
 
 
 .PHONY: docker-pull

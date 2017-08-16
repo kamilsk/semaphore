@@ -1,12 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"runtime"
 )
 
 func main() {
+	var command Command
+
 	base := &BaseCommand{BinName: os.Args[0]}
 	commands := Commands{
 		&CreateCommand{BaseCommand: base.Copy(),
@@ -17,16 +18,15 @@ func main() {
 			CmdName: "wait", Stdout: os.Stdout, Stderr: os.Stderr},
 	}
 	help := &HelpCommand{BaseCommand: base.Copy(),
-		CmdName: "help", Commit: commit, Date: date, Version: version, Commands: []Command(commands), Output: os.Stderr}
+		CmdName: "help", Commit: commit, Date: date, Version: version, Commands: commands, Output: os.Stderr}
 
-	command, err := commands.Parse(os.Args[1:])
-	if err != nil {
-		fmt.Println(err)
-		help.Do()
-		os.Exit(1)
+	if command, help.Error = commands.Parse(os.Args[1:]); help.Error != nil {
+		if help.Do() != nil {
+			os.Exit(1)
+		}
+		return
 	}
-	if err := command.Do(); err != nil {
-		fmt.Println(err)
+	if help.Error = command.Do(); help.Error != nil {
 		help.Do()
 		os.Exit(1)
 	}
