@@ -21,12 +21,12 @@ type HealthChecker interface {
 // Releaser defines a method to release the previously occupied semaphore.
 type Releaser interface {
 	// Release releases the previously occupied slot.
-	// If no places were occupied then returns an appropriate error.
+	// If no places were occupied, then it returns an appropriate error.
 	// It must be safe to call Release concurrently on a single semaphore.
 	Release() error
 }
 
-// A ReleaseFunc tells a semaphore to release the previously occupied slot
+// ReleaseFunc tells a semaphore to release the previously occupied slot
 // and ignore an error if it occurs.
 type ReleaseFunc func()
 
@@ -37,7 +37,7 @@ type Semaphore interface {
 
 	// Acquire tries to reduce the number of available slots for 1.
 	// The operation can be canceled using context. In this case,
-	// an appropriate error will be returned.
+	// it returns an appropriate error.
 	// It must be safe to call Acquire concurrently on a single semaphore.
 	Acquire(deadline <-chan struct{}) (ReleaseFunc, error)
 }

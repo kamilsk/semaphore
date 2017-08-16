@@ -16,7 +16,7 @@ func TestMultiplex(t *testing.T) {
 	end := time.Now()
 
 	if expected, obtained := sleep, end.Sub(start); expected > obtained {
-		t.Errorf("unexpected sleep time. expected: %s; obtained: %s", expected, obtained)
+		t.Errorf("an unexpected sleep time. expected: %v; obtained: %v", expected, obtained)
 	}
 }
 
@@ -31,7 +31,7 @@ func TestWithDeadline(t *testing.T) {
 	end := time.Now()
 
 	if expected, obtained := sleep, end; expected.After(obtained) {
-		t.Errorf("unexpected sleep time. expected: %s; obtained: %s", expected, obtained)
+		t.Errorf("an unexpected sleep time. expected: %v; obtained: %v", expected, obtained)
 	}
 }
 
@@ -47,6 +47,6 @@ func TestWithTimeout(t *testing.T) {
 	end := time.Now()
 
 	if expected, obtained := sleep, end.Sub(start); expected > obtained {
-		t.Errorf("unexpected sleep time. expected: %s; obtained: %s", expected, obtained)
+		t.Errorf("an unexpected sleep time. expected: %v; obtained: %v", expected, obtained)
 	}
 }

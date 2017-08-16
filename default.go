@@ -21,7 +21,7 @@ func Release() error {
 
 // Acquire tries to reduce the number of available slots of the default semaphore for 1.
 // The operation can be canceled using deadline channel. In this case,
-// an appropriate error will be returned.
+// it returns an appropriate error.
 func Acquire(deadline <-chan struct{}) (ReleaseFunc, error) {
 	return def.Acquire(deadline)
 }

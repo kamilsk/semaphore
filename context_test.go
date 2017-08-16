@@ -18,6 +18,6 @@ func TestWithContext(t *testing.T) {
 	end := time.Now()
 
 	if expected, obtained := sleep, end.Sub(start); expected > obtained {
-		t.Errorf("unexpected sleep time. expected: %s; obtained: %s", expected, obtained)
+		t.Errorf("an unexpected sleep time. expected: %v; obtained: %v", expected, obtained)
 	}
 }

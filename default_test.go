@@ -8,19 +8,19 @@ import (
 
 func TestCapacity(t *testing.T) {
 	if obtained, expected := Capacity(), runtime.GOMAXPROCS(0); obtained != expected {
-		t.Errorf("expected: %d; obtained: %d", expected, obtained)
+		t.Errorf("an unexpected capacity. expected: %d; obtained: %d", expected, obtained)
 	}
 }
 
 func TestOccupied(t *testing.T) {
 	if obtained, expected := Occupied(), 0; obtained != expected {
-		t.Errorf("expected: %d; obtained: %d", expected, obtained)
+		t.Errorf("unexpected occupied places. expected: %d; obtained: %d", expected, obtained)
 	}
 }
 
 func TestRelease(t *testing.T) {
 	if err, expected := Release(), "semaphore is empty"; err.Error() != expected {
-		t.Errorf("error %q is expected, but received %q instead", expected, err)
+		t.Errorf("an unexpected error. expected: %s; obtained: %v", expected, err)
 	}
 }
 
@@ -37,11 +37,11 @@ func TestAcquire(t *testing.T) {
 	}
 	expected := "operation timeout"
 	if _, err := Acquire(WithTimeout(10 * time.Millisecond)); err.Error() != expected {
-		t.Errorf("error %q is expected, but received %q instead", expected, err.Error())
+		t.Errorf("an unexpected error. expected: %s; obtained: %v", expected, err)
 	}
 	do()
 	if r, err := Acquire(WithTimeout(10 * time.Millisecond)); err != nil {
-		t.Error("unexpected error", err)
+		t.Error("an unexpected error", err)
 	} else {
 		r()
 	}

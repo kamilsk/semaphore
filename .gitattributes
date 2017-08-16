@@ -7,10 +7,9 @@
 /makes          export-ignore
 Makefile        export-ignore
 
+/research       export-ignore
+
 **/README.md    export-ignore
-RESEARCH.md     export-ignore
 
 **/doc.go       export-ignore
 **/*_test.go    export-ignore
-
-research.yml    export-ignore
