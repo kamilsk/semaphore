@@ -25,7 +25,7 @@ complex-bench: docker-bench-1.8
 complex-bench: docker-bench-latest
 
 .PHONY: complex-tests
-complex-tests: ARGS = -timeout=2s
+complex-tests: ARGS = -timeout=1s
 complex-tests: docker-test-1.5
 complex-tests: docker-test-1.6
 complex-tests: docker-test-1.7
@@ -33,7 +33,7 @@ complex-tests: docker-test-1.8
 complex-tests: docker-test-latest
 
 .PHONY: complex-tests-with-coverage
-complex-tests-with-coverage: ARGS = -timeout=2s
+complex-tests-with-coverage: ARGS = -timeout=1s
 complex-tests-with-coverage: docker-test-with-coverage-1.5
 complex-tests-with-coverage: docker-test-with-coverage-1.6
 complex-tests-with-coverage: docker-test-with-coverage-1.7
