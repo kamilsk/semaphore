@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -52,6 +53,7 @@ func (t *Task) Run() <-chan Result {
 				}
 
 				defer func() {
+					result.End = time.Now()
 					results <- result
 					wg.Done()
 				}()
@@ -63,6 +65,7 @@ func (t *Task) Run() <-chan Result {
 				}
 				defer release()
 
+				result.Start = time.Now()
 				if err := result.Fetch(); err != nil {
 					result.Error = err
 					return
@@ -115,9 +118,39 @@ type Result struct {
 	Job            Job
 	Error          error
 	Stdout, Stderr *bytes.Buffer
+	Start, End     time.Time
 }
 
 // Fetch executes the job and fetches its result into buffers.
 func (r Result) Fetch() error {
 	return errors.WithMessage(r.Job.Run(r.Stdout, r.Stderr), fmt.Sprintf("the job %s ended with an error", r.Job))
+}
+
+// Results is a container implements sort.Interface.
+type Results []Result
+
+// Append adds result into a container.
+func (l *Results) Append(r Result) {
+	*l = append(*l, r)
+}
+
+// Len returns a container size.
+func (l Results) Len() int {
+	return len(l)
+}
+
+// Less compares two results from container with indexes i and j.
+func (l Results) Less(i, j int) bool {
+	return strings.Compare(l[i].Job.ID, l[j].Job.ID) == -1
+}
+
+// Swap swaps two results from container with indexes i and j.
+func (l Results) Swap(i, j int) {
+	l[i], l[j] = l[j], l[i]
+}
+
+// Sort sorts results by its ID.
+func (l Results) Sort() Results {
+	sort.Sort(l)
+	return l
 }

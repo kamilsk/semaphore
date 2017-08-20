@@ -60,6 +60,9 @@ cmd-test-1:
 	                       semaphore create 1; \
 	                       semaphore add -- curl example.com; \
 	                       semaphore add -- curl example.com; \
+	                       semaphore add -- curl example.com; \
+	                       semaphore add -- curl example.com; \
+	                       semaphore add -- curl example.com; \
 	                       cat /tmp/semaphore.json && echo ""; \
 	                       semaphore wait --notify --timeout=10s'
 
@@ -68,6 +71,9 @@ cmd-test-1-local:
 	(cd cmd/semaphore && glide install -v)
 	go install ./cmd/semaphore
 	semaphore create 1
+	semaphore add -- curl example.com
+	semaphore add -- curl example.com
+	semaphore add -- curl example.com
 	semaphore add -- curl example.com
 	semaphore add -- curl example.com
 	semaphore wait --notify --timeout=10s
@@ -83,7 +89,6 @@ cmd-test-2:
 	                       && semaphore create --filename=/tmp/test.json 1 \
 	                       && semaphore add --filename=/tmp/test.json -- curl example.com \
 	                       && semaphore add -- curl example.com \
-	                       && cat /tmp/test.json && echo "" \
 	                       && semaphore wait --notify --timeout=10s --filename=/tmp/test.json'
 
 .PHONY: cmd-test-3
@@ -94,6 +99,8 @@ cmd-test-3:
 	           -w '/go/src/$(GO_PACKAGE)' \
 	           golang:1.8 \
 	           /bin/sh -c 'go install ./cmd/semaphore \
+	                       && semaphore help \
+	                       && semaphore -h \
 	                       && semaphore --help'
 
 
