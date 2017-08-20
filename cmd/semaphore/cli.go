@@ -275,6 +275,13 @@ func (c *WaitCommand) Do() error {
 		}), "template execution")
 	}
 
+	if c.Notify {
+		// TODO try to find or implement by myself
+		// - https://github.com/variadico/noti
+		// - https://github.com/jolicode/JoliNotif
+		fmt.Fprint(c.Stdout, "notify component is not ready")
+	}
+
 	return err
 }
 
