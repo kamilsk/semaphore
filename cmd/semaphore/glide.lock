@@ -1,8 +1,10 @@
-hash: d45055e14f76b86c5ed2d3ce3c6a967815b480ef5136ad7433b9328da7658399
-updated: 2017-08-14T19:09:06.753582032Z
+hash: afb8d6e6340950ad6e41514b884fc1baad128e4164600c57ef12d01a50223ef7
+updated: 2017-08-20T16:09:25.480203134+03:00
 imports:
 - name: github.com/cheggaaa/pb
-  version: b449a36fa2c295b9e36e75b0a0a369d14c5ff15d
+  version: 0d6285554e726cc0620cbecc7e6969c945dcc63b
+- name: github.com/mattn/go-runewidth
+  version: 9e777a8366cce605130a531d2cd6363d07ad7317
 - name: github.com/pkg/errors
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
 testImports: []

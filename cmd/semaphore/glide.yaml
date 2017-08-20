@@ -2,5 +2,7 @@ package: github.com/kamilsk/semaphore/cmd/semaphore
 import:
 - package: github.com/cheggaaa/pb
   version: ^1.0.0
+- package: github.com/mattn/go-runewidth
+  version: ^0.0.2
 - package: github.com/pkg/errors
   version: ^0.8.0

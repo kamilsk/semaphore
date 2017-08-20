@@ -12,6 +12,7 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/cheggaaa/pb"
 	"github.com/pkg/errors"
 )
 
@@ -235,10 +236,15 @@ func (c *WaitCommand) Do() error {
 		task.Timeout = c.Timeout
 	}
 
-	var results = &Results{}
+	var (
+		bar     = pb.StartNew(len(task.Jobs))
+		results = &Results{}
+	)
 	for result := range task.Run() {
+		bar.Increment()
 		results.Append(result)
 	}
+	bar.Finish()
 
 	for _, result := range results.Sort() {
 		var (
