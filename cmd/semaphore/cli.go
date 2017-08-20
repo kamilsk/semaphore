@@ -128,6 +128,7 @@ func (c *CreateCommand) Do() error {
 type AddCommand struct {
 	*BaseCommand
 	CmdName string
+	Edit    bool
 	Command []string
 }
 
@@ -135,6 +136,7 @@ type AddCommand struct {
 func (c *AddCommand) FlagSet() *flag.FlagSet {
 	if c.Flags == nil {
 		c.Flags = c.BaseCommand.FlagSet(c.CmdName)
+		c.Flags.BoolVar(&c.Edit, "edit", false, "switch to edit mode to read arguments from input (not implemented yet)")
 	}
 	return c.Flags
 }
@@ -151,6 +153,11 @@ func (c *AddCommand) Desc() string {
 
 // Do adds a job into a semaphore context and stores it.
 func (c *AddCommand) Do() error {
+	if c.Edit {
+		// TODO each new line from os.Stdin should be converted to Task
+		fmt.Fprint(os.Stdout, "edit component is not ready yet")
+	}
+
 	args := c.FlagSet().Args()
 	if len(args) == 0 {
 		return fmt.Errorf("the add command requires arguments to create a job based on them")
@@ -204,7 +211,7 @@ type WaitCommand struct {
 func (c *WaitCommand) FlagSet() *flag.FlagSet {
 	if c.Flags == nil {
 		c.Flags = c.BaseCommand.FlagSet(c.CmdName)
-		c.Flags.BoolVar(&c.Notify, "notify", false, "show notification at the end")
+		c.Flags.BoolVar(&c.Notify, "notify", false, "show notification at the end (not implemented yet)")
 		c.Flags.DurationVar(&c.Timeout, "timeout", time.Minute, "timeout for task execution")
 	}
 	return c.Flags
@@ -279,7 +286,7 @@ func (c *WaitCommand) Do() error {
 		// TODO try to find or implement by myself
 		// - https://github.com/variadico/noti
 		// - https://github.com/jolicode/JoliNotif
-		fmt.Fprint(c.Stdout, "notify component is not ready")
+		fmt.Fprint(c.Stdout, "notify component is not ready yet")
 	}
 
 	return err
