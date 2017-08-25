@@ -152,5 +152,5 @@ $ make complex-bench
 
 ## Notes
 
-- tested on Go 1.5, 1.6, 1.7 and 1.8
+- tested on Go 1.5, 1.6, 1.7, 1.8 and 1.9
 - [research](research)
