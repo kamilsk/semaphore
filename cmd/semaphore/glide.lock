@@ -1,10 +1,22 @@
-hash: afb8d6e6340950ad6e41514b884fc1baad128e4164600c57ef12d01a50223ef7
-updated: 2017-08-20T16:09:25.480203134+03:00
+hash: 3138460e986c7d09cda7fda60d3e8233799ade29512ea8b88f2659b978c25585
+updated: 2017-08-28T14:41:32.180470462+03:00
 imports:
 - name: github.com/cheggaaa/pb
-  version: 0d6285554e726cc0620cbecc7e6969c945dcc63b
+  version: 657164d0228d6bebe316fdf725c69f131a50fb10
+- name: github.com/fatih/color
+  version: 570b54cabe6b8eb0bc2dfce68d964677d63b5260
+- name: github.com/mattn/go-colorable
+  version: 167de6bfdfba052fa6b2d3664c8f5272e23c9072
+- name: github.com/mattn/go-isatty
+  version: 57fdcb988a5c543893cc61bce354a6e24ab70022
+  repo: https://github.com/mattn/go-isatty
 - name: github.com/mattn/go-runewidth
   version: 9e777a8366cce605130a531d2cd6363d07ad7317
 - name: github.com/pkg/errors
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
+- name: golang.org/x/sys
+  version: e24f485414aeafb646f6fca458b0bf869c0880a1
+  repo: https://go.googlesource.com/sys
+  subpackages:
+  - unix
 testImports: []
