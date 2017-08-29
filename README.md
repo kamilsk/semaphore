@@ -99,7 +99,7 @@ See more details [here](https://godoc.org/github.com/kamilsk/semaphore#example-p
 
 ### Use context for cancellation
 
-This example shows hot to use context and semaphore together.
+This example shows how to use context and semaphore together.
 
 ```go
 deadliner := func(limit int, timeout time.Duration, handler http.HandlerFunc) http.HandlerFunc {

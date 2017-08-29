@@ -9,7 +9,7 @@ import (
 	"github.com/kamilsk/semaphore"
 )
 
-// This example shows hot to use context and semaphore together.
+// This example shows how to use context and semaphore together.
 func Example_semaphoreWithContext() {
 	deadliner := func(limit int, timeout time.Duration, handler http.HandlerFunc) http.HandlerFunc {
 		throughput := semaphore.New(limit)
