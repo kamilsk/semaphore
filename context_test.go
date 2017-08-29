@@ -3,6 +3,7 @@
 package semaphore_test
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -11,7 +12,7 @@ import (
 
 func TestWithContext(t *testing.T) {
 	sleep := 100 * time.Millisecond
-	ctx := semaphore.WithContext(semaphore.WithTimeout(sleep))
+	ctx := semaphore.WithContext(context.TODO(), semaphore.WithTimeout(sleep))
 
 	start := time.Now()
 	<-ctx.Done()

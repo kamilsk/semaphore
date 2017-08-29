@@ -12,7 +12,7 @@ import (
 	"github.com/kamilsk/semaphore"
 )
 
-// This example shows how to limit request' throughput.
+// This example shows how to limit request throughput.
 func Example_httpRequestThroughputLimitation() {
 	limiter := func(limit int, timeout time.Duration, handler http.Handler) http.Handler {
 		throughput := semaphore.New(limit)

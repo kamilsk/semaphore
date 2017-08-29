@@ -26,7 +26,7 @@ func TestSemaphore_Acquire_Timeout(t *testing.T) {
 		if err.Error() != expected {
 			t.Errorf("an unexpected error in test case %q. expected: %s; obtained: %v", tc.name, expected, err)
 		}
-		release()
+		_ = release.Release()
 	}
 }
 

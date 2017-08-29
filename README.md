@@ -32,7 +32,7 @@ $ semaphore wait --notify --timeout=1m
 
 See more details [here](cmd#semaphore).
 
-### HTTP response' time limitation
+### HTTP response time limitation
 
 This example shows how to follow SLA.
 
@@ -41,46 +41,43 @@ sla := 100 * time.Millisecond
 sem := semaphore.New(1000)
 
 http.Handle("/do-with-timeout", http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-    done := make(chan struct{})
+	done := make(chan struct{})
+	deadline := semaphore.WithTimeout(sla)
 
-    ctx, cancel := context.WithTimeout(req.Context(), sla)
-    defer cancel()
+	go func() {
+		release, err := sem.Acquire(deadline)
+		if release, err = sem.Acquire(deadline); err != nil {
+			return
+		}
+		defer release()
+		defer close(done)
 
-    release, err := sem.Acquire(ctx.Done())
-    if err != nil {
-        http.Error(rw, err.Error(), http.StatusGatewayTimeout)
-        return
-    }
-    defer release()
+		// do some heavy work
+	}()
 
-    go func() {
-        defer close(done)
-
-        // do some heavy work
-    }()
-
-    // wait what happens before
-    select {
-    case <-ctx.Done():
-        http.Error(rw, err.Error(), http.StatusGatewayTimeout)
-    case <-done:
-        // send success response
-    }
+	// wait what happens before
+	select {
+	case <-deadline:
+		http.Error(rw, "operation timeout", http.StatusGatewayTimeout)
+	case <-done:
+		// send success response
+	}
 }))
 ```
 
-### HTTP request' throughput limitation
+See more details [here](https://godoc.org/github.com/kamilsk/semaphore#example-package--HttpResponseTimeLimitation).
 
-This example shows how to limit request' throughput.
+### HTTP request throughput limitation
+
+This example shows how to limit request throughput.
 
 ```go
-limiter := func(limit int, timeout time.Duration, handler http.Handler) http.Handler {
+limiter := func(limit int, timeout time.Duration, handler http.HandlerFunc) http.HandlerFunc {
 	throughput := semaphore.New(limit)
-	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-		ctx, cancel := context.WithTimeout(req.Context(), timeout)
-		defer cancel()
+	return func(rw http.ResponseWriter, req *http.Request) {
+		deadline := semaphore.WithTimeout(timeout)
 
-		release, err := throughput.Acquire(ctx.Done())
+		release, err := throughput.Acquire(deadline)
 		if err != nil {
 			http.Error(rw, err.Error(), http.StatusTooManyRequests)
 			return
@@ -88,13 +85,43 @@ limiter := func(limit int, timeout time.Duration, handler http.Handler) http.Han
 		defer release()
 
 		handler.ServeHTTP(rw, req)
-	})
+	}
 }
 
-http.Handle("/do-limited", limiter(1000, time.Minute, http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+http.HandleFunc("/do-with-limit", limiter(1000, time.Minute, func(rw http.ResponseWriter, req *http.Request) {
 	// do some limited work
-})))
+}))
 ```
+
+See more details [here](https://godoc.org/github.com/kamilsk/semaphore#example-package--HttpRequestThroughputLimitation).
+
+### Use context for cancellation
+
+This example shows hot to use context and semaphore together.
+
+```go
+deadliner := func(limit int, timeout time.Duration, handler http.HandlerFunc) http.HandlerFunc {
+	throughput := semaphore.New(limit)
+	return func(rw http.ResponseWriter, req *http.Request) {
+		ctx := semaphore.WithContext(req.Context(), semaphore.WithTimeout(timeout))
+
+		release, err := throughput.Acquire(ctx.Done())
+		if err != nil {
+			http.Error(rw, err.Error(), http.StatusGatewayTimeout)
+			return
+		}
+		defer release()
+
+		handler.ServeHTTP(rw, req.WithContext(ctx))
+	}
+}
+
+http.HandleFunc("/do-with-deadline", deadliner(1000, time.Minute, func(rw http.ResponseWriter, req *http.Request) {
+	// do some limited work
+}))
+```
+
+See more details [here](https://godoc.org/github.com/kamilsk/semaphore#example-package--SemaphoreWithContext).
 
 ## Installation
 

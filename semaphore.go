@@ -30,6 +30,12 @@ type Releaser interface {
 // and ignore an error if it occurs.
 type ReleaseFunc func()
 
+// Release calls f().
+func (f ReleaseFunc) Release() error {
+	f()
+	return nil
+}
+
 // Semaphore provides the functionality of the same named pattern.
 type Semaphore interface {
 	HealthChecker
