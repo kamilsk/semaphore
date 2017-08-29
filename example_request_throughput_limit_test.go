@@ -1,9 +1,6 @@
-// +build go1.7
-
 package semaphore_test
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -14,13 +11,12 @@ import (
 
 // This example shows how to limit request throughput.
 func Example_httpRequestThroughputLimitation() {
-	limiter := func(limit int, timeout time.Duration, handler http.Handler) http.Handler {
+	limiter := func(limit int, timeout time.Duration, handler http.HandlerFunc) http.HandlerFunc {
 		throughput := semaphore.New(limit)
-		return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-			ctx, cancel := context.WithTimeout(req.Context(), timeout)
-			defer cancel()
+		return func(rw http.ResponseWriter, req *http.Request) {
+			deadline := semaphore.WithTimeout(timeout)
 
-			release, err := throughput.Acquire(ctx.Done())
+			release, err := throughput.Acquire(deadline)
 			if err != nil {
 				http.Error(rw, err.Error(), http.StatusTooManyRequests)
 				return
@@ -28,7 +24,7 @@ func Example_httpRequestThroughputLimitation() {
 			defer release()
 
 			handler.ServeHTTP(rw, req)
-		})
+		}
 	}
 
 	var race int

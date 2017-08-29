@@ -22,6 +22,8 @@ the project team at feedback@octolab.org.
 
 ### Console tool for command execution in parallel
 
+This example shows how to execute many console commands in parallel.
+
 ```bash
 $ semaphore create 2
 $ semaphore add -- docker build
@@ -46,7 +48,7 @@ http.Handle("/do-with-timeout", http.HandlerFunc(func(rw http.ResponseWriter, re
 
 	go func() {
 		release, err := sem.Acquire(deadline)
-		if release, err = sem.Acquire(deadline); err != nil {
+		if err != nil {
 			return
 		}
 		defer release()
@@ -122,6 +124,21 @@ http.HandleFunc("/do-with-deadline", deadliner(1000, time.Minute, func(rw http.R
 ```
 
 See more details [here](https://godoc.org/github.com/kamilsk/semaphore#example-package--SemaphoreWithContext).
+
+### Interrupt execution
+
+```go
+sem := semaphore.New(runtime.GOMAXPROCS(0))
+interrupter := semaphore.Multiplex(
+	semaphore.WithTimeout(time.Second),
+	semaphore.WithSignal(os.Interrupt),
+)
+_, err := sem.Acquire(interrupter)
+if err == nil {
+	panic("press Ctrl+C")
+}
+// successful interruption
+```
 
 ## Installation
 
