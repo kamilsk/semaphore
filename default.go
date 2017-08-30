@@ -26,7 +26,8 @@ func Release() error {
 	return def.Release()
 }
 
-// Signal ...
-func Signal(deadline <-chan struct{}) <-chan struct{} {
+// Signal returns a channel to send to it release function only if Acquire is successful.
+// In any case, the channel will be closed.
+func Signal(deadline <-chan struct{}) <-chan ReleaseFunc {
 	return def.Signal(deadline)
 }

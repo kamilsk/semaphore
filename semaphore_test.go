@@ -71,6 +71,15 @@ func TestSemaphore_Release_TryToGetDeadLock(t *testing.T) {
 	}
 }
 
+func TestSemaphore_Signal(t *testing.T) {
+	sem := semaphore.New(0)
+
+	release, ok := <-sem.Signal(semaphore.WithTimeout(0))
+	if release != nil || ok {
+		t.Error("unexpected signal")
+	}
+}
+
 func TestSemaphore_Concurrently(t *testing.T) {
 	sem := semaphore.New(int(math.Max(2.0, float64(runtime.GOMAXPROCS(0)))))
 
