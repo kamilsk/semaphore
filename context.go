@@ -10,7 +10,6 @@ func WithContext(parent context.Context, deadline <-chan struct{}) context.Conte
 	go func() {
 		<-deadline
 		cancel()
-		return
 	}()
 	return ctx
 }
