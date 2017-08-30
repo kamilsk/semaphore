@@ -46,6 +46,8 @@ type Semaphore interface {
 	// it returns an appropriate error.
 	// It must be safe to call Acquire concurrently on a single semaphore.
 	Acquire(deadline <-chan struct{}) (ReleaseFunc, error)
+	// Signal ...
+	Signal(deadline <-chan struct{}) <-chan struct{}
 }
 
 // New constructs a new thread-safe Semaphore with the given capacity.
@@ -86,6 +88,16 @@ func (sem semaphore) Release() error {
 	default:
 		return errEmpty
 	}
+}
+
+func (sem semaphore) Signal(deadline <-chan struct{}) <-chan struct{} {
+	ch := make(chan struct{})
+	go func() {
+		if _, err := sem.Acquire(deadline); err == nil {
+			close(ch)
+		}
+	}()
+	return ch
 }
 
 func releaser(releaser Releaser) ReleaseFunc {

@@ -4,6 +4,13 @@ import "runtime"
 
 var def = New(runtime.GOMAXPROCS(0))
 
+// Acquire tries to reduce the number of available slots of the default semaphore for 1.
+// The operation can be canceled using deadline channel. In this case,
+// it returns an appropriate error.
+func Acquire(deadline <-chan struct{}) (ReleaseFunc, error) {
+	return def.Acquire(deadline)
+}
+
 // Capacity returns a capacity of the default semaphore.
 func Capacity() int {
 	return def.Capacity()
@@ -19,9 +26,7 @@ func Release() error {
 	return def.Release()
 }
 
-// Acquire tries to reduce the number of available slots of the default semaphore for 1.
-// The operation can be canceled using deadline channel. In this case,
-// it returns an appropriate error.
-func Acquire(deadline <-chan struct{}) (ReleaseFunc, error) {
-	return def.Acquire(deadline)
+// Signal ...
+func Signal(deadline <-chan struct{}) <-chan struct{} {
+	return def.Signal(deadline)
 }

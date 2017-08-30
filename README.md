@@ -125,6 +125,50 @@ http.HandleFunc("/do-with-deadline", deadliner(1000, time.Minute, func(rw http.R
 
 See more details [here](https://godoc.org/github.com/kamilsk/semaphore#example-package--SemaphoreWithContext).
 
+### Pool of workers
+
+```go
+type Pool struct {
+	sem  semaphore.Semaphore
+	work chan func()
+}
+
+func (p *Pool) Schedule(task func()) {
+	select {
+	case p.work <- task:
+	case <-p.sem.Signal(nil):
+		go p.worker(task)
+	}
+}
+
+func (p *Pool) worker(task func()) {
+	defer func() { p.sem.Release() }()
+	var ok bool
+	for {
+		task()
+		task, ok = <-p.work
+		if !ok {
+			return
+		}
+	}
+}
+
+func New(size int) *Pool {
+	return &Pool{
+		sem:  semaphore.New(size),
+		work: make(chan func()),
+	}
+}
+
+func main() {
+	pool := New(2)
+	pool.Schedule(func() { fmt.Println(1) })
+	pool.Schedule(func() { fmt.Println(2) })
+	pool.Schedule(func() { fmt.Println(3) })
+	pool.Schedule(func() { fmt.Println(4) })
+}
+```
+
 ### Interrupt execution
 
 ```go
