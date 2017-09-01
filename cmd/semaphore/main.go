@@ -16,9 +16,7 @@ func main() {
 		&AddCommand{BaseCommand: base.Copy(),
 			CmdName: "add"},
 		&WaitCommand{BaseCommand: base.Copy(),
-			CmdName: "wait",
-			Stdout:  os.Stdout, Stderr: os.Stderr,
-			Template: template.Must(template.New("report").Parse(DefaultReport))},
+			CmdName: "wait", Output: os.Stdout, Template: template.Must(template.New("report").Parse(DefaultReport))},
 	}
 	help := &HelpCommand{BaseCommand: base.Copy(),
 		CmdName: "help", Commit: commit, Date: date, Version: version, Commands: commands, Output: os.Stderr}

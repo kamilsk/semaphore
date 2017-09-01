@@ -52,8 +52,11 @@ cmd-deps:
 	           glide install -v
 	rm -rf cmd/semaphore/.glide
 
+.PHONY: cmd-deps-local
+cmd-deps-local:
+	cd cmd/semaphore && glide install -v
+
 .PHONY: cmd-test-1
-cmd-test-1: cmd-deps
 cmd-test-1:
 	docker run --rm -it \
 	           -v '$(GOPATH)/src/$(GO_PACKAGE)':'/go/src/$(GO_PACKAGE)' \
@@ -61,28 +64,26 @@ cmd-test-1:
 	           golang:1.8 \
 	           /bin/sh -c 'go install ./cmd/semaphore; \
 	                       semaphore create 1; \
+	                       semaphore add -- curl localhost; \
 	                       semaphore add -- curl example.com; \
+	                       semaphore add -- curl unknown; \
 	                       semaphore add -- curl example.com; \
-	                       semaphore add -- curl example.com; \
-	                       semaphore add -- curl example.com; \
-	                       semaphore add -- curl example.com; \
+	                       semaphore add -- curl localhost; \
 	                       cat /tmp/semaphore.json && echo ""; \
 	                       semaphore wait --notify --timeout=10s'
 
 .PHONY: cmd-test-1-local
 cmd-test-1-local:
-	(cd cmd/semaphore && glide install -v)
 	go install ./cmd/semaphore
 	semaphore create 1
+	semaphore add -- curl localhost
 	semaphore add -- curl example.com
+	semaphore add -- curl unknown
 	semaphore add -- curl example.com
-	semaphore add -- curl example.com
-	semaphore add -- curl example.com
-	semaphore add -- curl example.com
+	semaphore add -- curl localhost
 	semaphore wait --notify --timeout=10s
 
 .PHONY: cmd-test-2
-cmd-test-2: cmd-deps
 cmd-test-2:
 	docker run --rm -it \
 	           -v '$(GOPATH)/src/$(GO_PACKAGE)':'/go/src/$(GO_PACKAGE)' \
@@ -95,8 +96,18 @@ cmd-test-2:
 	                       && semaphore wait --notify --timeout=10s --filename=/tmp/test.json'
 
 .PHONY: cmd-test-3
-cmd-test-3: cmd-deps
 cmd-test-3:
+	docker run --rm -it \
+	           -v '$(GOPATH)/src/$(GO_PACKAGE)':'/go/src/$(GO_PACKAGE)' \
+	           -w '/go/src/$(GO_PACKAGE)' \
+	           golang:1.8 \
+	           /bin/sh -c 'go install ./cmd/semaphore \
+	                       && semaphore help \
+	                       && semaphore -h \
+	                       && semaphore --help'
+
+.PHONY: cmd-test-3-local
+cmd-test-3-local:
 	docker run --rm -it \
 	           -v '$(GOPATH)/src/$(GO_PACKAGE)':'/go/src/$(GO_PACKAGE)' \
 	           -w '/go/src/$(GO_PACKAGE)' \

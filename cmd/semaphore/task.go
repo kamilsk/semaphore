@@ -85,7 +85,7 @@ type Job struct {
 	Args []string
 }
 
-// Format implements Formatter interface.
+// Format implements fmt.Formatter interface.
 func (j Job) Format(s fmt.State, verb rune) {
 	switch verb {
 	case 'v':
@@ -101,7 +101,7 @@ func (j Job) Format(s fmt.State, verb rune) {
 	}
 }
 
-// String implements Stringer interface.
+// String implements fmt.Stringer interface.
 func (j Job) String() string {
 	return j.Name + "#" + j.ID
 }

@@ -43,6 +43,9 @@ func (l Commands) Parse(args []string) (Command, error) {
 		return nil, NotProvided
 	}
 	cmdName := args[0]
+	if _, found := map[string]struct{}{"-h": {}, "-help": {}, "--help": {}}[cmdName]; found {
+		return nil, flag.ErrHelp
+	}
 	for _, cmd := range l {
 		if cmd.Name() == cmdName {
 			return cmd, errors.WithMessage(cmd.FlagSet().Parse(args[1:]),
@@ -192,20 +195,35 @@ var DefaultReport = `
 command: {{ .Name }} {{ range .Args }}{{ . }} {{ end }}
   error: {{ .Error }}
 details: started at {{ .Start }}, finished at {{ .End }}, elapsed {{ .Elapsed }}
- output:
+ stdout:
 
-{{ .Output }}
+{{ .Stdout }}
+
+ stderr:
+
+{{ .Stderr }}
 ---
 `
+
+// ColoredOutput wraps another output and colorizes input data before to pass it.
+type ColoredOutput struct {
+	clr *color.Color
+	dst io.Writer
+}
+
+// Write implements io.Writer interface.
+func (c *ColoredOutput) Write(p []byte) (int, error) {
+	return c.clr.Fprint(c.dst, string(p))
+}
 
 // WaitCommand is a command to execute a semaphore task.
 type WaitCommand struct {
 	*BaseCommand
-	CmdName        string
-	Notify         bool
-	Stdout, Stderr io.Writer
-	Template       *template.Template
-	Timeout        time.Duration
+	CmdName  string
+	Notify   bool
+	Output   io.Writer
+	Template *template.Template
+	Timeout  time.Duration
 }
 
 // FlagSet returns a configured FlagSet to handle WaitCommand arguments.
@@ -245,33 +263,36 @@ func (c *WaitCommand) Do() error {
 	}
 
 	var (
-		bar     = pb.StartNew(len(task.Jobs))
+		bar     = pb.New(len(task.Jobs))
 		results = &Results{}
+		red     = &ColoredOutput{clr: color.New(color.FgHiRed), dst: c.Output}
 	)
+	bar.Output = c.Output
+	bar.Start()
 	for result := range task.Run() {
+		if result.Error != nil {
+			bar.Output = red
+		}
 		bar.Increment()
 		results.Append(result)
 	}
 	bar.Finish()
 
 	for _, result := range results.Sort() {
-		var (
-			src io.Reader = result.Stdout
-			dst io.Writer = c.Stdout
-		)
-
+		var output io.Writer = c.Output
 		if result.Error != nil {
-			src, dst = result.Stderr, c.Stderr
+			output = red
 		}
-
-		output, _ := ioutil.ReadAll(src)
-		err = errors.WithMessage(c.Template.Execute(dst, struct {
+		stdout, _ := ioutil.ReadAll(result.Stdout)
+		stderr, _ := ioutil.ReadAll(result.Stderr)
+		err = errors.WithMessage(c.Template.Execute(output, struct {
 			Name       string
 			Args       []string
 			Error      error
 			Start, End string
 			Elapsed    time.Duration
-			Output     string
+			Stdout     string
+			Stderr     string
 		}{
 			Name:    result.Job.Name,
 			Args:    result.Job.Args,
@@ -279,7 +300,8 @@ func (c *WaitCommand) Do() error {
 			Start:   result.Start.Format("2006-01-02 15:04:05.99"),
 			End:     result.End.Format("2006-01-02 15:04:05.99"),
 			Elapsed: result.End.Sub(result.Start),
-			Output:  string(output),
+			Stdout:  string(stdout),
+			Stderr:  string(stderr),
 		}), "template execution")
 	}
 
