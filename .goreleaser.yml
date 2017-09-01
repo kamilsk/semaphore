@@ -1,6 +1,3 @@
-homepage:    &home https://github.com/kamilsk/semaphore
-description: &desc Semaphore pattern implementation with a timeout of lock/unlock operations based on channels.
-
 archive:
   files:
   - LICENSE
@@ -23,8 +20,8 @@ brew:
   github:
     name:  homebrew-tap
     owner: kamilsk
-  homepage:    *home
-  description: *desc
+  homepage:    https://github.com/kamilsk/semaphore
+  description: Semaphore pattern implementation with a timeout of lock/unlock operations based on channels.
 
 build:
   binary: semaphore

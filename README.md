@@ -29,7 +29,7 @@ $ semaphore create 2
 $ semaphore add -- docker build
 $ semaphore add -- vagrant up
 $ semaphore add -- ansible-playbook
-$ semaphore wait --notify --timeout=1m
+$ semaphore wait --timeout=1m --notify
 ```
 
 See more details [here](cmd#semaphore).
