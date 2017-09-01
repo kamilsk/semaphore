@@ -90,24 +90,12 @@ cmd-test-2:
 	           -w '/go/src/$(GO_PACKAGE)' \
 	           golang:1.8 \
 	           /bin/sh -c 'go install ./cmd/semaphore \
-	                       && semaphore create --filename=/tmp/test.json 1 \
-	                       && semaphore add --filename=/tmp/test.json -- curl example.com \
-	                       && semaphore add -- curl example.com \
-	                       && semaphore wait --notify --timeout=10s --filename=/tmp/test.json'
-
-.PHONY: cmd-test-3
-cmd-test-3:
-	docker run --rm -it \
-	           -v '$(GOPATH)/src/$(GO_PACKAGE)':'/go/src/$(GO_PACKAGE)' \
-	           -w '/go/src/$(GO_PACKAGE)' \
-	           golang:1.8 \
-	           /bin/sh -c 'go install ./cmd/semaphore \
 	                       && semaphore help \
 	                       && semaphore -h \
 	                       && semaphore --help'
 
-.PHONY: cmd-test-3-local
-cmd-test-3-local:
+.PHONY: cmd-test-2-local
+cmd-test-2-local:
 	docker run --rm -it \
 	           -v '$(GOPATH)/src/$(GO_PACKAGE)':'/go/src/$(GO_PACKAGE)' \
 	           -w '/go/src/$(GO_PACKAGE)' \
