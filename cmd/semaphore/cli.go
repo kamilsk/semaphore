@@ -18,8 +18,8 @@ import (
 )
 
 var (
-	NotProvided = fmt.Errorf("command not provided")
-	NotFound    = fmt.Errorf("command not found")
+	errNotProvided = fmt.Errorf("command not provided")
+	errNotFound    = fmt.Errorf("command not found")
 )
 
 // Command defines behavior to interact with user input.
@@ -40,7 +40,7 @@ type Commands []Command
 // Parse parses the arguments and searches an appropriate command for them.
 func (l Commands) Parse(args []string) (Command, error) {
 	if len(args) == 0 {
-		return nil, NotProvided
+		return nil, errNotProvided
 	}
 	cmdName := args[0]
 	if _, found := map[string]struct{}{"-h": {}, "-help": {}, "--help": {}}[cmdName]; found {
@@ -52,7 +52,7 @@ func (l Commands) Parse(args []string) (Command, error) {
 				fmt.Sprintf("invalid arguments for command %s", cmd.Name()))
 		}
 	}
-	return nil, NotFound
+	return nil, errNotFound
 }
 
 // BaseCommand contains general fields for other commands.
@@ -191,6 +191,7 @@ func (c *AddCommand) Do() error {
 	return nil
 }
 
+// DefaultReport is a default template for report.
 var DefaultReport = `
 command: {{ .Name }} {{ range .Args }}{{ . }} {{ end }}
   error: {{ .Error }}
@@ -348,12 +349,12 @@ func (c *HelpCommand) Do() error {
 	switch c.Error {
 	case nil:
 		fallthrough
-	case NotProvided:
+	case errNotProvided:
 		fallthrough
 	case flag.ErrHelp:
 		c.Usage()
 		return nil
-	case NotFound:
+	case errNotFound:
 		c.Usage()
 		return c.Error
 	default:
