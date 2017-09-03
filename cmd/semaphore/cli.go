@@ -20,6 +20,7 @@ import (
 var (
 	errNotProvided = fmt.Errorf("command not provided")
 	errNotFound    = fmt.Errorf("command not found")
+	errExecution   = fmt.Errorf("execution error")
 )
 
 // Command defines behavior to interact with user input.
@@ -264,23 +265,31 @@ func (c *WaitCommand) Do() error {
 	}
 
 	var (
-		bar     = pb.New(len(task.Jobs))
-		results = &Results{}
-		red     = &ColoredOutput{clr: color.New(color.FgHiRed), dst: c.Output}
+		bar              = pb.New(len(task.Jobs))
+		results          = &Results{}
+		red              = &ColoredOutput{clr: color.New(color.FgHiRed), dst: c.Output}
+		success, failure = 0, 0
+		output           io.Writer
+		start, end       time.Time
 	)
 	bar.Output = c.Output
+	bar.ShowTimeLeft = false
 	bar.Start()
+	start = time.Now()
 	for result := range task.Run() {
+		success++
 		if result.Error != nil {
 			bar.Output = red
+			failure++
+			success--
 		}
 		bar.Increment()
 		results.Append(result)
 	}
+	end = time.Now()
 	bar.Finish()
 
 	for _, result := range results.Sort() {
-		var output io.Writer = c.Output
 		if result.Error != nil {
 			output = red
 		}
@@ -306,6 +315,13 @@ func (c *WaitCommand) Do() error {
 		}), "template execution")
 	}
 
+	output = c.Output
+	if failure > 0 {
+		output = red
+	}
+	fmt.Fprintf(output, "total: %d; successful: %d; failed: %d; elapsed: %s \n",
+		results.Len(), success, failure, end.Sub(start))
+
 	if c.Notify {
 		// TODO try to find or implement by myself
 		// - https://github.com/variadico/noti
@@ -313,6 +329,9 @@ func (c *WaitCommand) Do() error {
 		color.New(color.FgYellow).Fprintln(os.Stdout, "notify component is not ready yet")
 	}
 
+	if failure > 0 {
+		return errExecution
+	}
 	return err
 }
 
@@ -356,6 +375,8 @@ func (c *HelpCommand) Do() error {
 		return nil
 	case errNotFound:
 		c.Usage()
+		fallthrough
+	case errExecution:
 		return c.Error
 	default:
 		color.New(color.FgRed).Fprintf(c.Output, "%+v\n", c.Error)

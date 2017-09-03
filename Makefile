@@ -104,7 +104,8 @@ cmd-test-1:
 	                       semaphore add -- curl example.com; \
 	                       semaphore add -- curl localhost; \
 	                       cat /tmp/semaphore.json && echo ""; \
-	                       semaphore wait --notify --timeout=10s'
+	                       semaphore wait --notify --timeout=10s; \
+	                       echo $$?'
 
 .PHONY: cmd-test-2
 cmd-test-2:
@@ -115,7 +116,8 @@ cmd-test-2:
 	           /bin/sh -c 'go install ./cmd/semaphore \
 	                       && semaphore help \
 	                       && semaphore -h \
-	                       && semaphore --help'
+	                       && semaphore --help; \
+	                       echo $$?'
 
 .PHONY: cmd-deps-local
 cmd-deps-local:
@@ -135,6 +137,7 @@ cmd-test-1-local:
 	semaphore add -- curl example.com
 	semaphore add -- curl localhost
 	semaphore wait --notify --timeout=10s
+	echo $$?
 
 .PHONY: cmd-test-2-local
 cmd-test-2-local: cmd-install
@@ -142,6 +145,7 @@ cmd-test-2-local:
 	semaphore help
 	semaphore -h
 	semaphore --help
+	echo $$?
 
 
 
