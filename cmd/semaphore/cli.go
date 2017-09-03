@@ -214,8 +214,44 @@ type ColoredOutput struct {
 }
 
 // Write implements io.Writer interface.
-func (c *ColoredOutput) Write(p []byte) (int, error) {
-	return c.clr.Fprint(c.dst, string(p))
+func (o *ColoredOutput) Write(p []byte) (int, error) {
+	return o.clr.Fprint(o.dst, string(p))
+}
+
+// LimitedOutput wraps another output and writes to it with specified velocity.
+type LimitedOutput struct {
+	dst   io.Writer
+	speed int
+}
+
+// For sets limiter for passed io.Writer.
+func (o *LimitedOutput) For(dst io.Writer) *LimitedOutput {
+	o.dst = dst
+	return o
+}
+
+// Write implements io.Writer interface.
+func (o *LimitedOutput) Write(p []byte) (int, error) {
+	if o.speed != 0 {
+		pause := time.Second / time.Duration(o.speed)
+		var (
+			total, n int
+			err      error
+		)
+		for _, r := range []rune(string(p)) {
+			if r == 0 {
+				continue
+			}
+			n, err = o.dst.Write([]byte(string(r)))
+			total += n
+			if err != nil {
+				break
+			}
+			time.Sleep(pause)
+		}
+		return total, err
+	}
+	return o.dst.Write(p)
 }
 
 // WaitCommand is a command to execute a semaphore task.
@@ -224,6 +260,7 @@ type WaitCommand struct {
 	CmdName  string
 	Notify   bool
 	Output   io.Writer
+	Speed    int
 	Template *template.Template
 	Timeout  time.Duration
 }
@@ -234,6 +271,7 @@ func (c *WaitCommand) FlagSet() *flag.FlagSet {
 		c.Flags = c.BaseCommand.FlagSet(c.CmdName)
 		c.Flags.BoolVar(&c.Notify, "notify", false, "show notification at the end (not implemented yet)")
 		c.Flags.DurationVar(&c.Timeout, "timeout", time.Minute, "timeout for task execution")
+		c.Flags.IntVar(&c.Speed, "speed", 0, "a velocity of report output (characters per second)")
 	}
 	return c.Flags
 }
@@ -268,6 +306,7 @@ func (c *WaitCommand) Do() error {
 		bar              = pb.New(len(task.Jobs))
 		results          = &Results{}
 		red              = &ColoredOutput{clr: color.New(color.FgHiRed), dst: c.Output}
+		limiter          = &LimitedOutput{speed: c.Speed}
 		success, failure = 0, 0
 		output           io.Writer
 		start, end       time.Time
@@ -290,12 +329,13 @@ func (c *WaitCommand) Do() error {
 	bar.Finish()
 
 	for _, result := range results.Sort() {
+		output = c.Output
 		if result.Error != nil {
 			output = red
 		}
 		stdout, _ := ioutil.ReadAll(result.Stdout)
 		stderr, _ := ioutil.ReadAll(result.Stderr)
-		err = errors.WithMessage(c.Template.Execute(output, struct {
+		err = errors.WithMessage(c.Template.Execute(limiter.For(output), struct {
 			Name       string
 			Args       []string
 			Error      error

@@ -104,7 +104,7 @@ cmd-test-1:
 	                       semaphore add -- curl example.com; \
 	                       semaphore add -- curl localhost; \
 	                       cat /tmp/semaphore.json && echo ""; \
-	                       semaphore wait --notify --timeout=10s; \
+	                       semaphore wait --notify --speed=300 --timeout=10s; \
 	                       echo $$?'
 
 .PHONY: cmd-test-2
@@ -136,7 +136,7 @@ cmd-test-1-local:
 	semaphore add -- curl unknown
 	semaphore add -- curl example.com
 	semaphore add -- curl localhost
-	semaphore wait --notify --timeout=10s
+	semaphore wait --notify --speed=300 --timeout=10s
 	echo $$?
 
 .PHONY: cmd-test-2-local
