@@ -43,6 +43,44 @@ complex-tests-with-coverage: docker-test-with-coverage-latest
 
 
 
+.PHONY: parallel-bench
+parallel-bench: ARGS = -benchmem
+parallel-bench:
+	semaphore create
+	semaphore add -- make docker-bench-1.5 ARGS=$(ARGS)
+	semaphore add -- make docker-bench-1.6 ARGS=$(ARGS)
+	semaphore add -- make docker-bench-1.7 ARGS=$(ARGS)
+	semaphore add -- make docker-bench-1.8 ARGS=$(ARGS)
+	semaphore add -- make docker-bench-1.9 ARGS=$(ARGS)
+	semaphore add -- make docker-bench-latest ARGS=$(ARGS)
+	semaphore wait
+
+.PHONY: parallel-tests
+parallel-tests: ARGS = -timeout=1s
+parallel-tests:
+	semaphore create
+	semaphore add -- make docker-test-1.5 ARGS=$(ARGS)
+	semaphore add -- make docker-test-1.6 ARGS=$(ARGS)
+	semaphore add -- make docker-test-1.7 ARGS=$(ARGS)
+	semaphore add -- make docker-test-1.8 ARGS=$(ARGS)
+	semaphore add -- make docker-test-1.9 ARGS=$(ARGS)
+	semaphore add -- make docker-test-latest ARGS=$(ARGS)
+	semaphore wait
+
+.PHONY: parallel-tests-with-coverage
+parallel-tests-with-coverage: ARGS = -timeout=1s
+parallel-tests-with-coverage:
+	semaphore create
+	semaphore add -- docker-test-with-coverage-1.5 ARGS=$(ARGS)
+	semaphore add -- docker-test-with-coverage-1.6 ARGS=$(ARGS)
+	semaphore add -- docker-test-with-coverage-1.7 ARGS=$(ARGS)
+	semaphore add -- docker-test-with-coverage-1.8 ARGS=$(ARGS)
+	semaphore add -- docker-test-with-coverage-1.9 ARGS=$(ARGS)
+	semaphore add -- docker-test-with-coverage-latest ARGS=$(ARGS)
+	semaphore wait
+
+
+
 .PHONY: cmd-deps
 cmd-deps:
 	docker run --rm \
@@ -83,9 +121,13 @@ cmd-test-2:
 cmd-deps-local:
 	cd cmd/semaphore && glide install -v
 
-.PHONY: cmd-test-1-local
-cmd-test-1-local:
+.PHONY: cmd-install
+cmd-install:
 	go install ./cmd/semaphore
+
+.PHONY: cmd-test-1-local
+cmd-test-1-local: cmd-install
+cmd-test-1-local:
 	semaphore create 1
 	semaphore add -- curl localhost
 	semaphore add -- curl example.com
@@ -95,8 +137,8 @@ cmd-test-1-local:
 	semaphore wait --notify --timeout=10s
 
 .PHONY: cmd-test-2-local
+cmd-test-2-local: cmd-install
 cmd-test-2-local:
-	go install ./cmd/semaphore
 	semaphore help
 	semaphore -h
 	semaphore --help
