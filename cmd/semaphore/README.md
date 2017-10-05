@@ -44,6 +44,23 @@ wait	is a command to execute a semaphore task
     	timeout for task execution (default 1m0s)
 ```
 
+### Complex example
+
+```bash
+$ semaphore create 2
+$ semaphore add -- bash -c "cd /tmp; \
+    git clone git@github.com:kamilsk/semaphore.git \
+    && cd semaphore \
+    && echo 'semaphore at revision' \$(git rev-parse HEAD) \
+    && rm -rf /tmp/semaphore"
+$ semaphore add -- bash -c "cd /tmp; \
+    git clone git@github.com:kamilsk/retry.git \
+    && cd retry \
+    && echo 'retry at revision' \$(git rev-parse HEAD) \
+    && rm -rf /tmp/retry"
+$ semaphore wait
+```
+
 ## Installation
 
 ### Brew
