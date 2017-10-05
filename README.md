@@ -99,6 +99,55 @@ http.HandleFunc("/do-with-limit", limiter(1000, time.Minute, func(rw http.Respon
 
 See more details [here](https://godoc.org/github.com/kamilsk/semaphore#example-package--HttpRequestThroughputLimitation).
 
+### HTTP rate limitation
+
+This example shows how to create user specific rate limiter.
+
+```go
+func LimiterForUser(user User, cnf Config) semaphore.Semaphore {
+	mx.RLock()
+	limiter, ok := limiters[user]
+	mx.RUnlock()
+	if !ok {
+		mx.Lock()
+		// handle negative case
+		mx.Unlock()
+	}
+	return limiter
+}
+
+func RateLimiter(cnf Config, handler http.HandlerFunc) http.HandlerFunc {
+	return func(rw http.ResponseWriter, req *http.Request) {
+		user, ok := // get user from request context
+
+		limiter := LimiterForUser(user, cnf)
+		release, err := limiter.Acquire(semaphore.WithTimeout(cnf.SLA))
+		if err != nil {
+			http.Error(rw, err.Error(), http.StatusGatewayTimeout)
+			return
+		}
+
+		// handle the request in separated goroutine because the current will be held
+		go func() { handler.ServeHTTP(rw, req) }()
+
+		// hold the place for a required time
+		rl, ok := cnf.RateLimit[user]
+		if !ok {
+			rl = cnf.DefaultRateLimit
+		}
+		time.Sleep(rl)
+		release()
+		// rate limit = semaphore capacity / rate limit time, e.g. 10 request per second 
+	}
+}
+
+http.HandleFunc("/do-with-rate-limit", RateLimiter(cnf, func(rw http.ResponseWriter, req *http.Request) {
+	// do some rate limited work
+}))
+```
+
+See more details [here](https://godoc.org/github.com/kamilsk/semaphore#example-package--UserRateLimitation).
+
 ### Use context for cancellation
 
 This example shows how to use context and semaphore together.
