@@ -1,14 +1,8 @@
-> # semaphore/cmd
+> # cmd/semaphore
 >
-> Package cmd contains console tools.
-
-## semaphore
-
 > `semaphore` provides functionality to execute terminal commands in parallel.
 
-[![asciicast](https://asciinema.org/a/135943.png)](https://asciinema.org/a/135943)
-
-### Concept
+## Concept
 
 ```bash
 $ semaphore create 2
@@ -18,7 +12,9 @@ $ semaphore add -- ansible-playbook
 $ semaphore wait --timeout=1m --notify
 ```
 
-### Documentation
+[![asciicast](https://asciinema.org/a/135943.png)](https://asciinema.org/a/135943)
+
+## Documentation
 
 ```
 Usage: semaphore COMMAND
@@ -48,15 +44,15 @@ wait	is a command to execute a semaphore task
     	timeout for task execution (default 1m0s)
 ```
 
-### Installation
+## Installation
 
-#### Brew
+### Brew
 
 ```bash
 $ brew install kamilsk/tap/semaphore
 ```
 
-#### Binary
+### Binary
 
 ```bash
 $ export SEM_V=4.0.0    # all available versions are https://github.com/kamilsk/semaphore/releases
@@ -68,7 +64,7 @@ $ tar xf semaphore.tar.gz -C "${GOPATH}"/bin/
 $ rm semaphore.tar.gz
 ```
 
-#### From source code
+### From source code
 
 ```bash
 $ go get -d github.com/kamilsk/semaphore
@@ -77,9 +73,9 @@ $ make cmd-deps-local # or cmd-deps if you don't have glide binary but have dock
 $ make cmd-install
 ```
 
-### Command-line completion
+## Command-line completion
 
-#### Bash
+### Bash
 
 Make sure [bash completion](https://github.com/scop/bash-completion) is installed.
 
@@ -113,7 +109,7 @@ fi
 
 You can source your `~/.bash_profile` or launch a new terminal to utilize completion.
 
-#### Zsh
+### Zsh
 
 Place the completion script in your `/path/to/zsh/completion`, using e.g. `~/.zsh/completion/`:
 

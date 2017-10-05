@@ -34,7 +34,7 @@ $ semaphore wait --timeout=1m --notify
 
 [![asciicast](https://asciinema.org/a/136111.png)](https://asciinema.org/a/136111)
 
-See more details [here](cmd#semaphore).
+See more details [here](cmd/semaphore).
 
 ### HTTP response time limitation
 
