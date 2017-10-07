@@ -14,73 +14,6 @@ check-code-quality: docker-tool-gometalinter
 
 
 
-.PHONY: complex-bench
-complex-bench: ARGS = -benchmem
-complex-bench: docker-bench-1.5
-complex-bench: docker-bench-1.6
-complex-bench: docker-bench-1.7
-complex-bench: docker-bench-1.8
-complex-bench: docker-bench-1.9
-complex-bench: docker-bench-latest
-
-.PHONY: complex-tests
-complex-tests: ARGS = -timeout=1s
-complex-tests: docker-test-1.5
-complex-tests: docker-test-1.6
-complex-tests: docker-test-1.7
-complex-tests: docker-test-1.8
-complex-tests: docker-test-1.9
-complex-tests: docker-test-latest
-
-.PHONY: complex-tests-with-coverage
-complex-tests-with-coverage: ARGS = -timeout=1s
-complex-tests-with-coverage: docker-test-with-coverage-1.5
-complex-tests-with-coverage: docker-test-with-coverage-1.6
-complex-tests-with-coverage: docker-test-with-coverage-1.7
-complex-tests-with-coverage: docker-test-with-coverage-1.8
-complex-tests-with-coverage: docker-test-with-coverage-1.9
-complex-tests-with-coverage: docker-test-with-coverage-latest
-
-
-
-.PHONY: parallel-bench
-parallel-bench: ARGS = -benchmem
-parallel-bench:
-	semaphore create
-	semaphore add -- make docker-bench-1.5 ARGS=$(ARGS)
-	semaphore add -- make docker-bench-1.6 ARGS=$(ARGS)
-	semaphore add -- make docker-bench-1.7 ARGS=$(ARGS)
-	semaphore add -- make docker-bench-1.8 ARGS=$(ARGS)
-	semaphore add -- make docker-bench-1.9 ARGS=$(ARGS)
-	semaphore add -- make docker-bench-latest ARGS=$(ARGS)
-	semaphore wait
-
-.PHONY: parallel-tests
-parallel-tests: ARGS = -timeout=1s
-parallel-tests:
-	semaphore create
-	semaphore add -- make docker-test-1.5 ARGS=$(ARGS)
-	semaphore add -- make docker-test-1.6 ARGS=$(ARGS)
-	semaphore add -- make docker-test-1.7 ARGS=$(ARGS)
-	semaphore add -- make docker-test-1.8 ARGS=$(ARGS)
-	semaphore add -- make docker-test-1.9 ARGS=$(ARGS)
-	semaphore add -- make docker-test-latest ARGS=$(ARGS)
-	semaphore wait
-
-.PHONY: parallel-tests-with-coverage
-parallel-tests-with-coverage: ARGS = -timeout=1s
-parallel-tests-with-coverage:
-	semaphore create
-	semaphore add -- docker-test-with-coverage-1.5 ARGS=$(ARGS)
-	semaphore add -- docker-test-with-coverage-1.6 ARGS=$(ARGS)
-	semaphore add -- docker-test-with-coverage-1.7 ARGS=$(ARGS)
-	semaphore add -- docker-test-with-coverage-1.8 ARGS=$(ARGS)
-	semaphore add -- docker-test-with-coverage-1.9 ARGS=$(ARGS)
-	semaphore add -- docker-test-with-coverage-latest ARGS=$(ARGS)
-	semaphore wait
-
-
-
 .PHONY: cmd-deps
 cmd-deps:
 	docker run --rm \
@@ -148,17 +81,6 @@ cmd-test-2-local:
 	echo $$?
 
 
-
-.PHONY: docker-pull
-docker-pull: docker-pull-1.5
-docker-pull: docker-pull-1.6
-docker-pull: docker-pull-1.7
-docker-pull: docker-pull-1.8
-docker-pull: docker-pull-1.9
-docker-pull: docker-pull-latest
-docker-pull: docker-pull-tools
-docker-pull: PRUNE = --force
-docker-pull: docker-clean
 
 .PHONY: pull-github-tpl
 pull-github-tpl:
