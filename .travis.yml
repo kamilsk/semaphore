@@ -22,7 +22,7 @@ before_install:
 
 - go get github.com/mattn/goveralls
 - export GO_TEST_COVERAGE_FILENAME='coverage.out'
-# - export GO15VENDOREXPERIMENT=1
+- export GO15VENDOREXPERIMENT=1
 
 install:
 - (cd cmd/semaphore && glide install -v)

@@ -10,3 +10,5 @@ GO_VERSION := $(shell go version | awk '{print $$3}' | tr -d 'go')
 GIT_REV    := $(shell git rev-parse --short HEAD)
 GO_PACKAGE := $(patsubst %/,%,$(subst $(GOPATH)/src/,,$(CWD)))
 PACKAGES   := go list ./... | grep -v vendor | grep -v ^_
+
+SHELL      ?= /bin/bash -euo pipefail
