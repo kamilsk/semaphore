@@ -58,7 +58,7 @@ docker-test-with-coverage-$(1):
 	                               rm "coverage_$$$${package##*/}.out"; \
 	                           fi \
 	                       done'
-	if [ '$${OPEN_BROWSER}' != '' ]; then go tool cover -html='$$@.out'; fi
+	if [ ! -z '$${OPEN_BROWSER}' ]; then go tool cover -html='$$@.out'; fi
 
 
 .PHONY: docker-docs-$(1)

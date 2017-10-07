@@ -12,3 +12,8 @@ GO_PACKAGE := $(patsubst %/,%,$(subst $(GOPATH)/src/,,$(CWD)))
 PACKAGES   := go list ./... | grep -v vendor | grep -v ^_
 
 SHELL      ?= /bin/bash -euo pipefail
+
+.PHONY: help
+help:
+	@fgrep -h "#|" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/#| //'
+	# TODO make -pnrR
