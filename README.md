@@ -10,14 +10,6 @@
 [![GoDoc](https://godoc.org/github.com/kamilsk/semaphore?status.svg)](https://godoc.org/github.com/kamilsk/semaphore)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](LICENSE)
 
-## Code of Conduct
-
-The project team follows [Contributor Covenant v1.4](http://contributor-covenant.org/version/1/4/).
-Instances of abusive, harassing or otherwise unacceptable behavior may be reported by contacting
-the project team at feedback@octolab.org.
-
----
-
 ## Usage
 
 ### Console tool for command execution in parallel
@@ -254,35 +246,6 @@ $ egg bitbucket.org/kamilsk/semaphore
 This library is using [SemVer](http://semver.org) for versioning and it is not
 [BC](https://en.wikipedia.org/wiki/Backward_compatibility)-safe.
 Therefore, do not use `go get -u` to update it, use [Glide](https://glide.sh) or something similar for this purpose.
-
-## Contributing workflow
-
-Read first [Go Code Review Comments](https://github.com/golang/go/wiki/CodeReviewComments).
-
-### Code quality checking
-
-```bash
-$ make docker-pull-tools
-$ make check-code-quality
-```
-
-### Testing
-
-#### Local
-
-```bash
-$ make install-deps
-$ make test # or test-with-coverage
-$ make bench
-```
-
-#### Docker
-
-```bash
-$ make docker-pull
-$ make complex-tests # or complex-tests-with-coverage
-$ make complex-bench
-```
 
 ## Feedback
 

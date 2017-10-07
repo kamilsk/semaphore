@@ -9,7 +9,7 @@ include makes/docker.mk
 check-code-quality: ARGS = \
 	--exclude='.*_test\.go:.*error return value not checked.*\(errcheck\)$' \
 	--exclude='duplicate of.*_test.go.*\(dupl\)$' \
-	--vendor --deadline=1m ./...
+	--vendor --deadline=2m ./...
 check-code-quality: docker-tool-gometalinter
 
 
@@ -172,14 +172,3 @@ pull-makes:
 	rm -rf makes
 	(git clone git@github.com:kamilsk/shared.git makes && cd makes && git checkout makefile-go-v1 \
 	  && echo 'makes at revision' $$(git rev-parse HEAD) && rm -rf .git)
-
-
-
-.PHONY: research
-research:
-	docker run --rm \
-	           -v '${GOPATH}/src/${GO_PACKAGE}':'/go/src/${GO_PACKAGE}' \
-	           -w '/go/src/${GO_PACKAGE}/research' \
-	           kamilsk/go-tools:latest \
-	           glide install -v
-	rm -rf research/.glide
