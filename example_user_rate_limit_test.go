@@ -97,7 +97,7 @@ func UserToContext(cnf Config, handler http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-// This example shows how to create user specific rate limiter.
+// This example shows how to create user-specific rate limiter.
 func Example_userRateLimitation() {
 	var cnf Config = Config{
 		DefaultUser:      1,

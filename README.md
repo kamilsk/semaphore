@@ -91,9 +91,9 @@ http.HandleFunc("/do-with-limit", limiter(1000, time.Minute, func(rw http.Respon
 
 See more details [here](https://godoc.org/github.com/kamilsk/semaphore#example-package--HttpRequestThroughputLimitation).
 
-### HTTP rate limitation
+### HTTP personal rate limitation
 
-This example shows how to create user specific rate limiter.
+This example shows how to create user-specific rate limiter.
 
 ```go
 func LimiterForUser(user User, cnf Config) semaphore.Semaphore {
@@ -168,9 +168,9 @@ http.HandleFunc("/do-with-deadline", deadliner(1000, time.Minute, func(rw http.R
 
 See more details [here](https://godoc.org/github.com/kamilsk/semaphore#example-package--SemaphoreWithContext).
 
-### Pool of workers
+### A pool of workers
 
-This example shows how to create pool of workers based on semaphore.
+This example shows how to create a pool of workers based on semaphore.
 
 ```go
 type Pool struct {
@@ -243,7 +243,7 @@ $ egg bitbucket.org/kamilsk/semaphore
 
 ### Update
 
-This library is using [SemVer](http://semver.org) for versioning and it is not
+This library is using [SemVer](http://semver.org) for versioning, and it is not
 [BC](https://en.wikipedia.org/wiki/Backward_compatibility)-safe.
 Therefore, do not use `go get -u` to update it, use [Glide](https://glide.sh) or something similar for this purpose.
 

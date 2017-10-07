@@ -40,7 +40,7 @@ func New(size int) *Pool {
 	}
 }
 
-// This example shows how to create pool of workers based on semaphore.
+// This example shows how to create a pool of workers based on the semaphore.
 func Example_poolOfWorkers() {
 	var ok, fail int32 = 0, 5
 
