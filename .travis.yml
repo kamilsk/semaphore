@@ -17,11 +17,12 @@ matrix:
 sudo: false
 
 before_install:
-- wget https://github.com/Masterminds/glide/releases/download/v0.12.3/glide-v0.12.3-linux-amd64.tar.gz
-- tar -vxz -C $GOPATH/bin --strip=1 -f glide-v0.12.3-linux-amd64.tar.gz
+- wget https://github.com/Masterminds/glide/releases/download/v0.13.0/glide-v0.13.0-linux-amd64.tar.gz
+- tar -vxz -C "${GOPATH}"/bin --strip=1 -f glide-v0.13.0-linux-amd64.tar.gz
 
 - go get github.com/mattn/goveralls
 - export GO_TEST_COVERAGE_FILENAME='coverage.out'
+# - export GO15VENDOREXPERIMENT=1
 
 install:
 - (cd cmd/semaphore && glide install -v)
