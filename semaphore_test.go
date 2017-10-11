@@ -23,7 +23,7 @@ func TestSemaphore_Acquire_Timeout(t *testing.T) {
 	} {
 		sem := semaphore.New(0)
 		release, err := sem.Acquire(semaphore.WithTimeout(tc.timeout))
-		if err.Error() != expected {
+		if !semaphore.IsTimeout(err) {
 			t.Errorf("an unexpected error in test case %q. expected: %s; obtained: %v", tc.name, expected, err)
 		}
 		_ = release.Release()
@@ -66,7 +66,7 @@ func TestSemaphore_Occupied_Linearity(t *testing.T) {
 func TestSemaphore_Release_TryToGetDeadLock(t *testing.T) {
 	sem := semaphore.New(0)
 
-	if err, expected := sem.Release(), "semaphore is empty"; err.Error() != expected {
+	if err, expected := sem.Release(), "semaphore is empty"; !semaphore.IsEmpty(err) {
 		t.Errorf("an unexpected error. expected: %s; obtained: %v", expected, err)
 	}
 }

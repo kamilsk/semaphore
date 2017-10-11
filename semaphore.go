@@ -56,6 +56,16 @@ func New(capacity int) Semaphore {
 	return make(semaphore, capacity)
 }
 
+// IsEmpty checks if passed error is related to call Release on empty semaphore.
+func IsEmpty(err error) bool {
+	return err == errEmpty
+}
+
+// IsTimeout checks if passed error is related to call Acquire on full semaphore.
+func IsTimeout(err error) bool {
+	return err == errTimeout
+}
+
 var (
 	nothing ReleaseFunc = func() {}
 
@@ -68,7 +78,8 @@ type semaphore chan struct{}
 func (sem semaphore) Acquire(deadline <-chan struct{}) (ReleaseFunc, error) {
 	select {
 	case sem <- struct{}{}:
-		return releaser(sem), nil
+		//nolint: gas
+		return func() { _ = sem.Release() }, nil
 	case <-deadline:
 		return nothing, errTimeout
 	}
@@ -100,10 +111,4 @@ func (sem semaphore) Signal(deadline <-chan struct{}) <-chan ReleaseFunc {
 		close(ch)
 	}()
 	return ch
-}
-
-func releaser(releaser Releaser) ReleaseFunc {
-	return func() {
-		_ = releaser.Release() //nolint: gas
-	}
 }
