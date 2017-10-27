@@ -32,6 +32,8 @@ script:
 
 after_success:
 - goveralls -service=travis-ci -coverprofile="${GO_TEST_COVERAGE_FILENAME}"
+- echo "$TRAVIS_GO_VERSION"
+- test "$TRAVIS_GO_VERSION" = "master" -a -n "$TRAVIS_TAG" && curl -sL https://git.io/goreleaser | bash
 
 notifications:
   slack: octolab:1eMS7IqOArBipiu31jYVd0cN

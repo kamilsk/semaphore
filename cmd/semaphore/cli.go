@@ -380,6 +380,7 @@ type HelpCommand struct {
 	*BaseCommand
 	CmdName               string
 	Commit, Date, Version string
+	Compiler, Platform    string
 	Commands              Commands
 	Error                 error
 	Output                io.Writer
@@ -444,5 +445,12 @@ Semaphore provides functionality to execute terminal commands in parallel.
 		}
 	}
 
-	fmt.Fprintf(c.Output, "Version %s (commit: %s, build date: %s)\n", c.Version, c.Commit, c.Date)
+	fmt.Fprintf(c.Output, `
+Metadata:
+  version    : %s
+  commit     : %s
+  build date : %s
+  platform   : %s
+  compiler   : %s
+`, c.Version, c.Commit, c.Date, c.Platform, c.Compiler)
 }

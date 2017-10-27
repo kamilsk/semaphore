@@ -15,13 +15,16 @@ archive:
     windows: Windows
 
 brew:
-  caveats: semaphore -h
+  caveats: Use `semaphore help` to see detailed help message
+  commit_author:
+    name:  Kamil Samigullin
+    email: kamil@samigullin.info
+  description: Semaphore pattern implementation with a timeout of lock/unlock operations based on channels.
   folder: Formula
   github:
     name:  homebrew-tap
     owner: kamilsk
   homepage:    https://github.com/kamilsk/semaphore
-  description: Semaphore pattern implementation with a timeout of lock/unlock operations based on channels.
 
 build:
   binary: semaphore
@@ -37,11 +40,10 @@ build:
   ldflags: -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
   main:    ./cmd/semaphore
 
+checksum: { name_template: checksums.txt }
+
 release:
   draft: false
   github:
     name:  semaphore
     owner: kamilsk
-
-snapshot:
-  name_template: "{{.Commit}}_{{.Timestamp}}"
