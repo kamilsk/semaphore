@@ -445,6 +445,6 @@ Semaphore provides functionality to execute terminal commands in parallel.
 		}
 	}
 
-	fmt.Fprintf(c.Output, "Version %s (commit: %s, build date: %s, go version: %s, compiler: %s, platform: %s)",
+	fmt.Fprintf(c.Output, "Version %s (commit: %s, build date: %s, go version: %s, compiler: %s, platform: %s)\n",
 		c.Version, c.Commit, c.Date, c.GoVersion, c.Compiler, c.Platform)
 }

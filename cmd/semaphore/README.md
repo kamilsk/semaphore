@@ -72,7 +72,7 @@ $ brew install kamilsk/tap/semaphore
 ### Binary
 
 ```bash
-$ export SEM_V=4.1.0    # all available versions are on https://github.com/kamilsk/semaphore/releases
+$ export SEM_V=4.2.1    # all available versions are on https://github.com/kamilsk/semaphore/releases
 $ export REQ_OS=Linux   # macOS and Windows are also available
 $ export REQ_ARCH=64bit # 32bit is also available
 $ wget -q -O semaphore.tar.gz \
@@ -86,7 +86,7 @@ $ rm semaphore.tar.gz
 ```bash
 $ go get -d github.com/kamilsk/semaphore
 $ cd "${GOPATH}"/src/github.com/kamilsk/semaphore
-$ make cmd-deps-local # or cmd-deps, if you don't have glide binary but have docker app
+$ make cmd-deps-local # or cmd-deps, if you don't have the dep binary but have the docker
 $ make cmd-install
 ```
 
