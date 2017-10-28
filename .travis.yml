@@ -24,7 +24,7 @@ before_install:
 - export GO15VENDOREXPERIMENT=1
 
 install:
-- (cd cmd/semaphore && dep ensure)
+- make cmd-deps-local
 
 script:
 - make test-with-coverage-profile ARGS='-timeout=1s'
