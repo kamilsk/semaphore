@@ -19,7 +19,8 @@ func main() {
 			CmdName: "wait", Output: os.Stdout, Template: template.Must(template.New("report").Parse(DefaultReport))},
 	}
 	help := &HelpCommand{BaseCommand: base.Copy(),
-		CmdName: "help", Commit: commit, Date: date, Version: version, Compiler: compiler, Platform: platform,
+		CmdName: "help", Commit: commit, Date: date, Version: version,
+		Compiler: runtime.Compiler, Platform: runtime.GOOS + "/" + runtime.GOARCH, GoVersion: runtime.Version(),
 		Commands: commands, Output: os.Stderr}
 	commands = append(commands, help)
 

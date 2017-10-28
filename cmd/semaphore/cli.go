@@ -378,12 +378,12 @@ func (c *WaitCommand) Do() error {
 // HelpCommand is command to show help message.
 type HelpCommand struct {
 	*BaseCommand
-	CmdName               string
-	Commit, Date, Version string
-	Compiler, Platform    string
-	Commands              Commands
-	Error                 error
-	Output                io.Writer
+	CmdName                       string
+	Commit, Date, Version         string
+	Compiler, Platform, GoVersion string
+	Commands                      Commands
+	Error                         error
+	Output                        io.Writer
 }
 
 // FlagSet returns a configured FlagSet to handle HelpCommand arguments.
@@ -445,12 +445,6 @@ Semaphore provides functionality to execute terminal commands in parallel.
 		}
 	}
 
-	fmt.Fprintf(c.Output, `
-Metadata:
-  version    : %s
-  commit     : %s
-  build date : %s
-  platform   : %s
-  compiler   : %s
-`, c.Version, c.Commit, c.Date, c.Platform, c.Compiler)
+	fmt.Fprintf(c.Output, "Version %s (commit: %s, build date: %s, go version: %s, compiler: %s, platform: %s)",
+		c.Version, c.Commit, c.Date, c.GoVersion, c.Compiler, c.Platform)
 }
