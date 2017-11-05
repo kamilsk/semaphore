@@ -379,7 +379,7 @@ func (c *WaitCommand) Do() error {
 type HelpCommand struct {
 	*BaseCommand
 	CmdName                       string
-	Commit, Date, Version         string
+	Commit, BuildDate, Version    string
 	Compiler, Platform, GoVersion string
 	Commands                      Commands
 	Error                         error
@@ -446,5 +446,5 @@ Semaphore provides functionality to execute terminal commands in parallel.
 	}
 
 	fmt.Fprintf(c.Output, "Version %s (commit: %s, build date: %s, go version: %s, compiler: %s, platform: %s)\n",
-		c.Version, c.Commit, c.Date, c.GoVersion, c.Compiler, c.Platform)
+		c.Version, c.Commit, c.BuildDate, c.GoVersion, c.Compiler, c.Platform)
 }
