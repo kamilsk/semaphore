@@ -78,8 +78,7 @@ type semaphore chan struct{}
 func (sem semaphore) Acquire(deadline <-chan struct{}) (ReleaseFunc, error) {
 	select {
 	case sem <- struct{}{}:
-		//nolint: gas
-		return func() { _ = sem.Release() }, nil
+		return func() { _ = sem.Release() }, nil //nolint: gas
 	case <-deadline:
 		return nothing, errTimeout
 	}
