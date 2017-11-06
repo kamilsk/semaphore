@@ -11,7 +11,8 @@ cmd-test-1:
 	docker run --rm -it \
 	           -v '${GOPATH}/src/${GO_PACKAGE}':'/go/src/${GO_PACKAGE}' \
 	           -w '/go/src/${GO_PACKAGE}' \
-	           golang:1.8 \
+	           -e GO15VENDOREXPERIMENT=1 \
+	           golang:1.5 \
 	           /bin/sh -c 'go install ./cmd/semaphore; \
 	                       semaphore create 1; \
 	                       semaphore add -- curl localhost; \
@@ -28,7 +29,8 @@ cmd-test-2:
 	docker run --rm -it \
 	           -v '${GOPATH}/src/${GO_PACKAGE}':'/go/src/${GO_PACKAGE}' \
 	           -w '/go/src/${GO_PACKAGE}' \
-	           golang:1.8 \
+	           -e GO15VENDOREXPERIMENT=1 \
+	           golang:1.5 \
 	           /bin/sh -c 'go install ./cmd/semaphore \
 	                       && semaphore help \
 	                       && semaphore -h \
