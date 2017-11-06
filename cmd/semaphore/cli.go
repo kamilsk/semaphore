@@ -160,7 +160,7 @@ func (c *AddCommand) Desc() string {
 func (c *AddCommand) Do() error {
 	if c.Edit {
 		// TODO each new line from os.Stdin should be converted to Task
-		color.New(color.FgYellow).Fprintln(os.Stdout, "edit component is not ready yet")
+		color.New(color.FgYellow).Fprintln(os.Stderr, "edit component is not ready yet")
 	}
 
 	args := c.FlagSet().Args()
@@ -366,7 +366,7 @@ func (c *WaitCommand) Do() error {
 		// TODO try to find or implement by myself
 		// - https://github.com/variadico/noti
 		// - https://github.com/jolicode/JoliNotif
-		color.New(color.FgYellow).Fprintln(os.Stdout, "notify component is not ready yet")
+		color.New(color.FgYellow).Fprintln(os.Stderr, "notify component is not ready yet")
 	}
 
 	if failure > 0 {
