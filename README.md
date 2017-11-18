@@ -257,3 +257,5 @@ use [dep](https://github.com/golang/dep) or something similar for this purpose.
 - tested on Go 1.5, 1.6, 1.7, 1.8 and 1.9
 - [research](../../tree/research)
 - made with ❤️ by [OctoLab](https://www.octolab.org/)
+
+[![Analytics](https://ga-beacon.appspot.com/UA-109817251-2/semaphore/readme)](https://github.com/igrigorik/ga-beacon)
