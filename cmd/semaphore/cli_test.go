@@ -1,13 +1,15 @@
-package main
+package main_test
 
 import (
 	"flag"
 	"testing"
+
+	"github.com/kamilsk/semaphore/cmd/semaphore"
 )
 
 func TestCreateCommand(t *testing.T) {
-	bc := &BaseCommand{BinName: "test"}
-	cc := &CreateCommand{BaseCommand: bc, CmdName: "test"}
+	bc := &main.BaseCommand{BinName: "test"}
+	cc := &main.CreateCommand{BaseCommand: bc, CmdName: "test"}
 
 	if expected, obtained := cc.CmdName, cc.Name(); expected != obtained {
 		t.Errorf("unexpected command name. expected: %s, obtained: %s", expected, obtained)
@@ -27,8 +29,8 @@ func TestCreateCommand(t *testing.T) {
 }
 
 func TestAddCommand(t *testing.T) {
-	bc := &BaseCommand{BinName: "test"}
-	cc := &AddCommand{BaseCommand: bc, CmdName: "test"}
+	bc := &main.BaseCommand{BinName: "test"}
+	cc := &main.AddCommand{BaseCommand: bc, CmdName: "test"}
 
 	if expected, obtained := cc.CmdName, cc.Name(); expected != obtained {
 		t.Errorf("unexpected command name. expected: %s, obtained: %s", expected, obtained)
@@ -48,8 +50,8 @@ func TestAddCommand(t *testing.T) {
 }
 
 func TestWaitCommand(t *testing.T) {
-	bc := &BaseCommand{BinName: "test"}
-	cc := &WaitCommand{BaseCommand: bc, CmdName: "test"}
+	bc := &main.BaseCommand{BinName: "test"}
+	cc := &main.WaitCommand{BaseCommand: bc, CmdName: "test"}
 
 	if expected, obtained := cc.CmdName, cc.Name(); expected != obtained {
 		t.Errorf("unexpected command name. expected: %s, obtained: %s", expected, obtained)
@@ -69,8 +71,8 @@ func TestWaitCommand(t *testing.T) {
 }
 
 func TestHelpCommand(t *testing.T) {
-	bc := &BaseCommand{BinName: "test"}
-	cc := &HelpCommand{BaseCommand: bc, CmdName: "test"}
+	bc := &main.BaseCommand{BinName: "test"}
+	cc := &main.HelpCommand{BaseCommand: bc, CmdName: "test"}
 
 	if expected, obtained := cc.CmdName, cc.Name(); expected != obtained {
 		t.Errorf("unexpected command name. expected: %s, obtained: %s", expected, obtained)
