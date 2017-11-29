@@ -1,37 +1,58 @@
 package main
 
 import (
+	"io"
 	"os"
 	"runtime"
 	"text/template"
 )
 
-func main() {
+func main() { Main{Args: os.Args, Stderr: os.Stderr, Stdout: os.Stdout, Shutdown: os.Exit}.Exec() }
+
+const (
+	Success = 0
+	Failed  = 1
+)
+
+// Main is a struct to use it in `main` function and tests.
+type Main struct {
+	Args           []string
+	Stderr, Stdout io.Writer
+	Shutdown       func(code int)
+}
+
+// Exec executes application logic.
+func (m Main) Exec() {
 	var command Command
 
-	base := &BaseCommand{BinName: os.Args[0]}
+	base := &BaseCommand{BinName: m.Args[0]}
 	commands := Commands{
 		&CreateCommand{BaseCommand: base.Copy(),
 			CmdName: "create", Capacity: runtime.GOMAXPROCS(0)},
 		&AddCommand{BaseCommand: base.Copy(),
 			CmdName: "add"},
 		&WaitCommand{BaseCommand: base.Copy(),
-			CmdName: "wait", Output: os.Stdout, Template: template.Must(template.New("report").Parse(DefaultReport))},
+			CmdName: "wait", Output: m.Stdout, Template: template.Must(template.New("report").Parse(DefaultReport))},
 	}
 	help := &HelpCommand{BaseCommand: base.Copy(),
 		CmdName: "help", Commit: commit, BuildDate: date, Version: version,
 		Compiler: runtime.Compiler, Platform: runtime.GOOS + "/" + runtime.GOARCH, GoVersion: runtime.Version(),
-		Commands: commands, Output: os.Stderr}
+		Commands: commands, Output: m.Stderr}
 	commands = append(commands, help)
 
-	if command, help.Error = commands.Parse(os.Args[1:]); help.Error != nil {
+	if command, help.Error = commands.Parse(m.Args[1:]); help.Error != nil {
 		if help.Do() != nil {
-			os.Exit(1)
+			m.Shutdown(Failed)
+			return
 		}
+		m.Shutdown(Success)
 		return
 	}
 	if help.Error = command.Do(); help.Error != nil {
 		help.Do()
-		os.Exit(1)
+		m.Shutdown(Failed)
+		return
 	}
+	m.Shutdown(Success)
+	return
 }

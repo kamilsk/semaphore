@@ -20,19 +20,18 @@ import (
 type Task struct {
 	Capacity int
 	Timeout  time.Duration
-
-	jobs []Job
+	Jobs     []Job
 }
 
 // AddJob sets ID to a job and adds it to the task.
 func (t *Task) AddJob(job Job) {
-	job.ID = strconv.Itoa(len(t.jobs) + 1)
-	t.jobs = append(t.jobs, job)
+	job.ID = strconv.Itoa(len(t.Jobs) + 1)
+	t.Jobs = append(t.Jobs, job)
 }
 
 // Run executes all jobs.
 func (t *Task) Run() <-chan Result {
-	results := make(chan Result, len(t.jobs))
+	results := make(chan Result, len(t.Jobs))
 
 	go func() {
 		defer func() { close(results) }()
@@ -44,7 +43,7 @@ func (t *Task) Run() <-chan Result {
 		)
 
 		wg := &sync.WaitGroup{}
-		for i := range t.jobs {
+		for i := range t.Jobs {
 			wg.Add(1)
 			go func(job Job) {
 				result := Result{
@@ -71,7 +70,7 @@ func (t *Task) Run() <-chan Result {
 					result.Error = err
 					return
 				}
-			}(t.jobs[i])
+			}(t.Jobs[i])
 		}
 		wg.Wait()
 	}()

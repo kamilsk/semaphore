@@ -303,7 +303,7 @@ func (c *WaitCommand) Do() error {
 	}
 
 	var (
-		bar              = pb.New(len(task.jobs))
+		bar              = pb.New(len(task.Jobs))
 		results          = &Results{}
 		red              = &ColoredOutput{clr: color.New(color.FgHiRed), dst: c.Output}
 		limiter          = &LimitedOutput{speed: c.Speed}
