@@ -4,7 +4,7 @@ cmd-deps:
 	           -v '${GOPATH}/src/${GO_PACKAGE}':'/go/src/${GO_PACKAGE}' \
 	           -w '/go/src/${GO_PACKAGE}/cmd/semaphore' \
 	           kamilsk/go-tools:latest \
-	           dep ensure
+	           dep ensure -v
 
 .PHONY: cmd-test-1
 cmd-test-1:
@@ -39,7 +39,7 @@ cmd-test-2:
 
 .PHONY: cmd-deps-local
 cmd-deps-local:
-	if ! [ -e main.go ]; then cd cmd/semaphore && dep ensure; else dep ensure; fi
+	if ! [ -e main.go ]; then cd cmd/semaphore && dep ensure -v; else dep ensure -v; fi
 
 .PHONY: cmd-install
 cmd-install:

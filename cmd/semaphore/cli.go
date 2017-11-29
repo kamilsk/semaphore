@@ -213,7 +213,7 @@ type ColoredOutput struct {
 	dst io.Writer
 }
 
-// Write implements io.Writer interface.
+// Write implements `io.Writer` interface.
 func (o *ColoredOutput) Write(p []byte) (int, error) {
 	return o.clr.Fprint(o.dst, string(p))
 }
@@ -230,7 +230,7 @@ func (o *LimitedOutput) For(dst io.Writer) *LimitedOutput {
 	return o
 }
 
-// Write implements io.Writer interface.
+// Write implements `io.Writer` interface.
 func (o *LimitedOutput) Write(p []byte) (int, error) {
 	if o.speed != 0 {
 		pause := time.Second / time.Duration(o.speed)
@@ -303,7 +303,7 @@ func (c *WaitCommand) Do() error {
 	}
 
 	var (
-		bar              = pb.New(len(task.Jobs))
+		bar              = pb.New(len(task.jobs))
 		results          = &Results{}
 		red              = &ColoredOutput{clr: color.New(color.FgHiRed), dst: c.Output}
 		limiter          = &LimitedOutput{speed: c.Speed}

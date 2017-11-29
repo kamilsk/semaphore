@@ -20,18 +20,19 @@ import (
 type Task struct {
 	Capacity int
 	Timeout  time.Duration
-	Jobs     []Job
+
+	jobs []Job
 }
 
 // AddJob sets ID to a job and adds it to the task.
 func (t *Task) AddJob(job Job) {
-	job.ID = strconv.Itoa(len(t.Jobs) + 1)
-	t.Jobs = append(t.Jobs, job)
+	job.ID = strconv.Itoa(len(t.jobs) + 1)
+	t.jobs = append(t.jobs, job)
 }
 
 // Run executes all jobs.
 func (t *Task) Run() <-chan Result {
-	results := make(chan Result, len(t.Jobs))
+	results := make(chan Result, len(t.jobs))
 
 	go func() {
 		defer func() { close(results) }()
@@ -43,7 +44,7 @@ func (t *Task) Run() <-chan Result {
 		)
 
 		wg := &sync.WaitGroup{}
-		for i := range t.Jobs {
+		for i := range t.jobs {
 			wg.Add(1)
 			go func(job Job) {
 				result := Result{
@@ -70,7 +71,7 @@ func (t *Task) Run() <-chan Result {
 					result.Error = err
 					return
 				}
-			}(t.Jobs[i])
+			}(t.jobs[i])
 		}
 		wg.Wait()
 	}()
@@ -85,7 +86,7 @@ type Job struct {
 	Args []string
 }
 
-// Format implements fmt.Formatter interface.
+// Format implements `fmt.Formatter` interface.
 func (j Job) Format(s fmt.State, verb rune) {
 	switch verb {
 	case 'v':
@@ -101,11 +102,6 @@ func (j Job) Format(s fmt.State, verb rune) {
 	}
 }
 
-// String implements fmt.Stringer interface.
-func (j Job) String() string {
-	return j.Name + "#" + j.ID
-}
-
 // Run prepares command and executes it.
 func (j Job) Run(stdout, stderr io.Writer) error {
 	c := exec.Command(j.Name, j.Args...)
@@ -113,11 +109,16 @@ func (j Job) Run(stdout, stderr io.Writer) error {
 	return errors.WithMessage(c.Run(), fmt.Sprintf("an error occurred while executing %q", j))
 }
 
+// String implements `fmt.Stringer` interface.
+func (j Job) String() string {
+	return j.Name + "#" + j.ID
+}
+
 // Result holds the job execution result.
 type Result struct {
 	Job            Job
 	Error          error
-	Stdout, Stderr *bytes.Buffer
+	Stdout, Stderr io.ReadWriter
 	Start, End     time.Time
 }
 
@@ -126,7 +127,7 @@ func (r Result) Fetch() error {
 	return errors.WithMessage(r.Job.Run(r.Stdout, r.Stderr), fmt.Sprintf("the job %s ended with an error", r.Job))
 }
 
-// Results is a container implements sort.Interface.
+// Results is a container implements `sort.Interface`.
 type Results []Result
 
 // Append adds result into a container.
