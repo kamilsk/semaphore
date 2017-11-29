@@ -20,7 +20,7 @@ import (
 var (
 	errNotProvided = fmt.Errorf("command not provided")
 	errNotFound    = fmt.Errorf("command not found")
-	errExecution   = fmt.Errorf("execution error")
+	errExecution   = fmt.Errorf("command execution error")
 )
 
 // Command defines behavior to interact with user input.
@@ -49,8 +49,7 @@ func (l Commands) Parse(args []string) (Command, error) {
 	}
 	for _, cmd := range l {
 		if cmd.Name() == cmdName {
-			return cmd, errors.WithMessage(cmd.FlagSet().Parse(args[1:]),
-				fmt.Sprintf("invalid arguments for command %s", cmd.Name()))
+			return cmd, errors.Wrapf(cmd.FlagSet().Parse(args[1:]), "invalid arguments for command %s", cmd.Name())
 		}
 	}
 	return nil, errNotFound
@@ -58,21 +57,16 @@ func (l Commands) Parse(args []string) (Command, error) {
 
 // BaseCommand contains general fields for other commands.
 type BaseCommand struct {
+	Debug    bool
 	BinName  string
 	FileName string
 	Mode     flag.ErrorHandling
-	Flags    *flag.FlagSet
-}
-
-// Copy returns a copy of itself.
-func (c *BaseCommand) Copy() *BaseCommand {
-	n := *c
-	return &n
 }
 
 // FlagSet creates and configures new general FlagSet.
 func (c *BaseCommand) FlagSet(name string) *flag.FlagSet {
 	fs := flag.NewFlagSet(name, c.Mode)
+	fs.BoolVar(&c.Debug, "debug", false, "show error stack trace")
 	fs.StringVar(&c.FileName, "filename", filepath.Join(os.TempDir(), c.BinName+".json"),
 		"an absolute path to semaphore context")
 	return fs
@@ -83,6 +77,7 @@ type CreateCommand struct {
 	*BaseCommand
 	CmdName  string
 	Capacity int
+	Flags    *flag.FlagSet
 }
 
 // FlagSet returns a configured FlagSet to handle CreateCommand arguments.
@@ -111,19 +106,18 @@ func (c *CreateCommand) Do() error {
 	capacity := c.Capacity
 	if len(args) > 0 {
 		if capacity, err = strconv.Atoi(args[0]); err != nil || capacity < 1 {
-			return errors.WithMessage(err,
-				fmt.Sprintf("invalid capacity: capacity must be a valid integer greater than zero"))
+			return errors.Wrapf(err, "invalid capacity: capacity must be a valid integer greater than zero")
 		}
 	}
 
 	file, err := os.Create(c.FileName)
 	if err != nil {
-		return errors.WithMessage(err, fmt.Sprintf("could not create a file %s", c.FileName))
+		return errors.Wrapf(err, "could not create a file %s", c.FileName)
 	}
 
 	task := Task{Capacity: capacity}
 	if err := json.NewEncoder(file).Encode(task); err != nil {
-		return errors.WithMessage(err, fmt.Sprintf("could not store a context %+v into a file %s", task, c.FileName))
+		return errors.Wrapf(err, "could not store a context %+v into a file %s", task, c.FileName)
 	}
 
 	return nil
@@ -135,6 +129,7 @@ type AddCommand struct {
 	CmdName string
 	Edit    bool
 	Command []string
+	Flags   *flag.FlagSet
 }
 
 // FlagSet returns configured FlagSet to handle AddCommand arguments.
@@ -170,23 +165,22 @@ func (c *AddCommand) Do() error {
 
 	file, err := os.OpenFile(c.FileName, os.O_RDWR, 0644)
 	if err != nil {
-		return errors.WithMessage(err, fmt.Sprintf("could not open a file %s. did you create it before?", c.FileName))
+		return errors.Wrapf(err, "could not open a file %s. did you create it before?", c.FileName)
 	}
 
 	var task Task
 	if err := json.NewDecoder(file).Decode(&task); err != nil {
-		return errors.WithMessage(err,
-			fmt.Sprintf("could not restore a context from a file %s. is it a valid JSON?", c.FileName))
+		return errors.Wrapf(err, "could not restore a context from a file %s. is it a valid JSON?", c.FileName)
 	}
 
 	task.AddJob(Job{Name: args[0], Args: args[1:]})
 	data, err := json.Marshal(task)
 	if err != nil {
-		return errors.WithMessage(err, fmt.Sprintf("could not encode a context %+v into a JSON", task))
+		return errors.Wrapf(err, "could not encode a context %+v into a JSON", task)
 	}
 
 	if _, err := file.WriteAt(data, 0); err != nil {
-		return errors.WithMessage(err, fmt.Sprintf("could not store a context %+v into a file %s", task, c.FileName))
+		return errors.Wrapf(err, "could not store a context %+v into a file %s", task, c.FileName)
 	}
 
 	return nil
@@ -263,6 +257,7 @@ type WaitCommand struct {
 	Speed    int
 	Template *template.Template
 	Timeout  time.Duration
+	Flags    *flag.FlagSet
 }
 
 // FlagSet returns a configured FlagSet to handle WaitCommand arguments.
@@ -290,13 +285,12 @@ func (c *WaitCommand) Desc() string {
 func (c *WaitCommand) Do() error {
 	file, err := os.OpenFile(c.FileName, os.O_RDWR, 0644)
 	if err != nil {
-		return errors.WithMessage(err, fmt.Sprintf("could not open a file %s. did you create it before?", c.FileName))
+		return errors.Wrapf(err, "could not open a file %s. did you create it before?", c.FileName)
 	}
 
 	var task Task
 	if err := json.NewDecoder(file).Decode(&task); err != nil {
-		return errors.WithMessage(err,
-			fmt.Sprintf("could not restore a context from a file %s. is it a valid JSON?", c.FileName))
+		return errors.Wrapf(err, "could not restore a context from a file %s. is it a valid JSON?", c.FileName)
 	}
 	if c.Timeout > 0 {
 		task.Timeout = c.Timeout
@@ -335,7 +329,7 @@ func (c *WaitCommand) Do() error {
 		}
 		stdout, _ := ioutil.ReadAll(result.Stdout)
 		stderr, _ := ioutil.ReadAll(result.Stderr)
-		err = errors.WithMessage(c.Template.Execute(limiter.For(output), struct {
+		err = errors.Wrap(c.Template.Execute(limiter.For(output), struct {
 			Name       string
 			Args       []string
 			Error      error
@@ -384,6 +378,7 @@ type HelpCommand struct {
 	Commands                      Commands
 	Error                         error
 	Output                        io.Writer
+	Flags                         *flag.FlagSet
 }
 
 // FlagSet returns a configured FlagSet to handle HelpCommand arguments.
@@ -420,7 +415,11 @@ func (c *HelpCommand) Do() error {
 	case errExecution:
 		return c.Error
 	default:
-		color.New(color.FgRed).Fprintf(c.Output, "%+v\n", c.Error)
+		format := "%v\n"
+		if c.Debug {
+			format = "%+v\n"
+		}
+		color.New(color.FgRed).Fprintf(c.Output, format, c.Error)
 		return c.Error
 	}
 }

@@ -60,7 +60,7 @@ func (t *Task) Run() <-chan Result {
 
 				release, err := sem.Acquire(deadline)
 				if err != nil {
-					result.Error = errors.WithMessage(err, "semaphore")
+					result.Error = errors.Wrap(err, "semaphore")
 					return
 				}
 				defer release()
@@ -105,7 +105,7 @@ func (j Job) Format(s fmt.State, verb rune) {
 func (j Job) Run(stdout, stderr io.Writer) error {
 	c := exec.Command(j.Name, j.Args...)
 	c.Stdout, c.Stderr = stdout, stderr
-	return errors.WithMessage(c.Run(), fmt.Sprintf("an error occurred while executing %q", j))
+	return errors.Wrap(c.Run(), fmt.Sprintf("an error occurred while executing %q", j))
 }
 
 // String implements `fmt.Stringer` interface.
@@ -123,7 +123,7 @@ type Result struct {
 
 // Fetch executes the job and fetches its result into buffers.
 func (r Result) Fetch() error {
-	return errors.WithMessage(r.Job.Run(r.Stdout, r.Stderr), fmt.Sprintf("the job %s ended with an error", r.Job))
+	return errors.Wrap(r.Job.Run(r.Stdout, r.Stderr), fmt.Sprintf("the job %s ended with an error", r.Job))
 }
 
 // Results is a container implements `sort.Interface`.

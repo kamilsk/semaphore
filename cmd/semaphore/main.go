@@ -26,14 +26,14 @@ func (app application) Run() {
 
 	base := &BaseCommand{BinName: app.Args[0]}
 	commands := Commands{
-		&CreateCommand{BaseCommand: base.Copy(),
+		&CreateCommand{BaseCommand: base,
 			CmdName: "create", Capacity: runtime.GOMAXPROCS(0)},
-		&AddCommand{BaseCommand: base.Copy(),
+		&AddCommand{BaseCommand: base,
 			CmdName: "add"},
-		&WaitCommand{BaseCommand: base.Copy(),
+		&WaitCommand{BaseCommand: base,
 			CmdName: "wait", Output: app.Stdout, Template: template.Must(template.New("report").Parse(DefaultReport))},
 	}
-	help := &HelpCommand{BaseCommand: base.Copy(),
+	help := &HelpCommand{BaseCommand: base,
 		CmdName: "help", Commit: commit, BuildDate: date, Version: version,
 		Compiler: runtime.Compiler, Platform: runtime.GOOS + "/" + runtime.GOARCH, GoVersion: runtime.Version(),
 		Commands: commands, Output: app.Stderr}

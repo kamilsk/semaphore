@@ -32,11 +32,15 @@ Semaphore provides functionality to execute terminal commands in parallel.
 Commands:
 
 create	is a command to init a semaphore context
+  -debug
+    	show error stack trace
   -filename string
     	an absolute path to semaphore context (default "/tmp/semaphore.json")
 
 
 add	is a command to add a job into a semaphore context
+  -debug
+    	show error stack trace
   -edit
     	switch to edit mode to read arguments from input (not implemented yet)
   -filename string
@@ -44,12 +48,18 @@ add	is a command to add a job into a semaphore context
 
 
 wait	is a command to execute a semaphore task
+  -debug
+    	show error stack trace
   -filename string
     	an absolute path to semaphore context (default "/tmp/semaphore.json")
   -notify
     	show notification at the end (not implemented yet)
+  -speed int
+    	a velocity of report output (characters per second)
   -timeout duration
     	timeout for task execution (default 1m0s)
+
+Version 4.2.1 (commit: c3021037717c136851e639a0805900c062c73ce0, build date: 2017-10-29T07:30:15Z, go version: go1.9, compiler: gc, platform: darwin/amd64)
 ```
 
 ### Complex example

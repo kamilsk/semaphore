@@ -21,8 +21,7 @@ cmd-test-1:
 	                       semaphore add -- curl example.com; \
 	                       semaphore add -- curl localhost; \
 	                       cat /tmp/semaphore.json && echo ""; \
-	                       semaphore wait --notify --speed=300 --timeout=10s; \
-	                       echo $$?'
+	                       semaphore wait --notify --speed=300 --timeout=10s'
 
 .PHONY: cmd-test-2
 cmd-test-2:
@@ -34,8 +33,17 @@ cmd-test-2:
 	           /bin/sh -c 'go install ./cmd/semaphore \
 	                       && semaphore help \
 	                       && semaphore -h \
-	                       && semaphore --help; \
-	                       echo $$?'
+	                       && semaphore --help'
+
+.PHONY: cmd-test-3
+cmd-test-3:
+	docker run --rm -it \
+	           -v '${GOPATH}/src/${GO_PACKAGE}':'/go/src/${GO_PACKAGE}' \
+	           -w '/go/src/${GO_PACKAGE}' \
+	           -e GO15VENDOREXPERIMENT=1 \
+	           golang:1.5 \
+	           /bin/sh -c 'go install ./cmd/semaphore; \
+	                       semaphore wait --debug --filename="/bad"'
 
 .PHONY: cmd-deps-local
 cmd-deps-local:
@@ -55,7 +63,6 @@ cmd-test-1-local:
 	'${GOPATH}'/bin/semaphore add -- curl example.com
 	'${GOPATH}'/bin/semaphore add -- curl localhost
 	'${GOPATH}'/bin/semaphore wait --notify --speed=300 --timeout=10s
-	echo $$?
 
 .PHONY: cmd-test-2-local
 cmd-test-2-local: cmd-install
@@ -63,4 +70,8 @@ cmd-test-2-local:
 	'${GOPATH}'/bin/semaphore help
 	'${GOPATH}'/bin/semaphore -h
 	'${GOPATH}'/bin/semaphore --help
-	echo $$?
+
+.PHONY: cmd-test-3-local
+cmd-test-3-local: cmd-install
+cmd-test-3-local:
+	'${GOPATH}'/bin/semaphore wait --debug --filename="/bad"
