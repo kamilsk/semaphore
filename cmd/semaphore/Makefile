@@ -45,6 +45,8 @@ cmd-test-3:
 	           /bin/sh -c 'go install ./cmd/semaphore; \
 	                       semaphore wait --debug --filename="/bad"'
 
+
+
 .PHONY: cmd-deps-local
 cmd-deps-local:
 	if ! [ -e main.go ]; then cd cmd/semaphore && dep ensure -v; else dep ensure -v; fi

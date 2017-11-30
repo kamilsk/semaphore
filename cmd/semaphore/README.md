@@ -59,7 +59,7 @@ wait	is a command to execute a semaphore task
   -timeout duration
     	timeout for task execution (default 1m0s)
 
-Version 5.0.0 (commit: c3021037717c136851e639a0805900c062c73ce0, build date: 2017-10-29T07:30:15Z, go version: go1.9, compiler: gc, platform: darwin/amd64)
+Version 5.0.0 (commit: ..., build date: ..., go version: go1.9, compiler: gc, platform: darwin/amd64)
 ```
 
 ### Complex example
