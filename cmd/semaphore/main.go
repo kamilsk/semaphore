@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	Success = 0
-	Failed  = 1
+	success = 0
+	failed  = 1
 )
 
 func main() { application{Args: os.Args, Stderr: os.Stderr, Stdout: os.Stdout, Shutdown: os.Exit}.Run() }
@@ -41,17 +41,17 @@ func (app application) Run() {
 
 	if command, help.Error = commands.Parse(app.Args[1:]); help.Error != nil {
 		if help.Do() != nil {
-			app.Shutdown(Failed)
+			app.Shutdown(failed)
 			return
 		}
-		app.Shutdown(Success)
+		app.Shutdown(success)
 		return
 	}
 	if help.Error = command.Do(); help.Error != nil {
 		help.Do()
-		app.Shutdown(Failed)
+		app.Shutdown(failed)
 		return
 	}
-	app.Shutdown(Success)
+	app.Shutdown(success)
 	return
 }
