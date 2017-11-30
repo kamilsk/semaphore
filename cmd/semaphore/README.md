@@ -59,7 +59,7 @@ wait	is a command to execute a semaphore task
   -timeout duration
     	timeout for task execution (default 1m0s)
 
-Version 5.0.0 (commit: c3021037717c136851e639a0805900c062c73ce0, build date: 2017-10-29T07:30:15Z, go version: go1.9, compiler: gc, platform: darwin/amd64)
+Version 5.0.0 (commit: ..., build date: ..., go version: go1.9, compiler: gc, platform: darwin/amd64)
 ```
 
 ### Complex example
@@ -90,7 +90,7 @@ $ brew install kamilsk/tap/semaphore
 ### Binary
 
 ```bash
-$ export SEM_V=4.2.1    # all available versions are on https://github.com/kamilsk/semaphore/releases
+$ export SEM_V=5.0.0    # all available versions are on https://github.com/kamilsk/semaphore/releases
 $ export REQ_OS=Linux   # macOS and Windows are also available
 $ export REQ_ARCH=64bit # 32bit is also available
 $ wget -q -O semaphore.tar.gz \

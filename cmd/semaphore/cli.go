@@ -415,9 +415,9 @@ func (c *HelpCommand) Do() error {
 	case errExecution:
 		return c.Error
 	default:
-		format := "%v\n"
+		format := "an error occurred: %v\n"
 		if c.Debug {
-			format = "%+v\n"
+			format = "an error occurred: %+v\n"
 		}
 		color.New(color.FgRed).Fprintf(c.Output, format, c.Error)
 		return c.Error
