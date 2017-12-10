@@ -259,4 +259,4 @@ use [dep](https://github.com/golang/dep) or something similar for this purpose.
 - [research](../../tree/research)
 - made with ❤️ by [OctoLab](https://www.octolab.org/)
 
-[![Analytics](https://ga-beacon.appspot.com/UA-109817251-2/semaphore/readme)](https://github.com/igrigorik/ga-beacon)
+[![Analytics](https://ga-beacon.appspot.com/UA-109817251-2/semaphore/dev)](https://github.com/igrigorik/ga-beacon)
