@@ -1,6 +1,6 @@
-> # semaphore
->
-> Semaphore pattern implementation with a timeout of lock/unlock operations based on channels.
+> # semaphore [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Semaphore%20pattern%20implementation%20with%20a%20timeout%20of%20lock%2Funlock%20operations%20based%20on%20channels&url=https://github.com/kamilsk/semaphore&via=ikamilsk&hashtags=go,semaphore,throughput,limiter)
+> [![Analytics](https://ga-beacon.appspot.com/UA-109817251-2/semaphore/master?pixel)](https://github.com/igrigorik/ga-beacon)
+> Semaphore pattern implementation with timeout of lock/unlock operations based on channels.
 
 [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/avelino/awesome-go#goroutines)
 [![Patreon](https://img.shields.io/badge/patreon-donate-orange.svg)](https://www.patreon.com/octolab)
@@ -8,7 +8,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/kamilsk/semaphore)](https://goreportcard.com/report/github.com/kamilsk/semaphore)
 [![Coverage Status](https://coveralls.io/repos/github/kamilsk/semaphore/badge.svg)](https://coveralls.io/github/kamilsk/semaphore)
 [![GoDoc](https://godoc.org/github.com/kamilsk/semaphore?status.svg)](https://godoc.org/github.com/kamilsk/semaphore)
-[![License](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## Usage
 
@@ -255,8 +255,7 @@ use [dep](https://github.com/golang/dep) or something similar for this purpose.
 
 ## Notes
 
-- tested on Go 1.5, 1.6, 1.7, 1.8 and 1.9
 - [research](../../tree/research)
+- tested on Go 1.5, 1.6, 1.7, 1.8 and 1.9
 - made with ❤️ by [OctoLab](https://www.octolab.org/)
-
-[![Analytics](https://ga-beacon.appspot.com/UA-109817251-2/semaphore/readme)](https://github.com/igrigorik/ga-beacon)
+<

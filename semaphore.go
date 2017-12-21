@@ -3,7 +3,7 @@
 // that can be found in the LICENSE file.
 
 // Package semaphore provides an implementation of Semaphore pattern
-// with a timeout of lock/unlock operations based on channels.
+// with timeout of lock/unlock operations based on channels.
 package semaphore // import "github.com/kamilsk/semaphore"
 
 import "errors"
