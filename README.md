@@ -1,6 +1,6 @@
 > # semaphore [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Semaphore%20pattern%20implementation%20with%20a%20timeout%20of%20lock%2Funlock%20operations%20based%20on%20channels&url=https://github.com/kamilsk/semaphore&via=ikamilsk&hashtags=go,semaphore,throughput,limiter)
 > [![Analytics](https://ga-beacon.appspot.com/UA-109817251-2/semaphore/dev?pixel)](https://github.com/igrigorik/ga-beacon)
-> Semaphore pattern implementation with a timeout of lock/unlock operations based on channels.
+> Semaphore pattern implementation with timeout of lock/unlock operations based on channels.
 
 [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/avelino/awesome-go#goroutines)
 [![Patreon](https://img.shields.io/badge/patreon-donate-orange.svg)](https://www.patreon.com/octolab)
