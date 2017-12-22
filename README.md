@@ -258,4 +258,3 @@ use [dep](https://github.com/golang/dep) or something similar for this purpose.
 - [research](../../tree/research)
 - tested on Go 1.5, 1.6, 1.7, 1.8 and 1.9
 - made with ❤️ by [OctoLab](https://www.octolab.org/)
-<
