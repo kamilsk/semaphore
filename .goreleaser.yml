@@ -24,7 +24,7 @@ brew:
   github:
     name:  homebrew-tap
     owner: kamilsk
-  homepage:    https://github.com/kamilsk/semaphore
+  homepage: https://github.com/kamilsk/semaphore
 
 build:
   binary: semaphore
@@ -38,7 +38,7 @@ build:
   - linux
   - windows
   ldflags: -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
-  main:    ./cmd/semaphore
+  main: ./cmd/semaphore
 
 checksum: { name_template: checksums.txt }
 
