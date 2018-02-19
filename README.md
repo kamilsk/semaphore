@@ -1,5 +1,5 @@
 > # semaphore [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Semaphore%20pattern%20implementation%20with%20a%20timeout%20of%20lock%2Funlock%20operations%20based%20on%20channels&url=https://github.com/kamilsk/semaphore&via=ikamilsk&hashtags=go,semaphore,throughput,limiter)
-> [![Analytics](https://ga-beacon.appspot.com/UA-109817251-2/semaphore/master?pixel)](https://github.com/igrigorik/ga-beacon)
+> [![Analytics](https://ga-beacon.appspot.com/UA-109817251-2/semaphore/master?pixel)](https://github.com/kamilsk/semaphore)
 > Semaphore pattern implementation with timeout of lock/unlock operations based on channels.
 
 [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/avelino/awesome-go#goroutines)
@@ -11,6 +11,23 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## Usage
+
+### Quick start
+
+```go
+limiter := semaphore.New(1000)
+
+http.HandleFunc("/", func(rw http.ResponseWriter, _ *http.Request) {
+	if _, err := limiter.Acquire(semaphore.WithTimeout(time.Minute)); err != nil {
+		http.Error(rw, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
+		return
+	}
+	defer limiter.Release()
+	// handle request
+})
+
+log.Fatal(http.ListenAndServe(":80", nil))
+```
 
 ### Console tool for command execution in parallel
 
@@ -256,5 +273,5 @@ use [dep](https://github.com/golang/dep) or something similar for this purpose.
 ## Notes
 
 - [research](../../tree/research)
-- tested on Go 1.5, 1.6, 1.7, 1.8 and 1.9
+- tested on Go 1.5, 1.6, 1.7, 1.8, 1.9 and 1.10
 - made with ❤️ by [OctoLab](https://www.octolab.org/)

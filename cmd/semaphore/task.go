@@ -141,7 +141,7 @@ func (l Results) Len() int {
 
 // Less compares two results from container with indexes i and j.
 func (l Results) Less(i, j int) bool {
-	return strings.Compare(l[i].Job.ID, l[j].Job.ID) == -1
+	return l[i].Job.ID < l[j].Job.ID
 }
 
 // Swap swaps two results from container with indexes i and j.

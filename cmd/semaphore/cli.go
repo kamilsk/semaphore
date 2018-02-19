@@ -402,11 +402,7 @@ func (c *HelpCommand) Desc() string {
 // Do handles inner error and shows a specific message.
 func (c *HelpCommand) Do() error {
 	switch c.Error {
-	case nil:
-		fallthrough
-	case errNotProvided:
-		fallthrough
-	case flag.ErrHelp:
+	case nil, errNotProvided, flag.ErrHelp:
 		c.Usage()
 		return nil
 	case errNotFound:
