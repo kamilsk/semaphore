@@ -1,10 +1,8 @@
-.PHONY: cmd-deps
-cmd-deps:
-	docker run --rm \
-	           -v '${GOPATH}/src/${GO_PACKAGE}':'/go/src/${GO_PACKAGE}' \
-	           -w '/go/src/${GO_PACKAGE}/cmd/semaphore' \
-	           kamilsk/go-tools:latest \
-	           dep ensure -v
+.PHONY: cmd-install
+cmd-install:
+	if ! [ -e main.go ]; then go install ./cmd/semaphore; else go install .; fi
+
+
 
 .PHONY: cmd-test-1
 cmd-test-1:
@@ -46,14 +44,6 @@ cmd-test-3:
 	                       semaphore wait --debug --filename="/bad"'
 
 
-
-.PHONY: cmd-deps-local
-cmd-deps-local:
-	if ! [ -e main.go ]; then cd cmd/semaphore && dep ensure -v; else dep ensure -v; fi
-
-.PHONY: cmd-install
-cmd-install:
-	if ! [ -e main.go ]; then go install ./cmd/semaphore; else go install .; fi
 
 .PHONY: cmd-test-1-local
 cmd-test-1-local: cmd-install
