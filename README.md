@@ -5,8 +5,8 @@
 [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/avelino/awesome-go#goroutines)
 [![Patreon](https://img.shields.io/badge/patreon-donate-orange.svg)](https://www.patreon.com/octolab)
 [![Build Status](https://travis-ci.org/kamilsk/semaphore.svg?branch=dev)](https://travis-ci.org/kamilsk/semaphore)
-[![Go Report Card](https://goreportcard.com/badge/github.com/kamilsk/semaphore)](https://goreportcard.com/report/github.com/kamilsk/semaphore)
-[![Coverage Status](https://coveralls.io/repos/github/kamilsk/semaphore/badge.svg)](https://coveralls.io/github/kamilsk/semaphore)
+[![Code Coverage](https://scrutinizer-ci.com/g/kamilsk/semaphore/badges/coverage.png?b=dev)](https://scrutinizer-ci.com/g/kamilsk/semaphore/?branch=dev)
+[![Code Quality](https://scrutinizer-ci.com/g/kamilsk/semaphore/badges/quality-score.png?b=dev)](https://scrutinizer-ci.com/g/kamilsk/semaphore/?branch=dev)
 [![GoDoc](https://godoc.org/github.com/kamilsk/semaphore?status.svg)](https://godoc.org/github.com/kamilsk/semaphore)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
