@@ -8,7 +8,7 @@
 [![Code Coverage][icon_coverage]][page_quality]
 [![Code Quality][icon_quality]][page_quality]
 [![GoDoc][icon_docs]][page_docs]
-[![Research][icon_research]](../../tree/research)
+[![Research][icon_research]][page_research]
 [![License][icon_license]](LICENSE)
 
 ## Usage
@@ -279,6 +279,7 @@ made with ❤️ by [OctoLab](https://www.octolab.org/)
 [page_build]:      https://travis-ci.org/kamilsk/semaphore
 [page_docs]:       https://godoc.org/github.com/kamilsk/semaphore
 [page_promo]:      https://github.com/kamilsk/semaphore
+[page_research]:   https://github.com/kamilsk/go-research/tree/master/projects/semaphore
 [page_quality]:    https://scrutinizer-ci.com/g/kamilsk/semaphore/?branch=dev
 
 [twitter_publish]: https://twitter.com/intent/tweet?text=Semaphore%20pattern%20implementation%20with%20a%20timeout%20of%20lock%2Funlock%20operations%20based%20on%20channels&url=https://github.com/kamilsk/semaphore&via=ikamilsk&hashtags=go,semaphore,throughput,limiter
