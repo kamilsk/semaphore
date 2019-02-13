@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kamilsk/semaphore"
+	. "github.com/kamilsk/semaphore/v4"
 )
 
 func TestSemaphore_Acquire_Timeout(t *testing.T) {
@@ -21,9 +21,9 @@ func TestSemaphore_Acquire_Timeout(t *testing.T) {
 		{name: "zero timeout", timeout: 0},
 		{name: "positive timeout", timeout: time.Nanosecond},
 	} {
-		sem := semaphore.New(0)
-		release, err := sem.Acquire(semaphore.WithTimeout(tc.timeout))
-		if !semaphore.IsTimeout(err) {
+		sem := New(0)
+		release, err := sem.Acquire(WithTimeout(tc.timeout))
+		if !IsTimeout(err) {
 			t.Errorf("an unexpected error in test case %q. expected: %s; obtained: %v", tc.name, expected, err)
 		}
 		_ = release.Release()
@@ -33,7 +33,7 @@ func TestSemaphore_Acquire_Timeout(t *testing.T) {
 func TestSemaphore_Capacity_Immutability(t *testing.T) {
 	capacity := 7
 
-	sem := semaphore.New(capacity)
+	sem := New(capacity)
 
 	if sem.Capacity() != capacity {
 		t.Errorf("an unexpected capacity. expected: %d; obtained: %d", capacity, sem.Capacity())
@@ -49,7 +49,7 @@ func TestSemaphore_Capacity_Immutability(t *testing.T) {
 }
 
 func TestSemaphore_Occupied_Linearity(t *testing.T) {
-	sem := semaphore.New(7)
+	sem := New(7)
 
 	for i := 0; i < sem.Capacity(); i++ {
 		if sem.Occupied() != i {
@@ -64,24 +64,24 @@ func TestSemaphore_Occupied_Linearity(t *testing.T) {
 }
 
 func TestSemaphore_Release_TryToGetDeadLock(t *testing.T) {
-	sem := semaphore.New(0)
+	sem := New(0)
 
-	if err, expected := sem.Release(), "semaphore is empty"; !semaphore.IsEmpty(err) {
+	if err, expected := sem.Release(), "semaphore is empty"; !IsEmpty(err) {
 		t.Errorf("an unexpected error. expected: %s; obtained: %v", expected, err)
 	}
 }
 
 func TestSemaphore_Signal(t *testing.T) {
-	sem := semaphore.New(0)
+	sem := New(0)
 
-	release, ok := <-sem.Signal(semaphore.WithTimeout(0))
+	release, ok := <-sem.Signal(WithTimeout(0))
 	if release != nil || ok {
 		t.Error("unexpected signal")
 	}
 }
 
 func TestSemaphore_Concurrently(t *testing.T) {
-	sem := semaphore.New(int(math.Max(2.0, float64(runtime.GOMAXPROCS(0)))))
+	sem := New(int(math.Max(2.0, float64(runtime.GOMAXPROCS(0)))))
 
 	var counter int32
 

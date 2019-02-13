@@ -6,17 +6,17 @@ import (
 	"net/http/httptest"
 	"time"
 
-	"github.com/kamilsk/semaphore"
+	. "github.com/kamilsk/semaphore/v4"
 )
 
 // This example shows how to follow SLA.
 func Example_httpResponseTimeLimitation() {
-	limiter := semaphore.New(2)
+	limiter := New(2)
 
 	// start http server to handle parallel requests
 	ts := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		done := make(chan struct{})
-		deadline := semaphore.WithTimeout(sla)
+		deadline := WithTimeout(sla)
 
 		go func() {
 			release, err := limiter.Acquire(deadline)

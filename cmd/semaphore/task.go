@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/kamilsk/semaphore"
+	"github.com/kamilsk/semaphore/v4"
 	"github.com/pkg/errors"
 )
 

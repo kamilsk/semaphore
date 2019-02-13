@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/kamilsk/semaphore"
+	. "github.com/kamilsk/semaphore/v4"
 )
 
 // User represents user ID.
@@ -31,11 +31,11 @@ type Config struct {
 // This variables can be a part of limiter provider service.
 var (
 	mx       sync.RWMutex
-	limiters = make(map[User]semaphore.Semaphore)
+	limiters = make(map[User]Semaphore)
 )
 
 // LimiterForUser returns limiter for user found in request context.
-func LimiterForUser(user User, cnf Config) semaphore.Semaphore {
+func LimiterForUser(user User, cnf Config) Semaphore {
 	mx.RLock()
 	limiter, ok := limiters[user]
 	mx.RUnlock()
@@ -47,7 +47,7 @@ func LimiterForUser(user User, cnf Config) semaphore.Semaphore {
 			if !ok {
 				c = cnf.DefaultCapacity
 			}
-			limiter = semaphore.New(c)
+			limiter = New(c)
 			limiters[user] = limiter
 		}
 		mx.Unlock()
@@ -64,7 +64,7 @@ func RateLimiter(cnf Config, handler http.HandlerFunc) http.HandlerFunc {
 		}
 
 		limiter := LimiterForUser(user, cnf)
-		release, err := limiter.Acquire(semaphore.WithTimeout(cnf.SLA))
+		release, err := limiter.Acquire(WithTimeout(cnf.SLA))
 		if err != nil {
 			http.Error(rw, "operation timeout", http.StatusGatewayTimeout)
 			return

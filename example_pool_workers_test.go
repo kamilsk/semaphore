@@ -5,11 +5,11 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/kamilsk/semaphore"
+	. "github.com/kamilsk/semaphore/v4"
 )
 
 type Pool struct {
-	sem  semaphore.Semaphore
+	sem  Semaphore
 	work chan func()
 }
 
@@ -21,7 +21,7 @@ func (p *Pool) Schedule(task func()) {
 	}
 }
 
-func (p *Pool) worker(task func(), release semaphore.ReleaseFunc) {
+func (p *Pool) worker(task func(), release ReleaseFunc) {
 	defer release()
 	var ok bool
 	for {
@@ -33,9 +33,9 @@ func (p *Pool) worker(task func(), release semaphore.ReleaseFunc) {
 	}
 }
 
-func New(size int) *Pool {
+func NewPool(size int) *Pool {
 	return &Pool{
-		sem:  semaphore.New(size),
+		sem:  New(size),
 		work: make(chan func()),
 	}
 }
@@ -50,7 +50,7 @@ func Example_poolOfWorkers() {
 		atomic.AddInt32(&fail, -1)
 		wg.Done()
 	}
-	pool := New(int(fail / 2))
+	pool := NewPool(int(fail / 2))
 
 	wg.Add(int(fail))
 	for i, total := 0, int(fail); i < total; i++ {
