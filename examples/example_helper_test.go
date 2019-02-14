@@ -1,4 +1,4 @@
-package semaphore_test
+package examples_test
 
 import (
 	"net/http"

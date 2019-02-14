@@ -1,6 +1,6 @@
 // +build go1.7
 
-package semaphore_test
+package examples_test
 
 import (
 	"context"
@@ -84,7 +84,7 @@ func RateLimiter(cnf Config, handler http.HandlerFunc) http.HandlerFunc {
 // UserToContext gets user ID from request header and puts it into request context.
 func UserToContext(cnf Config, handler http.HandlerFunc) http.HandlerFunc {
 	return func(rw http.ResponseWriter, req *http.Request) {
-		var user User = cnf.DefaultUser
+		var user = cnf.DefaultUser
 
 		if id := req.Header.Get("user"); id != "" {
 			i, err := strconv.Atoi(id)
@@ -99,7 +99,7 @@ func UserToContext(cnf Config, handler http.HandlerFunc) http.HandlerFunc {
 
 // This example shows how to create user-specific rate limiter.
 func Example_userRateLimitation() {
-	var cnf Config = Config{
+	var cnf = Config{
 		DefaultUser:      1,
 		DefaultCapacity:  runtime.GOMAXPROCS(0),
 		DefaultRateLimit: 10 * time.Millisecond,

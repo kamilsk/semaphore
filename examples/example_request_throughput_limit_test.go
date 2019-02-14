@@ -1,6 +1,6 @@
 // +build go1.6
 
-package semaphore_test
+package examples_test
 
 import (
 	"fmt"
