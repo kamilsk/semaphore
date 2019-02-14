@@ -1,15 +1,15 @@
 > # 🚦 semaphore [![Tweet][icon_twitter]][twitter_publish]
-> [![Analytics][analytics_pixel]][page_promo]
+>
 > Semaphore pattern implementation with timeout of lock/unlock operations based on channels.
 
-[![Awesome][icon_awesome]](https://github.com/avelino/awesome-go#goroutines)
-[![Patreon][icon_patreon]](https://www.patreon.com/octolab)
+[![Awesome][icon_awesome]][page_awesome]
+[![Patreon][icon_patreon]][support]
 [![Build Status][icon_build]][page_build]
 [![Code Coverage][icon_coverage]][page_quality]
 [![Code Quality][icon_quality]][page_quality]
 [![GoDoc][icon_docs]][page_docs]
 [![Research][icon_research]][page_research]
-[![License][icon_license]](LICENSE)
+[![License][icon_license]][license]
 
 ## Usage
 
@@ -255,9 +255,9 @@ use [dep](https://github.com/golang/dep) or something similar for this purpose.
 
 ---
 
-[![Gitter][icon_gitter]](https://gitter.im/kamilsk/semaphore)
-[![@kamilsk][icon_tw_author]](https://twitter.com/ikamilsk)
-[![@octolab][icon_tw_sponsor]](https://twitter.com/octolab_inc)
+[![Gitter][icon_gitter]][gitter]
+[![@kamilsk][icon_tw_author]][author]
+[![@octolab][icon_tw_sponsor]][sponsor]
 
 made with ❤️ by [OctoLab](https://www.octolab.org/)
 
@@ -276,10 +276,17 @@ made with ❤️ by [OctoLab](https://www.octolab.org/)
 [icon_tw_sponsor]: https://img.shields.io/badge/sponsor-%40octolab-blue.svg
 [icon_twitter]:    https://img.shields.io/twitter/url/http/shields.io.svg?style=social
 
+[page_awesome]:    https://github.com/avelino/awesome-go#goroutines
 [page_build]:      https://travis-ci.org/kamilsk/semaphore
 [page_docs]:       https://godoc.org/github.com/kamilsk/semaphore
 [page_promo]:      https://github.com/kamilsk/semaphore
-[page_research]:   https://github.com/kamilsk/go-research/tree/master/projects/semaphore
 [page_quality]:    https://scrutinizer-ci.com/g/kamilsk/semaphore/?branch=master
+[page_research]:   https://github.com/kamilsk/go-research/tree/master/projects/semaphore
+
+[author]:          https://twitter.com/ikamilsk
+[gitter]:          https://gitter.im/kamilsk/semaphore
+[license]:         LICENSE
+[sponsor]:         https://twitter.com/octolab_inc
+[support]:         https://www.patreon.com/octolab
 
 [twitter_publish]: https://twitter.com/intent/tweet?text=Semaphore%20pattern%20implementation%20with%20a%20timeout%20of%20lock%2Funlock%20operations%20based%20on%20channels&url=https://github.com/kamilsk/semaphore&via=ikamilsk&hashtags=go,semaphore,throughput,limiter
