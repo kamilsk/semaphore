@@ -45,7 +45,7 @@ func TestJob(t *testing.T) {
 
 	assert.Equal(t, "echo#test", fmt.Sprintf("%v", j))
 	assert.Equal(t, "echo#test [hello, world]", fmt.Sprintf("%+v", j))
-	assert.Equal(t, "echo#test", fmt.Sprintf("%s", j))
+	assert.Equal(t, "echo#test", j.String())
 	assert.Equal(t, "echo#test `echo hello, world`", fmt.Sprintf("%q", j))
 	assert.NoError(t, j.Run(ioutil.Discard, ioutil.Discard))
 	assert.Equal(t, "echo#test", j.String())

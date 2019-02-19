@@ -223,11 +223,11 @@ func main() {
 ### Interrupt execution
 
 ```go
-sem := semaphore.New(runtime.GOMAXPROCS(0))
 interrupter := semaphore.Multiplex(
 	semaphore.WithTimeout(time.Second),
 	semaphore.WithSignal(os.Interrupt),
 )
+sem := semaphore.New(runtime.GOMAXPROCS(0))
 _, err := sem.Acquire(interrupter)
 if err == nil {
 	panic("press Ctrl+C")

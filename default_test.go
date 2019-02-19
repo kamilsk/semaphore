@@ -5,26 +5,26 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kamilsk/semaphore"
+	. "github.com/kamilsk/semaphore"
 )
 
 func TestAcquire(t *testing.T) {
-	rs := make([]semaphore.ReleaseFunc, 0, semaphore.Capacity())
+	rs := make([]ReleaseFunc, 0, Capacity())
 	do := func() {
 		for _, r := range rs {
 			r()
 		}
 	}
-	for i := 0; i < semaphore.Capacity(); i++ {
-		r, _ := semaphore.Acquire(nil)
+	for i := 0; i < Capacity(); i++ {
+		r, _ := Acquire(nil)
 		rs = append(rs, r)
 	}
 	expected := "operation timeout"
-	if _, err := semaphore.Acquire(semaphore.WithTimeout(10 * time.Millisecond)); err.Error() != expected {
+	if _, err := Acquire(WithTimeout(10 * time.Millisecond)); err.Error() != expected {
 		t.Errorf("an unexpected error. expected: %s; obtained: %v", expected, err)
 	}
 	do()
-	if r, err := semaphore.Acquire(semaphore.WithTimeout(10 * time.Millisecond)); err != nil {
+	if r, err := Acquire(WithTimeout(10 * time.Millisecond)); err != nil {
 		t.Error("an unexpected error", err)
 	} else {
 		r()
@@ -32,25 +32,25 @@ func TestAcquire(t *testing.T) {
 }
 
 func TestCapacity(t *testing.T) {
-	if obtained, expected := semaphore.Capacity(), runtime.GOMAXPROCS(0); obtained != expected {
+	if obtained, expected := Capacity(), runtime.GOMAXPROCS(0); obtained != expected {
 		t.Errorf("an unexpected capacity. expected: %d; obtained: %d", expected, obtained)
 	}
 }
 
 func TestOccupied(t *testing.T) {
-	if obtained, expected := semaphore.Occupied(), 0; obtained != expected {
+	if obtained, expected := Occupied(), 0; obtained != expected {
 		t.Errorf("unexpected occupied places. expected: %d; obtained: %d", expected, obtained)
 	}
 }
 
 func TestRelease(t *testing.T) {
-	if err, expected := semaphore.Release(), "semaphore is empty"; err.Error() != expected {
+	if err, expected := Release(), "semaphore is empty"; err.Error() != expected {
 		t.Errorf("an unexpected error. expected: %s; obtained: %v", expected, err)
 	}
 }
 
 func TestSignal(t *testing.T) {
-	if release, ok := <-semaphore.Signal(nil); release == nil || !ok {
+	if release, ok := <-Signal(nil); release == nil || !ok {
 		t.Error("unexpected signal")
 	}
 }

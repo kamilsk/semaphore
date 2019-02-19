@@ -36,7 +36,7 @@ func (t *Task) Run() <-chan Result {
 	go func() {
 		defer func() { close(results) }()
 
-		sem := semaphore.New(t.Capacity)
+		limiter := semaphore.New(t.Capacity)
 		deadline := semaphore.Multiplex(
 			semaphore.WithTimeout(t.Timeout),
 			semaphore.WithSignal(os.Interrupt),
@@ -58,7 +58,7 @@ func (t *Task) Run() <-chan Result {
 					wg.Done()
 				}()
 
-				release, err := sem.Acquire(deadline)
+				release, err := limiter.Acquire(deadline)
 				if err != nil {
 					result.Error = errors.Wrap(err, "semaphore")
 					return
@@ -90,14 +90,14 @@ func (j Job) Format(s fmt.State, verb rune) {
 	switch verb {
 	case 'v':
 		if s.Flag('+') && len(j.Args) > 0 {
-			fmt.Fprintf(s, "%s %+v", j.String(), j.Args)
+			_, _ = fmt.Fprintf(s, "%s %+v", j.String(), j.Args)
 			return
 		}
 		fallthrough
 	case 's':
-		io.WriteString(s, j.String())
+		_, _ = io.WriteString(s, j.String())
 	case 'q':
-		fmt.Fprintf(s, "%s `%s`", j.String(), strings.Join(append([]string{j.Name}, j.Args...), " "))
+		_, _ = fmt.Fprintf(s, "%s `%s`", j.String(), strings.Join(append([]string{j.Name}, j.Args...), " "))
 	}
 }
 

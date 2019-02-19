@@ -48,10 +48,9 @@ func (app application) Run() {
 		return
 	}
 	if help.Error = command.Do(); help.Error != nil {
-		help.Do()
+		_ = help.Do()
 		app.Shutdown(failed)
 		return
 	}
 	app.Shutdown(success)
-	return
 }

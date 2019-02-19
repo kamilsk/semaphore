@@ -155,7 +155,7 @@ func (c *AddCommand) Desc() string {
 func (c *AddCommand) Do() error {
 	if c.Edit {
 		// TODO each new line from os.Stdin should be converted to Task
-		color.New(color.FgYellow).Fprintln(os.Stderr, "edit component is not ready yet")
+		_, _ = color.New(color.FgYellow).Fprintln(os.Stderr, "edit component is not ready yet")
 	}
 
 	args := c.FlagSet().Args()
@@ -232,7 +232,7 @@ func (o *LimitedOutput) Write(p []byte) (int, error) {
 			total, n int
 			err      error
 		)
-		for _, r := range []rune(string(p)) {
+		for _, r := range string(p) {
 			if r == 0 {
 				continue
 			}
@@ -353,14 +353,14 @@ func (c *WaitCommand) Do() error {
 	if failure > 0 {
 		output = red
 	}
-	fmt.Fprintf(output, "total: %d; successful: %d; failed: %d; elapsed: %s \n",
+	_, _ = fmt.Fprintf(output, "total: %d; successful: %d; failed: %d; elapsed: %s \n",
 		results.Len(), success, failure, end.Sub(start))
 
 	if c.Notify {
 		// TODO try to find or implement by myself
 		// - https://github.com/variadico/noti
 		// - https://github.com/jolicode/JoliNotif
-		color.New(color.FgYellow).Fprintln(os.Stderr, "notify component is not ready yet")
+		_, _ = color.New(color.FgYellow).Fprintln(os.Stderr, "notify component is not ready yet")
 	}
 
 	if failure > 0 {
@@ -411,18 +411,14 @@ func (c *HelpCommand) Do() error {
 	case errExecution:
 		return c.Error
 	default:
-		format := "an error occurred: %v\n"
-		if c.Debug {
-			format = "an error occurred: %+v\n"
-		}
-		color.New(color.FgRed).Fprintf(c.Output, format, c.Error)
+		_, _ = color.New(color.FgRed).Fprintf(c.Output, "an error occurred: %v\n", c.Error)
 		return c.Error
 	}
 }
 
 // Usage shows help message.
 func (c *HelpCommand) Usage() {
-	fmt.Fprintf(c.Output, `
+	_, _ = fmt.Fprintf(c.Output, `
 Usage: %s COMMAND
 
 Semaphore provides functionality to execute terminal commands in parallel.
@@ -430,16 +426,16 @@ Semaphore provides functionality to execute terminal commands in parallel.
 `, c.BinName)
 
 	if len(c.Commands) > 0 {
-		fmt.Fprintln(c.Output, "Commands:")
+		_, _ = fmt.Fprintln(c.Output, "Commands:")
 		for _, cmd := range c.Commands {
-			fmt.Fprintf(c.Output, "\n%s\t%s\n", cmd.Name(), cmd.Desc())
+			_, _ = fmt.Fprintf(c.Output, "\n%s\t%s\n", cmd.Name(), cmd.Desc())
 			fs := cmd.FlagSet()
 			fs.SetOutput(c.Output)
 			fs.PrintDefaults()
-			fmt.Fprintln(c.Output)
+			_, _ = fmt.Fprintln(c.Output)
 		}
 	}
 
-	fmt.Fprintf(c.Output, "Version %s (commit: %s, build date: %s, go version: %s, compiler: %s, platform: %s)\n",
+	_, _ = fmt.Fprintf(c.Output, "Version %s (commit: %s, build date: %s, go version: %s, compiler: %s, platform: %s)\n",
 		c.Version, c.Commit, c.BuildDate, c.GoVersion, c.Compiler, c.Platform)
 }
