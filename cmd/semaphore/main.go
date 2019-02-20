@@ -9,7 +9,7 @@ import (
 
 const (
 	success = 0
-	failed  = 1
+	failure = 1
 )
 
 func main() { application{Args: os.Args, Stderr: os.Stderr, Stdout: os.Stdout, Shutdown: os.Exit}.Run() }
@@ -41,7 +41,7 @@ func (app application) Run() {
 
 	if command, help.Error = commands.Parse(app.Args[1:]); help.Error != nil {
 		if help.Do() != nil {
-			app.Shutdown(failed)
+			app.Shutdown(failure)
 			return
 		}
 		app.Shutdown(success)
@@ -49,7 +49,7 @@ func (app application) Run() {
 	}
 	if help.Error = command.Do(); help.Error != nil {
 		_ = help.Do()
-		app.Shutdown(failed)
+		app.Shutdown(failure)
 		return
 	}
 	app.Shutdown(success)

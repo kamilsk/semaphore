@@ -19,7 +19,7 @@ brew:
   commit_author:
     name:  Kamil Samigullin
     email: kamil@samigullin.info
-  description: Semaphore pattern implementation with timeout of lock/unlock operations based on channels.
+  description: Semaphore pattern implementation with timeout of lock/unlock operations.
   folder: Formula
   github:
     name:  homebrew-tap
