@@ -1,5 +1,3 @@
-// +build go1.10
-
 package main
 
 import (
@@ -31,7 +29,7 @@ func TestCompletion(t *testing.T) {
 		tc := test
 		t.Run(test.name, func(t *testing.T) {
 			buf.Reset()
-			Completion.Flag("format").Value.Set(tc.format)
+			_ = Completion.Flag("format").Value.Set(tc.format)
 			assert.NoError(t, Completion.RunE(Completion, nil))
 			assert.Contains(t, buf.String(), tc.expected)
 		})

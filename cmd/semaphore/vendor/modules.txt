@@ -8,6 +8,8 @@ github.com/fatih/color
 github.com/inconshreveable/mousetrap
 # github.com/kamilsk/go-kit v0.0.0-20190129050637-e2e228a63f53
 github.com/kamilsk/go-kit/pkg/fn
+# github.com/kamilsk/semaphore/v5 v5.0.0-20190220073958-e9f8e2531414
+github.com/kamilsk/semaphore/v5
 # github.com/mattn/go-colorable v0.0.9
 github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.3

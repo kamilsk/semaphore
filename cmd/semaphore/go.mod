@@ -6,6 +6,7 @@ require (
 	github.com/fatih/color v1.6.0
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/kamilsk/go-kit v0.0.0-20190129050637-e2e228a63f53
+	github.com/kamilsk/semaphore/v5 v5.0.0-20190220073958-e9f8e2531414
 	github.com/mattn/go-colorable v0.0.9 // indirect
 	github.com/mattn/go-isatty v0.0.3 // indirect
 	github.com/mattn/go-runewidth v0.0.2 // indirect
