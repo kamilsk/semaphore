@@ -4,9 +4,6 @@
 
 [![Awesome][icon_awesome]][awesome]
 [![Patreon][icon_patreon]][support]
-[![Build Status][icon_build]][build]
-[![Code Coverage][icon_coverage]][quality]
-[![Code Quality][icon_quality]][quality]
 [![GoDoc][icon_docs]][docs]
 [![Research][icon_research]][research]
 [![License][icon_license]][license]
@@ -132,32 +129,33 @@ made with ❤️ by [OctoLab][octolab]
 [gitter]:          https://gitter.im/kamilsk/semaphore
 [license]:         LICENSE
 [promo]:           https://github.com/kamilsk/semaphore
-[quality]:         https://scrutinizer-ci.com/g/kamilsk/semaphore/?branch=master
+[quality]:         https://scrutinizer-ci.com/g/kamilsk/semaphore/?branch=v5
 [research]:        https://github.com/kamilsk/go-research/tree/master/projects/semaphore
+[legacy]:          https://github.com/kamilsk/semaphore/tree/master
 [v4]:              https://github.com/kamilsk/semaphore/tree/v4
-[v5]:              https://github.com/kamilsk/semaphore/tree/v5
-[v5_features]:     https://github.com/kamilsk/semaphore/projects/6
+[v5]:              https://github.com/kamilsk/semaphore/projects/6
 
 [egg]:             https://github.com/kamilsk/egg
+[breaker]:         https://github.com/kamilsk/breaker
 [gomod]:           https://github.com/golang/go/wiki/Modules
-[semver]:          https://semver.org/
+[platform]:        https://github.com/kamilsk/platform
 
 [author]:          https://twitter.com/ikamilsk
 [octolab]:         https://www.octolab.org/
 [sponsor]:         https://twitter.com/octolab_inc
 [support]:         https://www.patreon.com/octolab
 
-[analytics]:       https://ga-beacon.appspot.com/UA-109817251-2/semaphore/master?pixel
-[tweet]:           https://twitter.com/intent/tweet?text=Semaphore%20pattern%20implementation%20with%20a%20timeout%20of%20lock%2Funlock%20operations%20based%20on%20channels&url=https://github.com/kamilsk/semaphore&via=ikamilsk&hashtags=go,semaphore,throughput,limiter
+[analytics]:       https://ga-beacon.appspot.com/UA-109817251-2/semaphore/v5?pixel
+[tweet]:           https://twitter.com/intent/tweet?text=Semaphore%20pattern%20implementation%20with%20a%20timeout%20of%20lock%2Funlock%20operations&url=https://github.com/kamilsk/semaphore&via=ikamilsk&hashtags=go,semaphore,throughput,limiter
 
 [icon_awesome]:    https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg
-[icon_build]:      https://travis-ci.org/kamilsk/semaphore.svg?branch=master
-[icon_coverage]:   https://scrutinizer-ci.com/g/kamilsk/semaphore/badges/coverage.png?b=master
+[icon_build]:      https://travis-ci.org/kamilsk/semaphore.svg?branch=v5
+[icon_coverage]:   https://scrutinizer-ci.com/g/kamilsk/semaphore/badges/coverage.png?b=v5
 [icon_docs]:       https://godoc.org/github.com/kamilsk/semaphore?status.svg
 [icon_gitter]:     https://badges.gitter.im/Join%20Chat.svg
 [icon_license]:    https://img.shields.io/badge/license-MIT-blue.svg
 [icon_patreon]:    https://img.shields.io/badge/patreon-donate-orange.svg
-[icon_quality]:    https://scrutinizer-ci.com/g/kamilsk/semaphore/badges/quality-score.png?b=master
+[icon_quality]:    https://scrutinizer-ci.com/g/kamilsk/semaphore/badges/quality-score.png?b=v5
 [icon_research]:   https://img.shields.io/badge/research-in%20progress-yellow.svg
 [icon_tw_author]:  https://img.shields.io/badge/author-%40kamilsk-blue.svg
 [icon_tw_sponsor]: https://img.shields.io/badge/sponsor-%40octolab-blue.svg

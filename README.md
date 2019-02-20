@@ -1,15 +1,35 @@
 > # 🚦 semaphore
 >
-> Semaphore pattern implementation with timeout of lock/unlock operations based on channels.
+> Semaphore pattern implementation with timeout of lock/unlock operations.
 
 [![Awesome][icon_awesome]][awesome]
 [![Patreon][icon_patreon]][support]
-[![Build Status][icon_build]][build]
-[![Code Coverage][icon_coverage]][quality]
-[![Code Quality][icon_quality]][quality]
 [![GoDoc][icon_docs]][docs]
 [![Research][icon_research]][research]
 [![License][icon_license]][license]
+
+## Important news
+
+The **[master][legacy]** is a feature frozen branch for versions **4.3.x** and no longer maintained.
+
+```bash
+$ dep ensure -add github.com/kamilsk/semaphore@4.3.1
+```
+
+The **[v4][]** branch is a continuation of the **[master][legacy]** branch for versions **v4.4.x**
+to better integration with [Go Modules][gomod].
+
+```bash
+$ go get -u github.com/kamilsk/semaphore/v4@v4.3.1
+```
+
+The **[v5][]** branch is an actual development branch.
+
+```bash
+$ go get -u github.com/kamilsk/semaphore/v5
+```
+
+Version **v5.x.y** focused on integration with the 🚧 [breaker][] and the 🧰 [platform][] packages.
 
 ## Usage
 
@@ -46,195 +66,6 @@ $ semaphore wait --timeout=1m --notify
 
 See more details [here](cmd/semaphore).
 
-### HTTP response time limitation
-
-This example shows how to follow SLA.
-
-```go
-sla := 100 * time.Millisecond
-sem := semaphore.New(1000)
-
-http.Handle("/do-with-timeout", http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-	done := make(chan struct{})
-	deadline := semaphore.WithTimeout(sla)
-
-	go func() {
-		release, err := sem.Acquire(deadline)
-		if err != nil {
-			return
-		}
-		defer release()
-		defer close(done)
-
-		// do some heavy work
-	}()
-
-	// wait what happens before
-	select {
-	case <-deadline:
-		http.Error(rw, "operation timeout", http.StatusGatewayTimeout)
-	case <-done:
-		// send success response
-	}
-}))
-```
-
-### HTTP request throughput limitation
-
-This example shows how to limit request throughput.
-
-```go
-limiter := func(limit int, timeout time.Duration, handler http.HandlerFunc) http.HandlerFunc {
-	throughput := semaphore.New(limit)
-	return func(rw http.ResponseWriter, req *http.Request) {
-		deadline := semaphore.WithTimeout(timeout)
-
-		release, err := throughput.Acquire(deadline)
-		if err != nil {
-			http.Error(rw, err.Error(), http.StatusTooManyRequests)
-			return
-		}
-		defer release()
-
-		handler.ServeHTTP(rw, req)
-	}
-}
-
-http.HandleFunc("/do-with-limit", limiter(1000, time.Minute, func(rw http.ResponseWriter, req *http.Request) {
-	// do some limited work
-}))
-```
-
-### HTTP personal rate limitation
-
-This example shows how to create user-specific rate limiter.
-
-```go
-func LimiterForUser(user User, cnf Config) semaphore.Semaphore {
-	mx.RLock()
-	limiter, ok := limiters[user]
-	mx.RUnlock()
-	if !ok {
-		mx.Lock()
-		// handle negative case
-		mx.Unlock()
-	}
-	return limiter
-}
-
-func RateLimiter(cnf Config, handler http.HandlerFunc) http.HandlerFunc {
-	return func(rw http.ResponseWriter, req *http.Request) {
-		user, ok := // get user from request context
-
-		limiter := LimiterForUser(user, cnf)
-		release, err := limiter.Acquire(semaphore.WithTimeout(cnf.SLA))
-		if err != nil {
-			http.Error(rw, err.Error(), http.StatusGatewayTimeout)
-			return
-		}
-
-		// handle the request in separated goroutine because the current will be held
-		go func() { handler.ServeHTTP(rw, req) }()
-
-		// hold the place for a required time
-		rl, ok := cnf.RateLimit[user]
-		if !ok {
-			rl = cnf.DefaultRateLimit
-		}
-		time.Sleep(rl)
-		release()
-		// rate limit = semaphore capacity / rate limit time, e.g. 10 request per second 
-	}
-}
-
-http.HandleFunc("/do-with-rate-limit", RateLimiter(cnf, func(rw http.ResponseWriter, req *http.Request) {
-	// do some rate limited work
-}))
-```
-
-### Use context for cancellation
-
-This example shows how to use context and semaphore together.
-
-```go
-deadliner := func(limit int, timeout time.Duration, handler http.HandlerFunc) http.HandlerFunc {
-	throughput := semaphore.New(limit)
-	return func(rw http.ResponseWriter, req *http.Request) {
-		ctx := semaphore.WithContext(req.Context(), semaphore.WithTimeout(timeout))
-
-		release, err := throughput.Acquire(ctx.Done())
-		if err != nil {
-			http.Error(rw, err.Error(), http.StatusGatewayTimeout)
-			return
-		}
-		defer release()
-
-		handler.ServeHTTP(rw, req.WithContext(ctx))
-	}
-}
-
-http.HandleFunc("/do-with-deadline", deadliner(1000, time.Minute, func(rw http.ResponseWriter, req *http.Request) {
-	// do some limited work
-}))
-```
-
-### A pool of workers
-
-This example shows how to create a pool of workers based on semaphore.
-
-```go
-type Pool struct {
-	sem  semaphore.Semaphore
-	work chan func()
-}
-
-func (p *Pool) Schedule(task func()) {
-	select {
-	case p.work <- task: // delay the task to already running workers
-	case release, ok := <-p.sem.Signal(nil): if ok { go p.worker(task, release) } // ok is always true in this case
-	}
-}
-
-func (p *Pool) worker(task func(), release semaphore.ReleaseFunc) {
-	defer release()
-	var ok bool
-	for {
-		task()
-		task, ok = <-p.work
-		if !ok { return }
-	}
-}
-
-func New(size int) *Pool {
-	return &Pool{
-		sem:  semaphore.New(size),
-		work: make(chan func()),
-	}
-}
-
-func main() {
-	pool := New(2)
-	pool.Schedule(func() { /* do some work */ })
-	...
-	pool.Schedule(func() { /* do some work */ })
-}
-```
-
-### Interrupt execution
-
-```go
-interrupter := semaphore.Multiplex(
-	semaphore.WithTimeout(time.Second),
-	semaphore.WithSignal(os.Interrupt),
-)
-sem := semaphore.New(runtime.GOMAXPROCS(0))
-_, err := sem.Acquire(interrupter)
-if err == nil {
-	panic("press Ctrl+C")
-}
-// successful interruption
-```
-
 ## Installation
 
 ```bash
@@ -247,9 +78,8 @@ $ egg bitbucket.org/kamilsk/semaphore
 
 ## Update
 
-This library is using [SemVer][semver] for versioning, and it is not
-[BC](https://en.wikipedia.org/wiki/Backward_compatibility)-safe. Therefore, do not use `go get -u` to update it,
-use **dep**, **glide** or something similar for this purpose.
+This library is using [SemVer](https://semver.org/) for versioning, and it is not
+[BC](https://en.wikipedia.org/wiki/Backward_compatibility)-safe.
 
 <sup id="egg">1</sup> The project is still in prototyping. [↩](#anchor-egg)
 
@@ -267,32 +97,33 @@ made with ❤️ by [OctoLab][octolab]
 [gitter]:          https://gitter.im/kamilsk/semaphore
 [license]:         LICENSE
 [promo]:           https://github.com/kamilsk/semaphore
-[quality]:         https://scrutinizer-ci.com/g/kamilsk/semaphore/?branch=master
+[quality]:         https://scrutinizer-ci.com/g/kamilsk/semaphore/?branch=v5
 [research]:        https://github.com/kamilsk/go-research/tree/master/projects/semaphore
+[legacy]:          https://github.com/kamilsk/semaphore/tree/master
 [v4]:              https://github.com/kamilsk/semaphore/tree/v4
-[v5]:              https://github.com/kamilsk/semaphore/tree/v5
-[v5_features]:     https://github.com/kamilsk/semaphore/projects/6
+[v5]:              https://github.com/kamilsk/semaphore/projects/6
 
 [egg]:             https://github.com/kamilsk/egg
+[breaker]:         https://github.com/kamilsk/breaker
 [gomod]:           https://github.com/golang/go/wiki/Modules
-[semver]:          https://semver.org/
+[platform]:        https://github.com/kamilsk/platform
 
 [author]:          https://twitter.com/ikamilsk
 [octolab]:         https://www.octolab.org/
 [sponsor]:         https://twitter.com/octolab_inc
 [support]:         https://www.patreon.com/octolab
 
-[analytics]:       https://ga-beacon.appspot.com/UA-109817251-2/semaphore/master?pixel
-[tweet]:           https://twitter.com/intent/tweet?text=Semaphore%20pattern%20implementation%20with%20a%20timeout%20of%20lock%2Funlock%20operations%20based%20on%20channels&url=https://github.com/kamilsk/semaphore&via=ikamilsk&hashtags=go,semaphore,throughput,limiter
+[analytics]:       https://ga-beacon.appspot.com/UA-109817251-2/semaphore/v5?pixel
+[tweet]:           https://twitter.com/intent/tweet?text=Semaphore%20pattern%20implementation%20with%20a%20timeout%20of%20lock%2Funlock%20operations&url=https://github.com/kamilsk/semaphore&via=ikamilsk&hashtags=go,semaphore,throughput,limiter
 
 [icon_awesome]:    https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg
-[icon_build]:      https://travis-ci.org/kamilsk/semaphore.svg?branch=master
-[icon_coverage]:   https://scrutinizer-ci.com/g/kamilsk/semaphore/badges/coverage.png?b=master
+[icon_build]:      https://travis-ci.org/kamilsk/semaphore.svg?branch=v5
+[icon_coverage]:   https://scrutinizer-ci.com/g/kamilsk/semaphore/badges/coverage.png?b=v5
 [icon_docs]:       https://godoc.org/github.com/kamilsk/semaphore?status.svg
 [icon_gitter]:     https://badges.gitter.im/Join%20Chat.svg
 [icon_license]:    https://img.shields.io/badge/license-MIT-blue.svg
 [icon_patreon]:    https://img.shields.io/badge/patreon-donate-orange.svg
-[icon_quality]:    https://scrutinizer-ci.com/g/kamilsk/semaphore/badges/quality-score.png?b=master
+[icon_quality]:    https://scrutinizer-ci.com/g/kamilsk/semaphore/badges/quality-score.png?b=v5
 [icon_research]:   https://img.shields.io/badge/research-in%20progress-yellow.svg
 [icon_tw_author]:  https://img.shields.io/badge/author-%40kamilsk-blue.svg
 [icon_tw_sponsor]: https://img.shields.io/badge/sponsor-%40octolab-blue.svg
