@@ -1,20 +1,36 @@
-OPEN_BROWSER       =
-SUPPORTED_VERSIONS = 1.9 1.10 1.11 latest
+SHELL := /bin/bash -euo pipefail
 
 
-include makes/env.mk
-include makes/docker.mk
-include makes/local.mk
-include cmd/semaphore/Makefile
+.PHONY: deps
+deps:
+	@(go mod tidy && go mod vendor && go mod verify)
 
 
-.PHONY: code-quality-check
-code-quality-check: ARGS = \
-	--exclude=".*_test\.go:.*error return value not checked.*\(errcheck\)$$" \
-	--exclude="duplicate of.*_test.go.*\(dupl\)$$" \
-	--vendor --deadline=1m ./... | sort
-code-quality-check: docker-tool-gometalinter
+.PHONY: goimports
+goimports:
+	@(goimports -ungroup -w .)
 
-.PHONY: code-quality-report
-code-quality-report:
-	time make code-quality-check | tail +7 | tee report.out
+
+.PHONY: test
+test:                         #| Runs tests with race.
+	go test -race -timeout 1s ./...
+
+.PHONY: test-check
+test-check:                   #| Fast runs tests to check their compilation errors.
+	go test -run=^hack ./...
+
+.PHONY: test-with-coverage
+test-with-coverage:           #| Runs tests with coverage.
+	go test -cover -timeout 1s  ./...
+
+.PHONY: test-with-coverage-formatted
+test-with-coverage-formatted: #| Runs tests with coverage and formats the result.
+	go test -cover -timeout 1s  ./... | column -t | sort -r
+
+.PHONY: test-with-coverage-profile
+test-with-coverage-profile:   #| Runs tests with coverage and collects the result.
+	go test -covermode count -coverprofile cover.out -timeout 1s ./...
+
+.PHONY: test-example
+test-example:                 #| Runs example tests with coverage and collects the result.
+	go test -covermode count -coverprofile -run=Example -timeout 1s -v example.out ./...

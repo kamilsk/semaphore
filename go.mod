@@ -1,1 +1,1 @@
-module github.com/kamilsk/semaphore
+module github.com/kamilsk/semaphore/v5

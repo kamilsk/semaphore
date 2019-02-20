@@ -5,14 +5,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kamilsk/semaphore"
+	. "github.com/kamilsk/semaphore/v5"
 )
 
 func TestMultiplex(t *testing.T) {
 	sleep := 100 * time.Millisecond
 
 	start := time.Now()
-	<-semaphore.Multiplex(semaphore.WithSignal(os.Interrupt), semaphore.WithTimeout(sleep))
+	<-Multiplex(WithSignal(os.Interrupt), WithTimeout(sleep))
 	end := time.Now()
 
 	if expected, obtained := sleep, end.Sub(start); expected > obtained {
@@ -21,7 +21,7 @@ func TestMultiplex(t *testing.T) {
 }
 
 func TestMultiplex_WithoutChannels(t *testing.T) {
-	<-semaphore.Multiplex()
+	<-Multiplex()
 }
 
 func TestWithDeadline(t *testing.T) {
@@ -34,7 +34,7 @@ func TestWithDeadline(t *testing.T) {
 	}
 	for _, test := range tests {
 		start := time.Now()
-		<-semaphore.WithDeadline(start.Add(test.deadline))
+		<-WithDeadline(start.Add(test.deadline))
 		end := time.Now()
 
 		if !end.After(start.Add(test.deadline)) {
@@ -44,14 +44,14 @@ func TestWithDeadline(t *testing.T) {
 }
 
 func TestWithSignal_NilSignal(t *testing.T) {
-	<-semaphore.WithSignal(nil)
+	<-WithSignal(nil)
 }
 
 func TestWithTimeout(t *testing.T) {
 	sleep := 100 * time.Millisecond
 
 	start := time.Now()
-	<-semaphore.WithTimeout(sleep)
+	<-WithTimeout(sleep)
 	end := time.Now()
 
 	if expected, obtained := sleep, end.Sub(start); expected > obtained {

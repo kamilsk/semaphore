@@ -4,7 +4,7 @@
 
 // Package semaphore provides an implementation of Semaphore pattern
 // with timeout of lock/unlock operations based on channels.
-package semaphore // import "github.com/kamilsk/semaphore"
+package semaphore // import "github.com/kamilsk/semaphore/v5"
 
 import "errors"
 

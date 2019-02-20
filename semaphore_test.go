@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kamilsk/semaphore"
+	. "github.com/kamilsk/semaphore/v5"
 )
 
 func TestSemaphore_Acquire_Timeout(t *testing.T) {
@@ -21,9 +21,9 @@ func TestSemaphore_Acquire_Timeout(t *testing.T) {
 		{name: "zero timeout", timeout: 0},
 		{name: "positive timeout", timeout: time.Nanosecond},
 	} {
-		sem := semaphore.New(0)
-		release, err := sem.Acquire(semaphore.WithTimeout(tc.timeout))
-		if !semaphore.IsTimeout(err) {
+		semaphore := New(0)
+		release, err := semaphore.Acquire(WithTimeout(tc.timeout))
+		if !IsTimeout(err) {
 			t.Errorf("an unexpected error in test case %q. expected: %s; obtained: %v", tc.name, expected, err)
 		}
 		_ = release.Release()
@@ -33,65 +33,65 @@ func TestSemaphore_Acquire_Timeout(t *testing.T) {
 func TestSemaphore_Capacity_Immutability(t *testing.T) {
 	capacity := 7
 
-	sem := semaphore.New(capacity)
+	semaphore := New(capacity)
 
-	if sem.Capacity() != capacity {
-		t.Errorf("an unexpected capacity. expected: %d; obtained: %d", capacity, sem.Capacity())
+	if semaphore.Capacity() != capacity {
+		t.Errorf("an unexpected capacity. expected: %d; obtained: %d", capacity, semaphore.Capacity())
 	}
 
-	for i := 0; i < sem.Capacity(); i++ {
-		_, _ = sem.Acquire(nil)
+	for i := 0; i < semaphore.Capacity(); i++ {
+		_, _ = semaphore.Acquire(nil)
 	}
 
-	if sem.Capacity() != capacity {
-		t.Errorf("an unexpected capacity. expected: %d; obtained: %d", capacity, sem.Capacity())
+	if semaphore.Capacity() != capacity {
+		t.Errorf("an unexpected capacity. expected: %d; obtained: %d", capacity, semaphore.Capacity())
 	}
 }
 
 func TestSemaphore_Occupied_Linearity(t *testing.T) {
-	sem := semaphore.New(7)
+	semaphore := New(7)
 
-	for i := 0; i < sem.Capacity(); i++ {
-		if sem.Occupied() != i {
-			t.Errorf("unexpected occupied places. expected: %d; obtained: %d", i, sem.Occupied())
+	for i := 0; i < semaphore.Capacity(); i++ {
+		if semaphore.Occupied() != i {
+			t.Errorf("unexpected occupied places. expected: %d; obtained: %d", i, semaphore.Occupied())
 		}
-		_, _ = sem.Acquire(nil)
+		_, _ = semaphore.Acquire(nil)
 	}
 
-	if sem.Occupied() != sem.Capacity() {
-		t.Errorf("unexpected occupied places. expected: %d; obtained: %d", sem.Capacity(), sem.Occupied())
+	if semaphore.Occupied() != semaphore.Capacity() {
+		t.Errorf("unexpected occupied places. expected: %d; obtained: %d", semaphore.Capacity(), semaphore.Occupied())
 	}
 }
 
 func TestSemaphore_Release_TryToGetDeadLock(t *testing.T) {
-	sem := semaphore.New(0)
+	semaphore := New(0)
 
-	if err, expected := sem.Release(), "semaphore is empty"; !semaphore.IsEmpty(err) {
+	if err, expected := semaphore.Release(), "semaphore is empty"; !IsEmpty(err) {
 		t.Errorf("an unexpected error. expected: %s; obtained: %v", expected, err)
 	}
 }
 
 func TestSemaphore_Signal(t *testing.T) {
-	sem := semaphore.New(0)
+	semaphore := New(0)
 
-	release, ok := <-sem.Signal(semaphore.WithTimeout(0))
+	release, ok := <-semaphore.Signal(WithTimeout(0))
 	if release != nil || ok {
 		t.Error("unexpected signal")
 	}
 }
 
 func TestSemaphore_Concurrently(t *testing.T) {
-	sem := semaphore.New(int(math.Max(2.0, float64(runtime.GOMAXPROCS(0)))))
+	semaphore := New(int(math.Max(2.0, float64(runtime.GOMAXPROCS(0)))))
 
 	var counter int32
 
 	start, wg := make(chan bool), &sync.WaitGroup{}
-	for i := 0; i < sem.Capacity(); i++ {
+	for i := 0; i < semaphore.Capacity(); i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
 			<-start
-			release, err := sem.Acquire(nil)
+			release, err := semaphore.Acquire(nil)
 			if err != nil {
 				t.Error("an unexpected error", err)
 				return
@@ -103,11 +103,11 @@ func TestSemaphore_Concurrently(t *testing.T) {
 	close(start)
 	wg.Wait()
 
-	if int(counter) != sem.Capacity() {
-		t.Errorf("an unexpected counter value. expected: %d; obtained: %d", sem.Capacity(), counter)
+	if int(counter) != semaphore.Capacity() {
+		t.Errorf("an unexpected counter value. expected: %d; obtained: %d", semaphore.Capacity(), counter)
 	}
 
-	if sem.Occupied() != 0 {
-		t.Errorf("zero occupied places are expected but received %d instead", sem.Occupied())
+	if semaphore.Occupied() != 0 {
+		t.Errorf("zero occupied places are expected but received %d instead", semaphore.Occupied())
 	}
 }

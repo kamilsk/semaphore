@@ -124,8 +124,6 @@ func lockEcho() (shutdownCh chan struct{}, err error) {
 		err = fmt.Errorf("Can't set terminal settings: %v", e)
 		return
 	}
-
-	shutdownCh = make(chan struct{})
 	return
 }
 
