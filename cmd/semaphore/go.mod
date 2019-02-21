@@ -3,7 +3,7 @@ module github.com/kamilsk/semaphore/cli
 require (
 	github.com/cheggaaa/pb v1.0.22
 	github.com/fatih/color v1.6.0
-	github.com/kamilsk/platform v1.4.0
+	github.com/kamilsk/platform v0.5.0
 	github.com/kamilsk/semaphore/v5 v5.0.0-20190220073958-e9f8e2531414
 	github.com/mattn/go-colorable v0.0.9 // indirect
 	github.com/mattn/go-isatty v0.0.3 // indirect

@@ -9,8 +9,8 @@ github.com/fatih/color v1.6.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5Kwzbycv
 github.com/golang/mock v1.2.0/go.mod h1:oTYuIxOrZwtPieC+H1uAHpcLFnEyAGVDL/k47Jfbm0A=
 github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NHg9XEKhtSvM=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
-github.com/kamilsk/platform v1.4.0 h1:+EdsQTmSgFbckjwiBUpq6vM42BpaamoszFbQ9Nbd1Yc=
-github.com/kamilsk/platform v1.4.0/go.mod h1:AZtZ9SncxGgpB1zcBhtSdQQ1/j0zAy8+0DjCkuvbRCE=
+github.com/kamilsk/platform v0.5.0 h1:zTEXqBS8O/wcw92AKuxJo3x/S8+TWWjZBBGmkgOJvG0=
+github.com/kamilsk/platform v0.5.0/go.mod h1:AZtZ9SncxGgpB1zcBhtSdQQ1/j0zAy8+0DjCkuvbRCE=
 github.com/kamilsk/semaphore/v5 v5.0.0-20190220073958-e9f8e2531414 h1:4y/mi4cLQtjYMOW/33ho8P4O/xQZqvxulXBhEOvvXJE=
 github.com/kamilsk/semaphore/v5 v5.0.0-20190220073958-e9f8e2531414/go.mod h1:F4VxjAD6yjJB6dsIATp7uaj263RaIFD9f/roxi4i/Lw=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
