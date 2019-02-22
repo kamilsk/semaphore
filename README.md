@@ -27,6 +27,8 @@ The **[v5][]** branch is an actual development branch.
 
 ```bash
 $ go get -u github.com/kamilsk/semaphore/v5
+
+$ dep ensure -add github.com/kamilsk/semaphore@v5.0.0-rc1
 ```
 
 Version **v5.x.y** focused on integration with the 🚧 [breaker][] and the 🧰 [platform][] packages.
