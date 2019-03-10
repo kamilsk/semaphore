@@ -1,6 +1,7 @@
 package semaphore_test
 
 import (
+	"context"
 	"math"
 	"runtime"
 	"sync"
@@ -22,7 +23,9 @@ func TestSemaphore_Acquire_Timeout(t *testing.T) {
 		{name: "positive timeout", timeout: time.Nanosecond},
 	} {
 		semaphore := New(0)
-		release, err := semaphore.Acquire(WithTimeout(tc.timeout))
+		ctx, cancel := context.WithTimeout(context.Background(), tc.timeout)
+		release, err := semaphore.Acquire(ctx.Done())
+		cancel()
 		if !IsTimeout(err) {
 			t.Errorf("an unexpected error in test case %q. expected: %s; obtained: %v", tc.name, expected, err)
 		}
@@ -74,7 +77,9 @@ func TestSemaphore_Release_TryToGetDeadLock(t *testing.T) {
 func TestSemaphore_Signal(t *testing.T) {
 	semaphore := New(0)
 
-	release, ok := <-semaphore.Signal(WithTimeout(0))
+	ctx, cancel := context.WithTimeout(context.Background(), 0)
+	release, ok := <-semaphore.Signal(ctx.Done())
+	cancel()
 	if release != nil || ok {
 		t.Error("unexpected signal")
 	}

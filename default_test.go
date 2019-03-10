@@ -1,6 +1,7 @@
 package semaphore_test
 
 import (
+	"context"
 	"runtime"
 	"testing"
 	"time"
@@ -19,12 +20,15 @@ func TestAcquire(t *testing.T) {
 		r, _ := Acquire(nil)
 		rs = append(rs, r)
 	}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
+	defer cancel()
 	expected := "operation timeout"
-	if _, err := Acquire(WithTimeout(10 * time.Millisecond)); err.Error() != expected {
+	if _, err := Acquire(ctx.Done()); err.Error() != expected {
 		t.Errorf("an unexpected error. expected: %s; obtained: %v", expected, err)
 	}
 	do()
-	if r, err := Acquire(WithTimeout(10 * time.Millisecond)); err != nil {
+	ctx, cancel = context.WithTimeout(context.Background(), 10*time.Millisecond)
+	if r, err := Acquire(ctx.Done()); err != nil {
 		t.Error("an unexpected error", err)
 	} else {
 		r()
