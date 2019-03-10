@@ -1,4 +1,4 @@
-package semaphore_test
+package semaphore
 
 import (
 	"context"
@@ -9,7 +9,6 @@ import (
 	"testing"
 	"time"
 
-	. "github.com/kamilsk/semaphore/v5"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -1,12 +1,10 @@
-package semaphore_test
+package semaphore
 
 import (
 	"context"
 	"runtime"
 	"testing"
 	"time"
-
-	. "github.com/kamilsk/semaphore/v5"
 )
 
 func TestAcquire(t *testing.T) {
