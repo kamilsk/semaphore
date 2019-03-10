@@ -10,10 +10,10 @@ import (
 	"time"
 
 	. "github.com/kamilsk/semaphore/v5"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSemaphore_Acquire_Timeout(t *testing.T) {
-	expected := "operation timeout"
 	for _, tc := range []struct {
 		name    string
 		timeout time.Duration
@@ -26,10 +26,9 @@ func TestSemaphore_Acquire_Timeout(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), tc.timeout)
 		release, err := semaphore.Acquire(ctx.Done())
 		cancel()
-		if !IsTimeout(err) {
-			t.Errorf("an unexpected error in test case %q. expected: %s; obtained: %v", tc.name, expected, err)
-		}
 		_ = release.Release()
+
+		assert.True(t, IsTimeout(err))
 	}
 }
 
