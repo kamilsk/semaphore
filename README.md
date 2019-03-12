@@ -34,7 +34,7 @@ $ go get -u github.com/kamilsk/semaphore/v5
 $ dep ensure -add github.com/kamilsk/semaphore@v5.0.0-rc1
 ```
 
-Version **v5.x.y** focused on integration with the 🚧 [breaker][] and the 🧰 [platform][] packages.
+Version **v5** focused on integration with the 🚧 [breaker][] package.
 
 ## Usage
 
@@ -69,24 +69,13 @@ $ semaphore wait --timeout=1m --notify
 
 [![asciicast](https://asciinema.org/a/136111.png)](https://asciinema.org/a/136111)
 
-See more details [here](cmd/semaphore).
-
-## Installation
-
-```bash
-$ go get github.com/kamilsk/semaphore
-$ # or use mirror
-$ egg bitbucket.org/kamilsk/semaphore
-```
-
-> [egg][]<sup id="anchor-egg">[1](#egg)</sup> is an `extended go get`.
+See more details [here][cli].
 
 ## Update
 
 This library is using [SemVer](https://semver.org/) for versioning, and it is not
-[BC](https://en.wikipedia.org/wiki/Backward_compatibility)-safe.
-
-<sup id="egg">1</sup> The project is still in prototyping. [↩](#anchor-egg)
+[BC](https://en.wikipedia.org/wiki/Backward_compatibility)-safe. You can use [dep][],
+[glide][] or [Go Modules][gomod] to manage its version.
 
 ---
 
@@ -98,6 +87,7 @@ made with ❤️ by [OctoLab][octolab]
 
 [awesome]:         https://github.com/avelino/awesome-go#goroutines
 [build]:           https://travis-ci.org/kamilsk/semaphore
+[cli]:             https://github.com/kamilsk/semaphore.cli
 [docs]:            https://godoc.org/github.com/kamilsk/semaphore
 [gitter]:          https://gitter.im/kamilsk/semaphore
 [license]:         LICENSE
@@ -108,8 +98,10 @@ made with ❤️ by [OctoLab][octolab]
 [v4]:              https://github.com/kamilsk/semaphore/tree/v4
 [v5]:              https://github.com/kamilsk/semaphore/projects/6
 
-[egg]:             https://github.com/kamilsk/egg
 [breaker]:         https://github.com/kamilsk/breaker
+[dep]:             https://golang.github.io/dep/
+[egg]:             https://github.com/kamilsk/egg
+[glide]:           https://glide.sh/
 [gomod]:           https://github.com/golang/go/wiki/Modules
 [platform]:        https://github.com/kamilsk/platform
 
