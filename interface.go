@@ -18,8 +18,24 @@ type BreakCloser interface {
 	Close()
 }
 
-// Interface provides the functionality of the Semaphore pattern.
+// A Releaser provides a possibility to release resources that it holds.
+type Releaser interface {
+	// Release releases resources associated with the Releaser.
+	// If no places were occupied, then it returns an appropriate error.
+	Release() error
+}
+
+// Interface defines the functionality of the Semaphore pattern.
 type Interface interface {
+	Releaser
+
+	Acquire(BreakCloser, ...uint) (Releaser, error)
+	Try(Breaker, ...uint) (Releaser, error)
+	Signal(Breaker) <-chan Releaser
+
+	Capacity() uint
+	Resize(uint) uint
+	Occupied() uint
 }
 
 // Semaphore provides the functionality of the same named pattern.
@@ -39,6 +55,7 @@ type Semaphore interface {
 }
 
 // HealthChecker defines helpful methods related with semaphore status.
+// Deprecated: will be replaced by Interface.
 type HealthChecker interface {
 	// Capacity returns a capacity of a semaphore.
 	// It must be safe to call Capacity concurrently on a single semaphore.
@@ -46,12 +63,4 @@ type HealthChecker interface {
 	// Occupied returns a current number of occupied slots.
 	// It must be safe to call Occupied concurrently on a single semaphore.
 	Occupied() int
-}
-
-// Releaser defines a method to release the previously occupied semaphore.
-type Releaser interface {
-	// Release releases the previously occupied slot.
-	// If no places were occupied, then it returns an appropriate error.
-	// It must be safe to call Release concurrently on a single semaphore.
-	Release() error
 }
