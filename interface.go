@@ -33,9 +33,8 @@ type Interface interface {
 	Try(Breaker, ...uint) (Releaser, error)
 	Signal(Breaker) <-chan Releaser
 
-	Capacity() uint
-	Resize(uint) uint
-	Occupied() uint
+	Peek() uint
+	Size(uint) uint
 }
 
 // Semaphore provides the functionality of the same named pattern.
