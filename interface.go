@@ -29,12 +29,12 @@ type Releaser interface {
 type Interface interface {
 	Releaser
 
-	Acquire(BreakCloser, ...uint) (Releaser, error)
-	Try(Breaker, ...uint) (Releaser, error)
+	Acquire(BreakCloser, ...uint32) (Releaser, error)
+	Try(Breaker, ...uint32) (Releaser, error)
 	Signal(Breaker) <-chan Releaser
 
-	Peek() uint
-	Size(uint) uint
+	Peek() uint32
+	Size(uint) uint32
 }
 
 // Semaphore provides the functionality of the same named pattern.
