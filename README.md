@@ -29,7 +29,9 @@ $ go get -u github.com/kamilsk/semaphore/v4@v4.3.1
 The **[v5][]** branch is an actual development branch.
 
 ```bash
-$ go get -u github.com/kamilsk/semaphore/v5
+$ go get -u github.com/kamilsk/semaphore    # inside GOPATH and for old Go versions
+
+$ go get -u github.com/kamilsk/semaphore/v5 # inside Go module, works well since Go 1.11
 
 $ dep ensure -add github.com/kamilsk/semaphore@v5.0.0-rc1
 ```
