@@ -24,6 +24,11 @@ func IsEmpty(err error) bool {
 	return err == errEmpty
 }
 
+// IsNoPlace checks if passed error is related to call Catch on full semaphore.
+func IsNoPlace(err error) bool {
+	return err == errNoPlace
+}
+
 // IsTimeout checks if passed error is related to call Acquire on full semaphore.
 func IsTimeout(err error) bool {
 	return err == errTimeout
@@ -33,41 +38,51 @@ var (
 	nothing ReleaseFunc = func() {}
 
 	errEmpty   = errors.New("semaphore is empty")
+	errNoPlace = errors.New("semaphore has no place")
 	errTimeout = errors.New("operation timeout")
 )
 
 type semaphore chan struct{}
 
-func (sem semaphore) Acquire(deadline <-chan struct{}) (ReleaseFunc, error) {
+func (semaphore semaphore) Acquire(deadline <-chan struct{}) (ReleaseFunc, error) {
 	select {
-	case sem <- struct{}{}:
-		return func() { _ = sem.Release() }, nil //nolint: gas
+	case semaphore <- struct{}{}:
+		return func() { _ = semaphore.Release() }, nil //nolint: gas
 	case <-deadline:
 		return nothing, errTimeout
 	}
 }
 
-func (sem semaphore) Capacity() int {
-	return cap(sem)
-}
-
-func (sem semaphore) Occupied() int {
-	return len(sem)
-}
-
-func (sem semaphore) Release() error {
+func (semaphore semaphore) Catch() (ReleaseFunc, error) {
 	select {
-	case <-sem:
+	case semaphore <- struct{}{}:
+		return func() { _ = semaphore.Release() }, nil //nolint: gas
+	default:
+		return nothing, errNoPlace
+	}
+}
+
+func (semaphore semaphore) Capacity() int {
+	return cap(semaphore)
+}
+
+func (semaphore semaphore) Occupied() int {
+	return len(semaphore)
+}
+
+func (semaphore semaphore) Release() error {
+	select {
+	case <-semaphore:
 		return nil
 	default:
 		return errEmpty
 	}
 }
 
-func (sem semaphore) Signal(deadline <-chan struct{}) <-chan ReleaseFunc {
+func (semaphore semaphore) Signal(deadline <-chan struct{}) <-chan ReleaseFunc {
 	ch := make(chan ReleaseFunc, 1)
 	go func() {
-		if release, err := sem.Acquire(deadline); err == nil {
+		if release, err := semaphore.Acquire(deadline); err == nil {
 			ch <- release
 		}
 		close(ch)
