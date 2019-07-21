@@ -2,16 +2,60 @@
 >
 > Semaphore pattern implementation with timeout of lock/unlock operations.
 
-[![Awesome][icon_awesome]][awesome]
-[![Patreon][icon_patreon]][support]
-[![Build][icon_build]][build]
-[![Quality][icon_quality]][quality]
-[![Coverage][icon_coverage]][quality]
-[![GoDoc][icon_docs]][docs]
-[![Research][icon_research]][research]
-[![License][icon_license]][license]
+[![Build][icon_build]][page_build]
+[![Quality][icon_quality]][page_quality]
+[![Documentation][icon_docs]][page_docs]
+[![Coverage][icon_coverage]][page_coverage]
+[![Awesome][icon_awesome]][page_awesome]
 
-## Important news
+## 💡 Idea
+
+The semaphore provides API to control access to a shared resource by multiple goroutines or limit throughput.
+
+```go
+releaser, err := semaphore.Acquire(breaker.BreakByTimeout(time.Second))
+if err != nil {
+	// timeout exceeded
+}
+defer releaser.Release()
+```
+
+Full description of the idea is available [here][design].
+
+## 🏆 Motivation
+
+...
+
+## 🤼‍♂️ How to
+
+### Quick start
+
+```go
+limiter := semaphore.New(1000)
+
+http.HandleFunc("/", func(rw http.ResponseWriter, req *http.Request) {
+	if _, err := limiter.Acquire(
+		breaker.BreakByContext(
+			context.WithTimeout(req.Context(), time.Second),
+		),
+	); err != nil {
+		http.Error(rw, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
+		return
+	}
+	defer limiter.Release()
+
+	// handle request
+})
+
+log.Fatal(http.ListenAndServe(":80", http.DefaultServeMux))
+```
+
+## 🧩 Integration
+
+The library uses [SemVer](https://semver.org) for versioning, and it is not
+[BC](https://en.wikipedia.org/wiki/Backward_compatibility)-safe through major releases.
+You can use [go modules](https://github.com/golang/go/wiki/Modules) or
+[dep](https://golang.github.io/dep/) to manage its version.
 
 The **[master][legacy]** is a feature frozen branch for versions **4.3.x** and no longer maintained.
 
@@ -20,7 +64,7 @@ $ dep ensure -add github.com/kamilsk/semaphore@4.3.1
 ```
 
 The **[v4][]** branch is a continuation of the **[master][legacy]** branch for versions **v4.4.x**
-to better integration with [Go Modules][gomod].
+to better integration with [go modules](https://github.com/golang/go/wiki/Modules).
 
 ```bash
 $ go get -u github.com/kamilsk/semaphore/v4@v4.3.1
@@ -38,24 +82,7 @@ $ dep ensure -add github.com/kamilsk/semaphore@v5.0.0-rc1
 
 Version **v5** focused on integration with the 🚧 [breaker][] package.
 
-## Usage
-
-### Quick start
-
-```go
-limiter := semaphore.New(1000)
-
-http.HandleFunc("/", func(rw http.ResponseWriter, _ *http.Request) {
-	if _, err := limiter.Acquire(semaphore.WithTimeout(time.Minute)); err != nil {
-		http.Error(rw, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
-		return
-	}
-	defer limiter.Release()
-	// handle request
-})
-
-log.Fatal(http.ListenAndServe(":80", nil))
-```
+## 🤲 Outcomes
 
 ### Console tool for command execution in parallel
 
@@ -69,61 +96,37 @@ $ semaphore add -- ansible-playbook
 $ semaphore wait --timeout=1m --notify
 ```
 
-[![asciicast](https://asciinema.org/a/136111.png)](https://asciinema.org/a/136111)
+[![asciicast][cli.preview]][cli.demo]
 
 See more details [here][cli].
 
-## Update
-
-This library is using [SemVer](https://semver.org/) for versioning, and it is not
-[BC](https://en.wikipedia.org/wiki/Backward_compatibility)-safe. You can use [dep][],
-[glide][] or [Go Modules][gomod] to manage its version.
-
 ---
 
-[![Gitter][icon_gitter]][gitter]
-[![@kamilsk][icon_tw_author]][author]
-[![@octolab][icon_tw_sponsor]][sponsor]
+made with ❤️ for everyone
 
-made with ❤️ by [OctoLab][octolab]
+[icon_awesome]:     https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg
+[icon_build]:       https://travis-ci.org/kamilsk/semaphore.svg?branch=v5
+[icon_coverage]:    https://api.codeclimate.com/v1/badges/0261f2170c785702034f/test_coverage
+[icon_docs]:        https://godoc.org/github.com/kamilsk/semaphore?status.svg
+[icon_quality]:     https://goreportcard.com/badge/github.com/kamilsk/semaphore
 
-[awesome]:         https://github.com/avelino/awesome-go#goroutines
-[build]:           https://travis-ci.org/kamilsk/semaphore
-[cli]:             https://github.com/kamilsk/semaphore.cli
-[docs]:            https://godoc.org/github.com/kamilsk/semaphore
-[gitter]:          https://gitter.im/kamilsk/semaphore
-[license]:         LICENSE
-[promo]:           https://github.com/kamilsk/semaphore
-[quality]:         https://scrutinizer-ci.com/g/kamilsk/semaphore/?branch=v5
-[research]:        https://github.com/kamilsk/go-research/tree/master/projects/semaphore
-[legacy]:          https://github.com/kamilsk/semaphore/tree/master
-[v4]:              https://github.com/kamilsk/semaphore/tree/v4
-[v5]:              https://github.com/kamilsk/semaphore/projects/6
+[page_awesome]:     https://github.com/avelino/awesome-go#goroutines
+[page_build]:       https://travis-ci.org/kamilsk/semaphore
+[page_coverage]:    https://codeclimate.com/github/kamilsk/semaphore/test_coverage
+[page_docs]:        https://godoc.org/github.com/kamilsk/semaphore
+[page_quality]:     https://goreportcard.com/report/github.com/kamilsk/semaphore
 
-[breaker]:         https://github.com/kamilsk/breaker
-[dep]:             https://golang.github.io/dep/
-[egg]:             https://github.com/kamilsk/egg
-[glide]:           https://glide.sh/
-[gomod]:           https://github.com/golang/go/wiki/Modules
-[platform]:        https://github.com/kamilsk/platform
+[breaker]:          https://github.com/kamilsk/breaker
+[cli]:              https://github.com/kamilsk/semaphore.cli
+[cli.demo]:         https://asciinema.org/a/136111
+[cli.preview]:      https://asciinema.org/a/136111.png
+[design]:           https://www.notion.so/octolab/semaphore-7d5ebf715d0141d1a8fa045c7966be3b?r=0b753cbf767346f5a6fd51194829a2f3
+[egg]:              https://github.com/kamilsk/egg
+[promo]:            https://github.com/kamilsk/semaphore
 
-[author]:          https://twitter.com/ikamilsk
-[octolab]:         https://www.octolab.org/
-[sponsor]:         https://twitter.com/octolab_inc
-[support]:         https://www.patreon.com/octolab
+[legacy]:           https://github.com/kamilsk/semaphore/tree/master
+[v4]:               https://github.com/kamilsk/semaphore/tree/v4
+[v5]:               https://github.com/kamilsk/semaphore/projects/6
 
-[analytics]:       https://ga-beacon.appspot.com/UA-109817251-2/semaphore/v5?pixel
-[tweet]:           https://twitter.com/intent/tweet?text=Semaphore%20pattern%20implementation%20with%20a%20timeout%20of%20lock%2Funlock%20operations&url=https://github.com/kamilsk/semaphore&via=ikamilsk&hashtags=go,semaphore,throughput,limiter
-
-[icon_awesome]:    https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg
-[icon_build]:      https://travis-ci.org/kamilsk/semaphore.svg?branch=v5
-[icon_coverage]:   https://scrutinizer-ci.com/g/kamilsk/semaphore/badges/coverage.png?b=v5
-[icon_docs]:       https://godoc.org/github.com/kamilsk/semaphore?status.svg
-[icon_gitter]:     https://badges.gitter.im/Join%20Chat.svg
-[icon_license]:    https://img.shields.io/badge/license-MIT-blue.svg
-[icon_patreon]:    https://img.shields.io/badge/patreon-donate-orange.svg
-[icon_quality]:    https://scrutinizer-ci.com/g/kamilsk/semaphore/badges/quality-score.png?b=v5
-[icon_research]:   https://img.shields.io/badge/research-in%20progress-yellow.svg
-[icon_tw_author]:  https://img.shields.io/badge/author-%40kamilsk-blue.svg
-[icon_tw_sponsor]: https://img.shields.io/badge/sponsor-%40octolab-blue.svg
-[icon_twitter]:    https://img.shields.io/twitter/url/http/shields.io.svg?style=social
+[tmp.docs]:         https://nicedoc.io/kamilsk/semaphore?theme=dark
+[tmp.history]:      https://github.githistory.xyz/kamilsk/semaphore/blob/v5/README.md
