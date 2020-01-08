@@ -1,5 +1,5 @@
 SHELL       = /bin/bash -euo pipefail
-PKGS        = go list ./... | grep -v vendor
+PKGS        = $(shell go list ./... | grep -v vendor)
 GO111MODULE = on
 GOFLAGS     = -mod=vendor
 TIMEOUT     = 1s
@@ -23,7 +23,7 @@ format:
 
 .PHONY: generate
 generate:
-	@go generate ./...
+	@go generate $(PKGS)
 
 .PHONY: refresh
 refresh: generate format
@@ -31,20 +31,12 @@ refresh: generate format
 
 .PHONY: test
 test:
-	@go test -race -timeout $(TIMEOUT) ./...
+	@go test -race -timeout $(TIMEOUT) $(PKGS)
 
 .PHONY: test-with-coverage
 test-with-coverage:
-	@go test -cover -timeout $(TIMEOUT) ./... | column -t | sort -r
+	@go test -cover -timeout $(TIMEOUT) $(PKGS) | column -t | sort -r
 
 .PHONY: test-with-coverage-profile
 test-with-coverage-profile:
-	@go test -cover -covermode count -coverprofile c.out -timeout $(TIMEOUT) ./...
-
-
-.PHONY: sync
-sync:
-	@git stash && git pull --rebase && git stash pop || true
-
-.PHONY: upgrade
-upgrade: sync update deps refresh test-with-coverage
+	@go test -cover -covermode count -coverprofile c.out -timeout $(TIMEOUT) $(PKGS)

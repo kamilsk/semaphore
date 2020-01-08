@@ -117,7 +117,7 @@ made with ❤️ for everyone
 [page_quality]:     https://goreportcard.com/report/github.com/kamilsk/semaphore
 
 [breaker]:          https://github.com/kamilsk/breaker
-[cli]:              https://github.com/kamilsk/semaphore.cli
+[cli]:              https://github.com/kamilsk/parallel
 [cli.demo]:         https://asciinema.org/a/136111
 [cli.preview]:      https://asciinema.org/a/136111.png
 [design]:           https://www.notion.so/octolab/semaphore-7d5ebf715d0141d1a8fa045c7966be3b?r=0b753cbf767346f5a6fd51194829a2f3
